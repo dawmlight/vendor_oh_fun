@@ -24,7 +24,7 @@ Software architecture description
 2.  Create Feat_xxx branch
 3.  Commit your code
 4.  Create Pull Request
-
+5.  Prequest the issues
 
 #### Gitee Feature
 
