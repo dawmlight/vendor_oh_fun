@@ -10,7 +10,7 @@ OpenHarmony_Fun将基于OpenHarmony开源代码和开发板，打造一系列“
 
 #### 可体验项目清单
 
-1.  **[OpenHarmony_HID_v0.1](https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/hihope_neptune-oh_hid)** ，基于润和Neptune开发板实现：旧键盘加上40￥、30分钟DIY投入，有线变BLE无线。更可支持鼠标、游戏手柄、控制杆等HID设备。
+1.  **[OpenHarmony_HID_v0.2](https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/hihope_neptune-oh_hid)** ，基于润和Neptune开发板实现：旧键盘加上40￥、30分钟DIY投入，有线变BLE无线。更可支持鼠标、游戏手柄、控制杆等HID设备。
 
 
 
