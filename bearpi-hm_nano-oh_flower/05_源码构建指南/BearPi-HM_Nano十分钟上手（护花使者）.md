@@ -139,19 +139,16 @@
 
 4. 在MobaXterm中输入：
     ```
-    git clone https://gitee.com/bearpi/bearpi-hm_nano.git
+    git clone https://gitee.com/openharmony-sig/vendor_oh_fun.git
     ```
     然后回车,等待代码下载完毕。
-
-
-
 
 ## 七、编译代码
 
 1. 在MobaXterm中输入
 
     ```
-    cd bearpi-hm_nano
+    cd vendor_oh_fun/bearpi-hm_nano-oh_flower/00_代码/bearpi-hm_nano_oh_fun
     ```
     然后回车，进入源码目录
 2. 在MobaXterm中输入：
