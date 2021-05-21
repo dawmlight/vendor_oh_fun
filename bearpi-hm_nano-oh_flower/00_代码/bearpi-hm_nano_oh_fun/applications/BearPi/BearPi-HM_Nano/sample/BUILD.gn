@@ -15,9 +15,7 @@ import("//build/lite/config/component/lite_component.gni")
 
 lite_component("app") {
     features = [
-
         "00_iot_cloud_oc_flower:cloud_oc_flower"
-        
     ]
 }
 

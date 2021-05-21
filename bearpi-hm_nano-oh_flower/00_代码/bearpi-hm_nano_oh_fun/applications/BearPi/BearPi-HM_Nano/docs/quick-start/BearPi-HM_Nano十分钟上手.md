@@ -41,7 +41,7 @@
     ![](figures/导入镜像.png)
 
 5. 点击`开启此虚拟机`，来开启虚拟机电源
-
+ 
     ![](figures/开启ubuntu虚拟机.png)
     
 6. 此时虚拟机进入登录界面，点击`HarmonyOS`
@@ -68,7 +68,7 @@
 
     ![](figures/VMWare设置.png)
 
-    然后在网络适配器中，改成`NAT 模式`，点击`确定`
+    然后在网络适配器中，改成`NET 模式`，点击`确定`
 
     ![](figures/VMware_net_config.png)
 
@@ -100,7 +100,7 @@
 ## 五、把ubuntu文件远程映射到Windows上
 
 1. 安装RaiDrive软件
-   
+    
     默认安装即可。
 
 2. 切换为中文语言
@@ -215,6 +215,7 @@
 
     ![](figures/Hiburn_下载程序中.png)
 
+    
 6. 直到出现`Execution Successful`字样，程序下载完成。
 
 7. 下载完后，点击`Disconnect`按钮，便于后面调测使用。
@@ -223,7 +224,7 @@
 ## 十、MobaXterm 查看串口打印日志
 
 1. 打开MobaXterm，
-   
+    
     1. 点击：`Session`、`Serial`按钮
 
     2. 设置Seral port为 Hiburn 同一个串口
