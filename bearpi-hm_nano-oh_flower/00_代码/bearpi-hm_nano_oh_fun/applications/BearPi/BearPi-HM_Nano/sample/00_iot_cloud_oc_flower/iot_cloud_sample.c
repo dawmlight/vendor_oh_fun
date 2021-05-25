@@ -48,9 +48,14 @@
 #define CONFIG_QUEUE_TIMEOUT      (5*1000)
 
 
+#define CONFIG_MOTOR_TIME         400U 
+
 extern char product[50],wifissid[50], wifipwd[50],deviceid[50], devicepwd[50];
 app_cb_t  g_app_cb;
-osTimerId_t id1;
+osTimerId_t timer_id;
+osThreadId_t led_task_id;
+osEventFlagsId_t evt_id;
+
 /**************************************************
  * deal_report_msg
  * 处理数据，并将数据上报到平台
@@ -148,11 +153,9 @@ static int msg_rcv_callback(oc_mqtt_profile_msgrcv_t *msg)
 void Timer1_Callback(void *arg)
 {
     (void)arg;
-    g_app_cb.motor = 0;
+    osEventFlagsSet(evt_id, 0x00000001U);
+    osTimerStop (timer_id);
 
-    /* 关闭抽水 */
-    GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 1);
-    printf("Pump Off!\r\n");
 }
 
 /**************************************************
@@ -195,9 +198,9 @@ static void deal_cmd_msg(cmd_t *cmd)
         if (0 == strcmp(cJSON_GetStringValue(obj_para), "ON"))
         {
             g_app_cb.motor = 1;
-            GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 0);       
+            Motor_StatusSet(ON);    
 
-            osTimerStart(id1, 400U);
+            osTimerStart(timer_id, CONFIG_MOTOR_TIME);
             /* 打开抽水 */
             printf("Pump On!\r\n");
         }
@@ -206,7 +209,7 @@ static void deal_cmd_msg(cmd_t *cmd)
             g_app_cb.motor = 0;
 
             /* 关闭抽水 */
-            GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 1);
+            Motor_StatusSet(OFF);
             printf("Pump Off!\r\n");
         }
         cmdret = 0;
@@ -279,6 +282,9 @@ static int iot_cloud_task_entry(void)
     if((ret == (int)en_oc_mqtt_err_ok)){
         g_app_cb.connected = 1;
         printf("Huawei iot cloud connect succed!\r\n");
+        osThreadTerminate(led_task_id);
+        GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_2, 1);
+        
     }
     else{
         printf("Huawei iot cloud connect faild!\r\n");
@@ -349,6 +355,70 @@ static int sensor_task_entry(void)
     return 0;
 }
 
+/**************************************************
+ * 任务：sensor_task_entry
+ * 传感器采集任务
+ * ***********************************************/
+static int led_task_entry(void)
+{
+
+    //设置GPIO_2的复用功能为普通GPIO
+    IoSetFunc(WIFI_IOT_IO_NAME_GPIO_2, WIFI_IOT_IO_FUNC_GPIO_2_GPIO);
+
+    //设置GPIO_2为输出模式
+    GpioSetDir(WIFI_IOT_GPIO_IDX_2, WIFI_IOT_GPIO_DIR_OUT);
+
+    while (1)
+    {
+       GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_2, 1);
+       sleep(1);
+       GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_2, 0);
+       sleep(1);
+    }
+    return 0;
+}
+
+/**************************************************
+ * 任务：motor_task_entry
+ * 传感器采集任务
+ * ***********************************************/
+static int motor_task_entry(void)
+{
+    oc_mqtt_profile_service_t    service;
+    oc_mqtt_profile_kv_t         motor;
+    /* 创建按键事件 */
+    evt_id = osEventFlagsNew(NULL);
+    if (evt_id == NULL)
+    {
+        printf("Falied to create EventFlags!\n");
+    }
+
+    while (1)
+    {
+       osEventFlagsWait(evt_id, 0x00000001U, osFlagsWaitAny, osWaitForever);
+
+        g_app_cb.motor = 0;
+
+        /* 打包要发送的数据 */
+        service.event_time = NULL;
+        service.service_id = "AutoWater";
+        service.service_property = &motor;
+        service.nxt = NULL;
+
+        motor.key = "MotorStatus";
+        motor.value = "OFF";
+        motor.type = EN_OC_MQTT_PROFILE_VALUE_STRING;
+        motor.nxt = NULL;
+
+        /* 将数据发送到华为IoT平台 */
+        oc_mqtt_profile_propertyreport(NULL,&service);
+        printf("Pump Off!\r\n");
+        /* 关闭抽水 */
+        Motor_StatusSet(OFF);
+
+    }
+    return 0;
+}
 
 /**************************************************
  * 任务：OC_Demo
@@ -368,13 +438,29 @@ static void main_entry(void)
     printf("=======================================\r\n");
     printf("************iot_cloud_sample***********\r\n");
     printf("=======================================\r\n");
-    id1 = osTimerNew(Timer1_Callback, osTimerPeriodic, NULL, NULL);
+    timer_id = osTimerNew(Timer1_Callback, osTimerPeriodic, NULL, NULL);
     /* 创建传感器数据采集任务 */
     attr.name = "sensor_task_entry";
     attr.priority = 25;
     if (osThreadNew((osThreadFunc_t)sensor_task_entry, NULL, &attr) == NULL)
     {
         printf("Falied to create sensor_task_entry!\n");
+    }
+
+    /* 创建led任务 */
+    attr.name = "led_task_entry";
+    attr.priority = 25;
+    if ((led_task_id = osThreadNew((osThreadFunc_t)led_task_entry, NULL, &attr)) == NULL)
+    {
+        printf("Falied to create led_task_entry!\n");
+    }
+
+    /* 创建motor任务 */
+    attr.name = "motor_task_entry";
+    attr.priority = 25;
+    if ((osThreadNew((osThreadFunc_t)motor_task_entry, NULL, &attr)) == NULL)
+    {
+        printf("Falied to create motor_task_entry!\n");
     }
 
     /* 创建端云互通任务 */
@@ -385,6 +471,8 @@ static void main_entry(void)
     {
         printf("Falied to create report_task_entry!\n");
     }
+
+    
 }
 
 /* 将main_entry任务加入到harmonyOS系统主任务中 */

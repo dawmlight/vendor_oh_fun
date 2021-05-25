@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-static_library("cloud_oc_flower") {
+static_library("cloud_oc_agriculture") {
     sources = [
         "iot_cloud_sample.c",
         "src/wifi_connect.c",

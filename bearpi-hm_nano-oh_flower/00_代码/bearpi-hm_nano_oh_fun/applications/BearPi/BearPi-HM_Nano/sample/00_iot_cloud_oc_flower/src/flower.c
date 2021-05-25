@@ -41,6 +41,8 @@ static void Flower_IO_Init(void)
     //设置GPIO_2为输出模式
     GpioSetDir(WIFI_IOT_IO_NAME_GPIO_14, WIFI_IOT_GPIO_DIR_OUT);
 
+    GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 1);
+
     //GPIO_0复用为I2C1_SDA
     IoSetFunc(WIFI_IOT_IO_NAME_GPIO_0, WIFI_IOT_IO_FUNC_GPIO_0_I2C1_SDA);
 
@@ -180,7 +182,7 @@ void Flower_Read_Data(Flower_Data_TypeDef *ReadData)
     {
         printf("ADC Read Fail\n");
     }
-    printf("ADC Read ******%d\n",adc);
+
     ReadData->Smo = (float)adc/1500*100;
 
     uint8_t data[3];
@@ -232,10 +234,10 @@ void Motor_StatusSet(Flower_Status_ENUM status)
     if (status == ON)
 
         //设置GPIO_8输出高电平打开电机
-        GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_8, 0);
+        GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 0);
 
     if (status == OFF)
 
         //设置GPIO_8输出低电平关闭电机
-        GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_8, 1);
+        GpioSetOutputVal(WIFI_IOT_IO_NAME_GPIO_14, 1);
 }
