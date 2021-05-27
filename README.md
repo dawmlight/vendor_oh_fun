@@ -11,7 +11,7 @@ OpenHarmony_Fun将基于OpenHarmony开源代码和开发板，打造一系列“
 #### 可体验项目清单
 
 1.  **[OpenHarmony_HID_v0.2](https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/hihope_neptune-oh_hid)** ，基于润和Neptune开发板实现：旧键盘加上40￥、30分钟DIY投入，有线变BLE无线。更可支持鼠标、游戏手柄、控制杆等HID设备。
-2、**护花仙子v0.1(https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_flower)** ：<100￥、30分钟DIY，可实现远程监控盆栽的光照、温湿度、甚至浇水。更可简单改造成宠物投食、喂水机，伺候好你的主子们。
+2. 这里是列表文本**护花仙子v0.1(https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_flower)** ：<100￥、30分钟DIY，可实现远程监控盆栽的光照、温湿度、甚至浇水。更可简单改造成宠物投食、喂水机，伺候好你的主子们。
 
 #### ToDo List
 
