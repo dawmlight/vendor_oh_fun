@@ -2,7 +2,7 @@
 
 &emsp;&emsp;小时候，我们相信魔法，充满好奇；长大后，我们研发“魔法”，探索未知。又到了我们光明正大当宝宝的日子！这个六一，我们专宠每一位开发者。为每一位宝宝安排了一份神秘又充满乐趣的六一礼物——”护花使者”。OpenHarmony&小熊派HM Nano为六一献礼，推出 “护花使者”的超级礼盒，99元、30分钟便可让各位宝宝们重拾童趣。
 
-&emsp;&emsp;<img src="./figures/image001.png" width = "500"  alt="下载代码" align=center />
+&emsp;&emsp;<img src="./figures/image001.png" width = "650"  alt="下载代码" align=center />
 
 
  
@@ -72,5 +72,5 @@ https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_fl
 # 技术交流
  &emsp;&emsp;已开设交流群，请扫描下方二维码或搜索群号：780573931，进群与开发者们进行技术讨论，还可以与工程师在线交流哦！
 
-![](./figures/群二维码.png)
+ &emsp;&emsp;![](./figures/群二维码.png)
  
