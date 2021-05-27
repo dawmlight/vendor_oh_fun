@@ -9,17 +9,17 @@
 
 
 
-# 小程序获取
+# 客户端（小程序）获取
 
 &emsp;&emsp;扫描二维码关注公众号，在下方菜单栏中打开小程序。
     
 
 &emsp;&emsp;<img src="./01_操作文档/figures/打开微信小程序.png"  alt="打开微信小程序" align=center />
 
-# 设备购买（[点击购买](https://item.taobao.com/item.htm?ft=t&id=645216486457)）
+# 设备端（[点击购买](https://item.taobao.com/item.htm?ft=t&id=645216486457)）获取
 
-&emsp;&emsp;使用手机扫描下方二维码购买
+&emsp;&emsp;使用手机淘宝扫描下方二维码购买
 
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<img src="./01_操作文档/figures/淘宝链接.png"  width = "270" alt="打开微信小程序" align=center />
+&emsp;&emsp;<img src="./01_操作文档/figures/淘宝链接.png"  alt="淘宝链接" align=center />
 
 
