@@ -1,29 +1,25 @@
-# 项目介绍
+# 项目介绍（[详细教程](01_操作文档/护花使者使用手册.md)）
 本项目是用BearPi-HM_Nano开发板加上一块“护花使者“底板及抽水电机等配件，快速DIY出一款具备远程监测土壤湿度并实现远程浇水的“护花使者”。
 
 该项目具备成本低、耗时少、操作简单等特点，时时刻刻呵护您的植物，伴其茁壮成长。
 
-&emsp;<img src="01_操作文档/figures/植物.jpg" width = "600" height = "400" alt="传感器连接" align=center />
+&emsp;<img src="01_操作文档/figures/植物.jpg" width = "700"  alt="传感器连接" align=center />
 
 
-# 教程指导
-
-该项目支持：
-
-- 可通过小程序给设备配网
-- 远程查看土壤湿度、环境温度及环境湿度
-- 可实现远程控制水泵浇水 
-
-### 那么如何使用BearPi-HM_Nano开发板来制作“护花使者“，点击[查看教程](01_操作文档/护花使者使用手册.md)一起来DIY吧
 
 
-# 小程序获取
+
+# 客户端（小程序）获取
 
 &emsp;&emsp;扫描二维码关注公众号，在下方菜单栏中打开小程序。
     
-&emsp;&emsp;![](./01_操作文档/figures/微信公众号.jpg)
 
-&emsp;&emsp;<img src="./01_操作文档/figures/打开微信小程序.png" width = "300" height = "666" alt="打开微信小程序" align=center />
+&emsp;&emsp;<img src="./01_操作文档/figures/打开微信小程序.png"  alt="打开微信小程序" align=center />
 
+# 设备端（[点击购买](https://item.taobao.com/item.htm?ft=t&id=645216486457)）获取
+
+&emsp;&emsp;使用手机淘宝扫描下方二维码购买
+
+&emsp;&emsp;<img src="./01_操作文档/figures/淘宝链接.png"  alt="淘宝链接" align=center />
 
 
