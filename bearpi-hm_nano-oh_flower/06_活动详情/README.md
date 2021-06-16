@@ -70,7 +70,7 @@ https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_fl
  &emsp;&emsp;如您参与活动并中奖，为了完成奖品发放，我们需要收集您的姓名、Gitee昵称、邮件地址、联系地址、联系电话等信息。实物奖品的寄送服务由第三方物流公司提供，为此我们会将您的上述信息向其进行共享。如您参与活动即表示您同意以上声明。
 
 # 技术交流
- &emsp;&emsp;已开设交流群，请扫描下方二维码或搜索群号：780573931，进群与开发者们进行技术讨论，还可以与工程师在线交流哦！
+ &emsp;&emsp;已开设交流群，请扫描下方二维码或搜索小助手微信号：BearPi_Helper，让小助手拉您进群与开发者们进行技术讨论，还可以与工程师在线交流哦！
 
- &emsp;&emsp;![](./figures/群二维码.png)
+ &emsp;&emsp;![](./figures/小助手二维码.jpg)
  
