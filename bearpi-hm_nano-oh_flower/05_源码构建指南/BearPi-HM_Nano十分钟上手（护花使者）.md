@@ -153,11 +153,18 @@
     然后回车，进入源码目录
 2. 在MobaXterm中输入：
     ```
-    python build.py BearPi-HM_Nano
+    hb set
+    .
+     ```
+    选择bearpi_hm_nano@bearp，然后回车
+
+3. 在MobaXterm中输入：
+    ```
+    hb build -f
     ```
     然后回车，等待直到屏幕出现：`BUILD SUCCESS`字样，说明编译成功。
 
-2. 查看编译出的固件位置
+4. 查看编译出的固件位置
 
     当编译完后，在Windows中可以直接查看到最终编译的固件，具体路径在：
 
