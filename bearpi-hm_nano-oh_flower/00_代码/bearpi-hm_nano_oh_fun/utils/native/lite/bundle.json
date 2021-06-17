@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/utils_native_lite",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "公共基础库存放OpenHarmony通用的基础组件，这些基础组件可被OpenHarmony各业务子系统及上层应用所使用。",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/utils/native/lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/utils_native_lite",
+    "tags": [
+        "utils"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "utils",
+        "utilsnativelite"
+    ]
+}

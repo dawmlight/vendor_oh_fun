@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/nuttx",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "NuttX",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/third_party/NuttX && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/NuttX",
+    "tags": [
+        "third_party"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "",
+        "board": ""
+    },
+    "license": "BSD 3-Clause License",
+    "keywords": [
+        "thirdparty",
+        "nuttx"
+    ]
+}

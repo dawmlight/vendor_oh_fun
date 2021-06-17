@@ -202,6 +202,10 @@ server5-ss-forgeca.crt: server5.key
 	$(FAKETIME) '2015-09-01 14:08:43' $(OPENSSL) req -x509 -new -subj "/C=UK/O=mbed TLS/CN=mbed TLS Test intermediate CA 3" -set_serial 77 -config $(test_ca_config_file) -extensions noext_ca -days 3650 -sha256 -key $< -out $@
 all_final += server5-ss-forgeca.crt
 
+server5-tricky-ip-san.crt: server5.key
+	$(OPENSSL) req -x509 -new -subj "/C=UK/O=Mbed TLS/CN=Mbed TLS Tricky IP SAN" -set_serial 77 -config $(test_ca_config_file) -extensions tricky_ip_san -days 3650 -sha256 -key server5.key -out $@
+all_final += server5-tricky-ip-san.crt
+
 server10-badsign.crt: server10.crt
 	{ head -n-2 $<; tail -n-2 $< | sed -e '1s/0\(=*\)$$/_\1/' -e '1s/[^_=]\(=*\)$$/0\1/' -e '1s/_/1/'; } > $@
 all_final += server10-badsign.crt
@@ -999,7 +1003,10 @@ server1.v1.der.openssl: server1.v1.crt.openssl
 crl.pem: $(test_ca_crt) $(test_ca_key_file_rsa) $(test_ca_config_file)
 	$(OPENSSL) ca -gencrl -batch -cert $(test_ca_crt) -keyfile $(test_ca_key_file_rsa) -key $(test_ca_pwd_rsa) -config $(test_ca_server1_config_file) -md sha1 -crldays 3653 -out $@
 
-server1_all: crl.pem server1.crt server1.noauthid.crt server1.crt.openssl server1.v1.crt server1.v1.crt.openssl server1.key_usage.crt server1.key_usage_noauthid.crt server1.key_usage.crt.openssl server1.cert_type.crt server1.cert_type_noauthid.crt server1.cert_type.crt.openssl server1.der server1.der.openssl server1.v1.der server1.v1.der.openssl server1.key_usage.der server1.key_usage.der.openssl server1.cert_type.der server1.cert_type.der.openssl
+crl-futureRevocationDate.pem: $(test_ca_crt) $(test_ca_key_file_rsa) $(test_ca_config_file) test-ca.server1.future-crl.db  test-ca.server1.future-crl.opensslconf
+	$(FAKETIME) '2028-12-31' $(OPENSSL) ca -gencrl -config test-ca.server1.future-crl.opensslconf -crldays 365 -passin "pass:$(test_ca_pwd_rsa)" -out $@
+
+server1_all: crl.pem crl-futureRevocationDate.pem server1.crt server1.noauthid.crt server1.crt.openssl server1.v1.crt server1.v1.crt.openssl server1.key_usage.crt server1.key_usage_noauthid.crt server1.key_usage.crt.openssl server1.cert_type.crt server1.cert_type_noauthid.crt server1.cert_type.crt.openssl server1.der server1.der.openssl server1.v1.der server1.v1.der.openssl server1.key_usage.der server1.key_usage.der.openssl server1.cert_type.der server1.cert_type.der.openssl
 
 # server2*
 

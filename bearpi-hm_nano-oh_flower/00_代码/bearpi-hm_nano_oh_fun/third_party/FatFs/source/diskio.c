@@ -6,16 +6,25 @@
 /* This is an example of glue functions to attach various exsisting      */
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
-
-#include "diskio.h"		/* Declarations of disk functions */
+#include "diskio.h"
+#ifndef __LITEOS_M__
 #include "fs/fs.h"
 #include "string.h"
 #include "disk.h"
+#else
+#include "ff_gen_drv.h"
+#if defined ( __GNUC__ )
+#ifndef __weak
+#define __weak __attribute__((weak))
+#endif
+#endif
+#endif
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
 
+#ifndef __LITEOS_M__
 #define CARD_UNPLUGED   1
 extern int get_cardstatus(int pdrv);
 #define GET_CARD_STATUS					\
@@ -24,12 +33,20 @@ extern int get_cardstatus(int pdrv);
 			return STA_NOINIT;		\
 	} while (0)
 extern  struct tm tm;
+#endif
 
 DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
+#ifndef __LITEOS_M__
 	return 0;
+#else
+	DSTATUS stat;
+
+	stat = g_diskDrv.drv[pdrv]->disk_status(g_diskDrv.lun[pdrv]);
+	return stat;
+#endif
 }
 
 
@@ -42,7 +59,17 @@ DSTATUS disk_initialize (
 	BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
+#ifndef __LITEOS_M__
 	return 0;
+#else
+	DSTATUS stat = RES_OK;
+
+	if(g_diskDrv.initialized[pdrv] == 0)
+	{
+		stat = g_diskDrv.drv[pdrv]->disk_initialize(g_diskDrv.lun[pdrv]);
+	}
+	return stat;
+#endif
 }
 
 
@@ -58,6 +85,7 @@ DRESULT disk_read (
 	UINT count		/* Number of sectors to read */
 )
 {
+#ifndef __LITEOS_M__
 	int result;
 
 	result = los_part_read((int)pdrv, (void *)buff, sector, (UINT32)count);
@@ -66,8 +94,15 @@ DRESULT disk_read (
 		return RES_OK;
 	else
 		return RES_ERROR;
+#else
+	DRESULT res;
+
+	res = g_diskDrv.drv[pdrv]->disk_read(g_diskDrv.lun[pdrv], buff, sector, count);
+	return res;
+#endif
 }
 
+#ifndef __LITEOS_M__
 DRESULT disk_raw_read (int id, void *buff, QWORD sector, UINT32 count)
 {
 	int result;
@@ -79,11 +114,15 @@ DRESULT disk_raw_read (int id, void *buff, QWORD sector, UINT32 count)
 	else
 		return RES_ERROR;
 }
+#endif
+
 
 
 /*-----------------------------------------------------------------------*/
 /* Write Sector(s)                                                       */
 /*-----------------------------------------------------------------------*/
+
+#if FF_FS_READONLY == 0
 
 DRESULT disk_write (
 	BYTE pdrv,			/* Physical drive nmuber to identify the drive */
@@ -92,6 +131,7 @@ DRESULT disk_write (
 	UINT count			/* Number of sectors to write */
 )
 {
+#ifndef __LITEOS_M__
 	int result;
 
 	result = los_part_write((int)pdrv, (void *)buff, sector, (UINT32)count);
@@ -100,8 +140,16 @@ DRESULT disk_write (
 		return RES_OK;
 	else
 		return RES_ERROR;
+#else
+	DRESULT res;
+
+	res = g_diskDrv.drv[pdrv]->disk_write(g_diskDrv.lun[pdrv], buff, sector, count);
+
+	return res;
+#endif
 }
 
+#ifndef __LITEOS_M__
 DRESULT disk_raw_write(int id, void *buff, QWORD sector, UINT32 count){
 	int result;
 	void *uwBuff = buff;
@@ -113,6 +161,10 @@ DRESULT disk_raw_write(int id, void *buff, QWORD sector, UINT32 count){
 	else
 		return RES_ERROR;
 }
+#endif
+
+#endif /* FF_FS_READONLY == 0 */
+
 
 /*-----------------------------------------------------------------------*/
 /* Miscellaneous Functions                                               */
@@ -124,6 +176,7 @@ DRESULT disk_ioctl (
 	void *buff		/* Buffer to send/receive control data */
 )
 {
+#ifndef __LITEOS_M__
 	int result;
 
 	result = los_part_ioctl((int)pdrv, (int)cmd, buff);
@@ -132,8 +185,21 @@ DRESULT disk_ioctl (
 		return RES_OK;
 	else
 		return RES_ERROR;
+#else
+	DRESULT res;
+
+	res = g_diskDrv.drv[pdrv]->disk_ioctl(g_diskDrv.lun[pdrv], cmd, buff);
+	return res;
+#endif
 }
 
+ /*
+  * @brief  Gets Time from RTC
+  * @param  None
+  * @retval Time in DWORD
+  */
+
+#ifndef __LITEOS_M__
 DWORD get_fattime (void)
 {
 	time_t seconds = 0;
@@ -155,5 +221,10 @@ DWORD get_fattime (void)
 			((DWORD)local_time.tm_min << 5) |
 			((DWORD)local_time.tm_sec >> 1);
 }
-
+#else
+__weak DWORD get_fattime (void)
+{
+	return 0;
+}
+#endif
 

@@ -1,0 +1,37 @@
+{
+  "components": [
+    {
+      "component": "ota_lite",
+      "description": "",
+      "optional": "false",
+      "dirs": [
+        "base/update/ota_lite"
+      ],
+      "targets": [
+        "//base/update/ota_lite/frameworks:ota_lite"
+      ],
+      "rom": "20KB",
+      "ram": "~10KB",
+      "output": [ "hota.a" ],
+      "adapted_kernel": [
+        "liteos_a",
+        "liteos_m",
+        "linux"
+      ],
+      "features": [],
+      "deps": {
+        "third_party": [
+          "lwip_sack",
+          "mbedtls",
+          "bounds_checking_function"
+        ],
+        "kernel_special": {},
+        "board_special": {},
+        "components": [
+          "syspara_lite",
+          "utils_base"
+        ]
+      }
+    }
+  ]
+}

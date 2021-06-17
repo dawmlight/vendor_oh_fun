@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/prebuilts_lite_sysroot",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "系统头文件和标准库",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/prebuilts/lite/sysroot && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/prebuilts_lite_sysroot",
+    "tags": [
+        "prebuilts"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "prebuilts",
+        "prebuiltslitesysroot"
+    ]
+}

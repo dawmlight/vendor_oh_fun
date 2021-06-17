@@ -29,32 +29,32 @@ typedef struct {
     KalTimerProc func;
     union sigval arg;
     int isRunning;
-}KalTimer;
+} KalTimer;
 
 static void KalFunction(union sigval kalTimer)
 {
-    KalTimer *tmpPtr = (KalTimer *)(kalTimer.sival_ptr);
+    KalTimer* tmpPtr = (KalTimer *)(kalTimer.sival_ptr);
     if (tmpPtr->type == KAL_TIMER_ONCE) {
         tmpPtr->isRunning = 0;
     }
     tmpPtr->func(tmpPtr->arg);
 }
 
-static void KalMs2TimeSpec(struct timespec *tp, unsigned int ms)
+static void KalMs2TimeSpec(struct timespec* tp, unsigned int ms)
 {
     tp->tv_sec = ms / LOSCFG_BASE_CORE_MS_PER_SECOND;
     ms -= tp->tv_sec * LOSCFG_BASE_CORE_MS_PER_SECOND;
     tp->tv_nsec = (long)(((unsigned long long)ms * OS_SYS_NS_PER_SECOND) / LOSCFG_BASE_CORE_MS_PER_SECOND);
 }
 
-KalTimerId KalTimerCreate(KalTimerProc func, KalTimerType type, void *arg, unsigned int millisec)
+KalTimerId KalTimerCreate(KalTimerProc func, KalTimerType type, void* arg, unsigned int millisec)
 {
     struct sigevent evp = {0};
     timer_t timer;
     if ((func == NULL) || ((type != KAL_TIMER_ONCE) && (type != KAL_TIMER_PERIODIC))) {
         return NULL;
     }
-    KalTimer *kalTimer = (KalTimer *)malloc(sizeof(KalTimer));
+    KalTimer* kalTimer = (KalTimer *)malloc(sizeof(KalTimer));
     if (kalTimer == NULL) {
         return NULL;
     }
@@ -81,7 +81,7 @@ KalErrCode KalTimerStart(KalTimerId timerId)
         return KAL_ERR_PARA;
     }
     struct itimerspec ts = {0};
-    KalTimer *tmpPtr = (KalTimer *)timerId;
+    KalTimer* tmpPtr = (KalTimer *)timerId;
     KalMs2TimeSpec(&ts.it_value, tmpPtr->millisec);
     if (tmpPtr->type == KAL_TIMER_PERIODIC) {
         KalMs2TimeSpec(&ts.it_interval, tmpPtr->millisec);
@@ -101,7 +101,7 @@ KalErrCode KalTimerChange(KalTimerId timerId, unsigned int millisec)
     if (timerId == NULL) {
         return KAL_ERR_PARA;
     }
-    KalTimer *tmpPtr = (KalTimer *)timerId;
+    KalTimer* tmpPtr = (KalTimer *)timerId;
     struct itimerspec ts = {0};
     tmpPtr->millisec = millisec;
     if (tmpPtr->isRunning == 1) {
@@ -126,7 +126,7 @@ KalErrCode KalTimerStop(KalTimerId timerId)
     if (timerId == NULL) {
         return KAL_ERR_PARA;
     }
-    KalTimer *tmpPtr = (KalTimer *)timerId;
+    KalTimer* tmpPtr = (KalTimer *)timerId;
     struct itimerspec ts = {0};
     int ret = timer_settime(tmpPtr->timerPtr, 0, &ts, NULL);
     if (ret != 0) {
@@ -141,14 +141,10 @@ KalErrCode KalTimerDelete(KalTimerId timerId)
     if (timerId == NULL) {
         return KAL_ERR_PARA;
     }
-    KalTimer *tmpPtr = (KalTimer *)timerId;
+    KalTimer* tmpPtr = (KalTimer *)timerId;
     int ret = timer_delete(tmpPtr->timerPtr);
-    if (ret != 0) {
-        free(timerId);
-        return KAL_ERR_INNER;
-    }
     free(timerId);
-    return KAL_OK;
+    return (ret != 0) ? KAL_ERR_INNER : KAL_OK;
 }
 
 unsigned int KalTimerIsRunning(KalTimerId timerId)

@@ -49,6 +49,7 @@
 #endif
 
 #include "inode/inode.h"
+#include "mqueue.h"
 
 /****************************************************************************
  * Public Functions
@@ -97,6 +98,14 @@ int close(int fd)
         }
       else
 #endif
+#if defined(LOSCFG_COMPAT_POSIX)
+      if ((unsigned int)fd >= MQUEUE_FD_OFFSET && \
+          (unsigned int)fd < (unsigned int)(MQUEUE_FD_OFFSET + CONFIG_NQUEUE_DESCRIPTORS))
+        {
+          return mq_close((mqd_t)fd);
+        }
+#endif
+      else
         {
           err = EBADF;
           goto errout;

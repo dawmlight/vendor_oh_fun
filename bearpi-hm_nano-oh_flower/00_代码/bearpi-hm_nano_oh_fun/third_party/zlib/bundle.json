@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/zlib",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "Third-party open-source software zlib | 三方开源软件zlib",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/third_party/zlib && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/zlib",
+    "tags": [
+        "third_party"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "",
+        "board": ""
+    },
+    "license": "zlib/libpng License",
+    "keywords": [
+        "thirdparty",
+        "zlib"
+    ]
+}

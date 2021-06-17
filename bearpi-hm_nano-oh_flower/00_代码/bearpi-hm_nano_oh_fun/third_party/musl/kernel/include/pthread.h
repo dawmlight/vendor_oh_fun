@@ -14,17 +14,14 @@ extern "C" {
 #define __NEED_time_t
 #define __NEED_clockid_t
 #define __NEED_struct_timespec
+#define __NEED_struct_cpu_set_t
+#define __NEED_struct_sched_param
 #define __NEED_sigset_t
 #define __NEED_pthread_t
 #define __NEED_pthread_attr_t
 #define __NEED_pthread_mutexattr_t
 #define __NEED_pthread_condattr_t
-#define __NEED_pthread_rwlockattr_t
-#define __NEED_pthread_barrierattr_t
 
-#define __NEED_pthread_rwlock_t
-#define __NEED_pthread_barrier_t
-#define __NEED_pthread_spinlock_t
 #define __NEED_pthread_key_t
 #define __NEED_pthread_once_t
 #define __NEED_size_t
@@ -189,26 +186,6 @@ int pthread_cond_timedwait(pthread_cond_t *__restrict, pthread_mutex_t *__restri
 int pthread_cond_broadcast(pthread_cond_t *);
 int pthread_cond_signal(pthread_cond_t *);
 
-int pthread_rwlock_init(pthread_rwlock_t *__restrict, const pthread_rwlockattr_t *__restrict);
-int pthread_rwlock_destroy(pthread_rwlock_t *);
-int pthread_rwlock_rdlock(pthread_rwlock_t *);
-int pthread_rwlock_tryrdlock(pthread_rwlock_t *);
-int pthread_rwlock_timedrdlock(pthread_rwlock_t *__restrict, const struct timespec *__restrict);
-int pthread_rwlock_wrlock(pthread_rwlock_t *);
-int pthread_rwlock_trywrlock(pthread_rwlock_t *);
-int pthread_rwlock_timedwrlock(pthread_rwlock_t *__restrict, const struct timespec *__restrict);
-int pthread_rwlock_unlock(pthread_rwlock_t *);
-
-int pthread_spin_init(pthread_spinlock_t *, int);
-int pthread_spin_destroy(pthread_spinlock_t *);
-int pthread_spin_lock(pthread_spinlock_t *);
-int pthread_spin_trylock(pthread_spinlock_t *);
-int pthread_spin_unlock(pthread_spinlock_t *);
-
-int pthread_barrier_init(pthread_barrier_t *__restrict, const pthread_barrierattr_t *__restrict, unsigned);
-int pthread_barrier_destroy(pthread_barrier_t *);
-int pthread_barrier_wait(pthread_barrier_t *);
-
 int pthread_key_create(pthread_key_t *, void (*)(void *));
 int pthread_key_delete(pthread_key_t);
 void *pthread_getspecific(pthread_key_t);
@@ -256,16 +233,6 @@ int pthread_condattr_setclock(pthread_condattr_t *, clockid_t);
 int pthread_condattr_setpshared(pthread_condattr_t *, int);
 int pthread_condattr_getclock(const pthread_condattr_t *__restrict, clockid_t *__restrict);
 int pthread_condattr_getpshared(const pthread_condattr_t *__restrict, int *__restrict);
-
-int pthread_rwlockattr_init(pthread_rwlockattr_t *);
-int pthread_rwlockattr_destroy(pthread_rwlockattr_t *);
-int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *, int);
-int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *__restrict, int *__restrict);
-
-int pthread_barrierattr_destroy(pthread_barrierattr_t *);
-int pthread_barrierattr_getpshared(const pthread_barrierattr_t *__restrict, int *__restrict);
-int pthread_barrierattr_init(pthread_barrierattr_t *);
-int pthread_barrierattr_setpshared(pthread_barrierattr_t *, int);
 
 int pthread_atfork(void (*)(void), void (*)(void), void (*)(void));
 

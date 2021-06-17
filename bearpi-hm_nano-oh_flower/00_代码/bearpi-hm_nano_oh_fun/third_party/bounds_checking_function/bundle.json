@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/bounds_checking_function",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "遵循C11 Annex K(Bounds-checking interfaces)的标志，选取并实现了常见的内存/字符串操作类的函数，如memcpy_s、strcpy_s等函数。",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/third_party/bounds_checking_function && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/bounds_checking_function",
+    "tags": [
+        "third_party"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "",
+        "board": ""
+    },
+    "license": "Mulan PSL V2",
+    "keywords": [
+        "thirdparty",
+        "boundscheckingfunction"
+    ]
+}

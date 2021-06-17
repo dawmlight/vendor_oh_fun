@@ -59,6 +59,7 @@
 #endif
 #include "los_process_pri.h"
 #include "los_vm_filemap.h"
+#include "mqueue.h"
 #define ferr PRINTK
 
 #if CONFIG_NFILE_DESCRIPTORS > 0
@@ -175,6 +176,10 @@ static int _files_close(FAR struct file *filep)
                 }
             }
         }
+
+      /* Drop file caches */
+
+      (void)remove_mapping_nolock(filep->f_path, filep);
 
       /* And release the inode */
 
@@ -483,11 +488,7 @@ int files_allocate(FAR struct inode *inode_ptr, int oflags, off_t pos,void* priv
           list->fl_files[i].f_dir      = NULL;
           list->fl_files[i].f_magicnum = files_magic_generate();
           process_files = OsCurrProcessGet()->files;
-          if (process_files)
-            {
-              FD_SET(i, process_files->fdt->open_fds);
-            }
-          else
+          if (process_files == NULL)
             {
               PRINT_ERR("process files is NULL, %s %d\n", __FUNCTION__ ,__LINE__);
               _files_semgive(list);
@@ -535,11 +536,7 @@ static int files_close_internal(int fd, LosProcessCB *processCB)
 
   _files_semtake(list);
   process_files = processCB->files;
-  if (process_files)
-    {
-      FD_CLR(fd, process_files->fdt->open_fds);
-    }
-  else
+  if (process_files == NULL)
     {
       PRINT_ERR("process files is NULL, %s %d\n", __FUNCTION__ ,__LINE__);
       _files_semgive(list);
@@ -598,7 +595,6 @@ int files_close(int fd)
 void files_release(int fd)
 {
   FAR struct filelist *list = NULL;
-  struct files_struct *process_files = NULL;
 
   list = sched_getfiles();
   DEBUGASSERT(list);
@@ -618,11 +614,6 @@ void files_release(int fd)
       list->fl_files[fd].f_mapping  = NULL;
       list->fl_files[fd].f_dir      = NULL;
 
-      process_files = OsCurrProcessGet()->files;
-      if (process_files)
-        {
-          FD_CLR(fd, process_files->fdt->open_fds);
-        }
       clear_bit(fd, bitmap);
       _files_semgive(list);
     }
@@ -722,6 +713,16 @@ void files_refer(int fd)
   _files_semgive(list);
 }
 
+void alloc_std_fd(struct fd_table_s *fdt)
+{
+  fdt->ft_fds[STDIN_FILENO].sysFd = STDIN_FILENO;
+  fdt->ft_fds[STDOUT_FILENO].sysFd = STDOUT_FILENO;
+  fdt->ft_fds[STDERR_FILENO].sysFd = STDERR_FILENO;
+  FD_SET(STDIN_FILENO, fdt->proc_fds);
+  FD_SET(STDOUT_FILENO, fdt->proc_fds);
+  FD_SET(STDERR_FILENO, fdt->proc_fds);
+}
+
 static void copy_fds(const struct fd_table_s *new_fdt, const struct fd_table_s *old_fdt)
 {
   unsigned int sz;
@@ -731,7 +732,6 @@ static void copy_fds(const struct fd_table_s *new_fdt, const struct fd_table_s *
     {
       (void)memcpy_s(new_fdt->ft_fds, sz, old_fdt->ft_fds, sz);
     }
-  (void)memcpy_s(new_fdt->open_fds, sizeof(fd_set), old_fdt->open_fds, sizeof(fd_set));
   (void)memcpy_s(new_fdt->proc_fds, sizeof(fd_set), old_fdt->proc_fds, sizeof(fd_set));
 }
 
@@ -740,20 +740,27 @@ static void copy_fd_table(struct fd_table_s *new_fdt, struct fd_table_s *old_fdt
   copy_fds((const struct fd_table_s *)new_fdt, (const struct fd_table_s *)old_fdt);
   for (int i = 0; i < new_fdt->max_fds; i++)
     {
-      if (FD_ISSET(i, new_fdt->open_fds))
-        {
-          files_refer(i);
-        }
-#if defined(LOSCFG_NET_LWIP_SACK)
       if (FD_ISSET(i, new_fdt->proc_fds))
         {
           int sysFd = GetAssociatedSystemFd(i);
-          if (sysFd >= CONFIG_NFILE_DESCRIPTORS && sysFd < (CONFIG_NFILE_DESCRIPTORS + CONFIG_NSOCKET_DESCRIPTORS))
+          if ((sysFd >= 0) && (sysFd < CONFIG_NFILE_DESCRIPTORS))
+            {
+              files_refer(sysFd);
+            }
+#if defined(LOSCFG_NET_LWIP_SACK)
+          if ((sysFd >= CONFIG_NFILE_DESCRIPTORS) && (sysFd < (CONFIG_NFILE_DESCRIPTORS + CONFIG_NSOCKET_DESCRIPTORS)))
             {
               socks_refer(sysFd);
             }
-        }
 #endif
+#if defined(LOSCFG_COMPAT_POSIX)
+          if ((sysFd >= MQUEUE_FD_OFFSET) && (sysFd < (MQUEUE_FD_OFFSET + CONFIG_NQUEUE_DESCRIPTORS)))
+            {
+              mqueue_refer(sysFd);
+            }
+#endif
+
+        }
     }
 }
 
@@ -771,7 +778,6 @@ static struct fd_table_s * alloc_fd_table(unsigned int numbers)
   if (!numbers)
     {
       fdt->ft_fds = NULL;
-      fdt->open_fds = NULL;
       fdt->proc_fds = NULL;
       return fdt;
     }
@@ -782,10 +788,6 @@ static struct fd_table_s * alloc_fd_table(unsigned int numbers)
     }
   fdt->ft_fds = data;
 
-  /* 0,1,2 be distributed to stdin,stdout,stderr default */
-  fdt->ft_fds[STDIN_FILENO].sysFd = STDIN_FILENO;
-  fdt->ft_fds[STDOUT_FILENO].sysFd = STDOUT_FILENO;
-  fdt->ft_fds[STDERR_FILENO].sysFd = STDERR_FILENO;
   for (int i = STDERR_FILENO + 1; i < numbers; i++)
     {
         fdt->ft_fds[i].sysFd = -1;
@@ -797,28 +799,14 @@ static struct fd_table_s * alloc_fd_table(unsigned int numbers)
       goto out_arr;
     }
   (VOID)memset_s(data, sizeof(fd_set), 0, sizeof(fd_set));
-  fdt->open_fds = data;
-  FD_SET(STDIN_FILENO, fdt->open_fds);
-  FD_SET(STDOUT_FILENO, fdt->open_fds);
-  FD_SET(STDERR_FILENO, fdt->open_fds);
-
-  data = LOS_MemAlloc(m_aucSysMem0, sizeof(fd_set));
-  if (!data)
-    {
-      goto out_all;
-    }
-  (VOID)memset_s(data, sizeof(fd_set), 0, sizeof(fd_set));
   fdt->proc_fds = data;
-  FD_SET(STDIN_FILENO, fdt->proc_fds);
-  FD_SET(STDOUT_FILENO, fdt->proc_fds);
-  FD_SET(STDERR_FILENO, fdt->proc_fds);
+
+  alloc_std_fd(fdt);
 
   (void)sem_init(&fdt->ft_sem, 0, 1);
 
   return fdt;
 
-out_all:
-  (VOID)LOS_MemFree(m_aucSysMem0, fdt->open_fds);
 out_arr:
   (VOID)LOS_MemFree(m_aucSysMem0, fdt->ft_fds);
 out_fdt:
@@ -915,25 +903,16 @@ void delete_files(LosProcessCB *processCB, struct files_struct *files)
 
   for (int i = 0; i < files->fdt->max_fds; i++)
     {
-      if (FD_ISSET(i, files->fdt->open_fds))
-        {
-          files_close_internal(i, processCB);
-        }
-#if defined(LOSCFG_NET_LWIP_SACK)
       if (FD_ISSET(i, files->fdt->proc_fds))
         {
-          int sysFd = GetAssociatedSystemFd(i);
-          if (sysFd >= CONFIG_NFILE_DESCRIPTORS && sysFd < (CONFIG_NFILE_DESCRIPTORS + CONFIG_NSOCKET_DESCRIPTORS))
-            {
-              close(sysFd);
-            }
+          int sysFd = DisassociateProcessFd(i);
+          close(sysFd);
+          FreeProcessFd(i);
         }
-#endif
     }
 
   (VOID)sem_destroy(&files->fdt->ft_sem);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->ft_fds);
-  (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->open_fds);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->proc_fds);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt);
 out_file:
@@ -992,7 +971,6 @@ void delete_files_snapshot(struct files_struct *files)
 
   (VOID)sem_destroy(&files->fdt->ft_sem);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->ft_fds);
-  (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->open_fds);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt->proc_fds);
   (VOID)LOS_MemFree(m_aucSysMem0, files->fdt);
 out_file:

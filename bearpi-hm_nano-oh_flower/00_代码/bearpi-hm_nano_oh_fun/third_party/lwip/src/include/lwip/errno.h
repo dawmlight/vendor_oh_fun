@@ -130,7 +130,9 @@ extern "C" {
 #define  ELIBSCN         81  /* .lib section in a.out corrupted */
 #define  ELIBMAX         82  /* Attempting to link in too many shared libraries */
 #define  ELIBEXEC        83  /* Cannot exec a shared library directly */
+#ifndef  EILSEQ
 #define  EILSEQ          84  /* Illegal byte sequence */
+#endif
 #define  ERESTART        85  /* Interrupted system call should be restarted */
 #define  ESTRPIPE        86  /* Streams pipe error */
 #define  EUSERS          87  /* Too many users */

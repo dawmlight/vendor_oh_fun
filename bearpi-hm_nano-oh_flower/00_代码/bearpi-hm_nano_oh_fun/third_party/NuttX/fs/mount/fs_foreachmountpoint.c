@@ -110,7 +110,7 @@ static int mountpoint_filter(FAR struct inode *node,
 
       /* Append the inode name to the directory path */
 
-      ret = snprintf_s(&dirpath[pathlen], PATH_MAX - pathlen, PATH_MAX - pathlen - 1, "/%s", node->i_name);
+      ret = snprintf_s(&dirpath[pathlen], PATH_MAX - pathlen, PATH_MAX - pathlen - 1, "%s/", node->i_name);
       if (ret < 0)
         {
           return -ENAMETOOLONG;
@@ -122,6 +122,10 @@ static int mountpoint_filter(FAR struct inode *node,
       if (ret == OK)
         {
           /* And pass the full path and file system status to the handler */
+
+          if (strlen(dirpath) > 1) {
+              dirpath[strlen(dirpath) - 1] = '\0';
+          }
 
           ret = info->handler(dirpath, &statbuf, info->arg);
         }

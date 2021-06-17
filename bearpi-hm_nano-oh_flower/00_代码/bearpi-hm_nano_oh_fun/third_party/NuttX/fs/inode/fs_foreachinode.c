@@ -95,7 +95,6 @@ static int foreach_inodelevel(FAR struct inode *node, struct inode_path_s *info)
   for (; node; node = node->i_peer)
     {
       /* Give the next inode to the callback */
-
       ret = info->handler(node, info->path, info->arg);
 
       /* Break out of the loop early if the handler returns a non-zero
@@ -129,7 +128,7 @@ static int foreach_inodelevel(FAR struct inode *node, struct inode_path_s *info)
           /* Append the path segment to this inode and recurse */
 
           ret = snprintf_s(&info->path[pathlen], CONFIG_PATH_MAX - pathlen,
-                           CONFIG_PATH_MAX - pathlen - 1, "/%s", node->i_name);
+                           CONFIG_PATH_MAX - pathlen - 1, "%s/", node->i_name);
           if (ret < 0)
             {
               ret = -ENAMETOOLONG;

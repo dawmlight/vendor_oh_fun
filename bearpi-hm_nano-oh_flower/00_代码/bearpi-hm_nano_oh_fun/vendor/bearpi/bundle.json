@@ -1,0 +1,24 @@
+{
+    "name": "@bearpi/vendor_bearpi",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "BearPi-HM_Nano开发板产品特性配置",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/vendor/bearpi && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/bearpi/bearpi-hm_nano",
+    "tags": [
+        "vendor"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "bearpi_hm_nano"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "vendor",
+        "vendorbearpi",
+        "bearpi"
+    ]
+}

@@ -16,8 +16,6 @@
 #include "demosdk_adapter.h"
 #include <stdio.h>
 
-#include "kal.h"
-
 #include "cmsis_os2.h"
 
 #define MS_CNT 1000
@@ -53,6 +51,6 @@ int DemoSdkCreateTask(unsigned int *handle, const struct TaskPara *para)
 
 void DemoSdkSleepMs(int ms)
 {
-    KalDelayUs(MS_CNT * ms);
+    usleep(MS_CNT * ms);
 }
 

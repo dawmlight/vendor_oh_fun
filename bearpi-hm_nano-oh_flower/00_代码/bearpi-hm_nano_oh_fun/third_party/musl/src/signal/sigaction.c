@@ -326,7 +326,7 @@ int __libc_sigaction(int sig, const struct sigaction *restrict sa, struct sigact
 	}
 
 	if (sig == SIGSYS) {
-		return __syscall(SYS_rt_sigaction, sig, sa?&ksa:0, old?&ksa_old:0, _NSIG/8);
+		return syscall(SYS_rt_sigaction, sig, sa?&ksa:0, old?&ksa_old:0, _NSIG/8);
 	} else {
 		r = __sig_action_opr(sig, (const sigaction_t*)sa?&ksa:0, (sigaction_t*)old?&ksa_old:0);
 	}

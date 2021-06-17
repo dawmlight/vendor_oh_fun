@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,16 +25,21 @@
 __attribute__((constructor)) static void Initialize(void)
 {
     LOGD("srand(time(0)) is called.");
-    srand(time(0));
+    srand(time(nullptr));
 }
 
 int CheckValueClose(double target, double actual, double accuracy)
 {
     double diff = actual - target;
+    double pct;
     if (diff < 0) {
         diff = -diff;
     }
-    double pct = diff / actual;
+    if(actual == 0) {
+        return 0;
+    }else {
+        pct = diff / actual;
+    }
     LOGD("diff=%f, pct=%f\n", diff, pct);
     return (pct <= accuracy);
 }
@@ -47,8 +52,8 @@ void Msleep(int msec)
 
 int KeepRun(int msec)
 {
-    struct timespec time1 = {0, 0};
-	struct timespec time2 = {0, 0};
+    struct timespec time1 = { 0, 0 };
+    struct timespec time2 = { 0, 0 };
     clock_gettime(CLOCK_MONOTONIC, &time1);
     LOGD("KeepRun start : tv_sec=%ld, tv_nsec=%ld\n", time1.tv_sec, time1.tv_nsec);
     int loop = 0;
@@ -63,7 +68,7 @@ int KeepRun(int msec)
 }
 
 // check process state use 'waitpid'
-int CheckProcStatus(pid_t pid, int* code, int flag)
+int CheckProcStatus(pid_t pid, int *code, int flag)
 {
     int status;
     int rt = waitpid(pid, &status, flag);
@@ -81,12 +86,15 @@ int CheckProcStatus(pid_t pid, int* code, int flag)
         }
         return -2;
     }
+    if (code == nullptr) {
+        return -1;
+    }
 
     if (WIFEXITED(status)) {
-		*code = WEXITSTATUS(status);
+        *code = WEXITSTATUS(status);
         return 1;
     } else if (WIFSIGNALED(status)) {
-		*code = WTERMSIG(status);
+        *code = WTERMSIG(status);
         return 2;
     } else if (WIFSTOPPED(status)) {
         *code = WSTOPSIG(status);
@@ -96,7 +104,7 @@ int CheckProcStatus(pid_t pid, int* code, int flag)
 }
 
 // start a elf, only check if execve success or not
-static int StartElf(const char* fname, char* const argv[], char* const envp[])
+static int StartElf(const char *fname, char * const argv[], char * const envp[])
 {
     int pid = fork();
     if (pid == -1) {
@@ -115,10 +123,9 @@ static int StartElf(const char* fname, char* const argv[], char* const envp[])
     return pid;
 }
 
-int RunElf(const char* fname, char* const argv[], char* const envp[], int timeoutSec)
+int RunElf(const char *fname, char * const argv[], char * const envp[], int timeoutSec)
 {
     int isTimeout = 0;
-    int status;
     int exitCode;
     sigset_t set;
     sigemptyset(&set);
@@ -130,8 +137,8 @@ int RunElf(const char* fname, char* const argv[], char* const envp[], int timeou
     }
 
     if (timeoutSec > 0) {
-        struct timespec time1 = {timeoutSec, 0};
-        if (sigtimedwait(&set, 0, &time1) == -1) {
+        struct timespec time1 = { timeoutSec, 0 };
+        if (sigtimedwait(&set, nullptr, &time1) == -1) {
             if (errno == EAGAIN) {
                 isTimeout = 1;
             } else {
@@ -156,7 +163,7 @@ int RunElf(const char* fname, char* const argv[], char* const envp[], int timeou
     return exitCode;
 }
 
-int StartExecveError(const char* fname, char* const argv[], char* const envp[])
+int StartExecveError(const char *fname, char * const argv[], char * const envp[])
 {
     pid_t pid = fork();
     if (pid == -1) {
@@ -201,7 +208,7 @@ pid_t GetNonExistPid()
     }
     if (pid > 0) { // parent
         Msleep(20);
-        if (waitpid(pid, NULL, 0) != pid) {
+        if (waitpid(pid, nullptr, 0) != pid) {
             LOG("waitpid failed, errno = %d", errno);
             return -1;
         }
@@ -218,4 +225,64 @@ uint32_t GetRandom(uint32_t max)
         return 1;
     }
     return (rand() % max) + 1;
+}
+
+// get cur-time plus ms
+void GetDelayedTime(struct timespec *ts, unsigned int ms)
+{
+    const unsigned int nsecPerSec = 1000000000;
+    unsigned int setTimeNs = ms * 1000000;
+    struct timespec tsNow = { 0 };
+    clock_gettime(CLOCK_REALTIME, &tsNow);
+    ts->tv_sec = tsNow.tv_sec + (tsNow.tv_nsec + setTimeNs) / nsecPerSec;
+    ts->tv_nsec = (tsNow.tv_nsec + setTimeNs) % nsecPerSec;
+}
+
+// calculate time difference, in ms
+int GetTimeDiff(struct timespec ts1, struct timespec ts2)
+{
+    const unsigned int nsecPerSec = 1000000000;
+    int ms = (ts1.tv_sec - ts2.tv_sec) * nsecPerSec + (ts1.tv_nsec - ts2.tv_nsec);
+    ms = ms / 1000000;
+    return ms;
+}
+
+int GetCpuCount(void)
+{
+    cpu_set_t cpuset;
+
+    CPU_ZERO(&cpuset);
+    int temp = sched_getaffinity(getpid(), sizeof(cpu_set_t), &cpuset);
+    if (temp != 0) {
+        printf("%s %d Error : %d\n", __FUNCTION__, __LINE__, temp);
+    }
+
+    return CPU_COUNT(&cpuset);
+}
+
+int FixCurProcessToOneCpu(int cpuIndex, cpu_set_t *pOldMask)
+{
+    int ret;
+    cpu_set_t setMask;
+    CPU_ZERO(pOldMask);
+    ret = sched_getaffinity(0, sizeof(cpu_set_t), pOldMask);
+    if (ret != 0) {
+        LOG("sched_getaffinity failed, ret = %d", ret);
+        return -1;
+    }
+    if (CPU_ISSET(0, pOldMask)) {
+        LOG("before affinity cpu is 0");
+    }
+    if (CPU_ISSET(1, pOldMask)) {
+        LOG("before affinity cpu is 1");
+    }
+    CPU_ZERO(&setMask);
+    CPU_SET(cpuIndex, &setMask);
+    LOG("fix cpu to %d", cpuIndex);
+    ret = sched_setaffinity(0, sizeof(setMask), &setMask);
+    if (ret != 0) {
+        LOG("sched_setaffinity failed, ret = %d", ret);
+        return -1;
+    }
+    return 0;
 }

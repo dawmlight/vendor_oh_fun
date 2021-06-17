@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,19 +13,33 @@
  * limitations under the License.
  */
 #include "FileSystemTest.h"
+#include <string.h>
 #include <unistd.h>
 #include "utils.h"
 
 using namespace testing::ext;
 
+// delete test file and dir
+void DeleteTestFiles()
+{
+    if (access(TOP_DIR "/" DIR0, F_OK) == 0) {
+        RemoveDir(TOP_DIR "/" DIR0);
+    }
+    if (access(TOP_DIR "/" FILE0, F_OK) == 0) {
+        remove(TOP_DIR "/" FILE0);
+    }
+}
+
 // before testCase
 void FileSystemTest::SetUp()
 {
+    DeleteTestFiles();
+    errno = 0;
     LOG("------- case start");
     mCurPath = GetCurrentPath();
     int rt = chdir(TOP_DIR);
     if (rt == -1) {
-        LOG("== chdir to %s failed! rt=%d, errno=%d", TOP_DIR, rt, errno);
+        LOG("== chdir to %s failed! rt = %d, errno = %d", TOP_DIR, rt, errno);
     } else {
         LOG("== chdir to %s OK!", TOP_DIR);
     }
@@ -34,27 +48,56 @@ void FileSystemTest::SetUp()
 // after testCase
 void FileSystemTest::TearDown()
 {
-    RemoveDir(TOP_DIR "/" DIR0);
-    remove(TOP_DIR "/" FILE0);
+    DeleteTestFiles();
     int rt = chdir(mCurPath);
     if (rt == -1) {
-        LOG("== chdir to %s failed! rt=%d, errno=%d", mCurPath, rt, errno);
+        LOG("== chdir to %s failed! rt = %d, errno = %d", mCurPath, rt, errno);
     } else {
         LOG("== chdir to %s OK!", mCurPath);
     }
     LOG("------- case end\n");
 }
 
+// check TOP_DIR file system, 0 is exist, -1 is non-exist
+int CheckFsMount()
+{
+    const int lenMax = 100;
+    int len;
+    char buf[lenMax];
+    const char mountInfoFile[] = "/proc/mounts";
+
+    // check TOP_DIR exist
+    if (access(TOP_DIR, F_OK) != 0) {
+        LOG("'%s' not accessable, Test Stop!", TOP_DIR);
+        return -1;
+    }
+
+    FILE *fp = fopen(mountInfoFile, "r");
+    if (fp != nullptr) {
+        while (fgets(buf, lenMax, fp) != nullptr) {
+            len = strlen(buf);
+            if (strlen(buf) != 0) {
+                buf[len - 1] = '\0';
+            }
+
+            if (strstr(buf, TOP_DIR_MOUNT_INFO) != nullptr) {
+                fclose(fp);
+                return 0;
+            }
+        }
+        fclose(fp);
+    }
+    LOG("'%s' not mount properly, Test Stop!", TOP_DIR);
+    return -1;
+}
+
 int main(int argc, char *argv[])
 {
     testing::GTEST_FLAG(output) = "xml:";
     testing::InitGoogleTest(&argc, argv);
-    if (access(TOP_DIR, F_OK) == 0) {
-        RemoveDir(TOP_DIR "/" DIR0);
-        remove(TOP_DIR "/" FILE0);
-        return RUN_ALL_TESTS();
-    } else {
-        LOG("======= %s dose not exist. Test Stop.", TOP_DIR);
-        return 0;
+    if (CheckFsMount() != 0) {
+        return 1;
     }
+    DeleteTestFiles();
+    return RUN_ALL_TESTS();
 }

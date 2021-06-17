@@ -31,7 +31,7 @@
 
 #include "stdlib.h"
 #include "string.h"
-#include "los_memory.h"
+#include "los_vm_map.h"
 
 /*
  * Allocates the requested memory and returns a pointer to it. The requested
@@ -48,7 +48,7 @@ void* calloc(size_t nitems, size_t size) { /*lint !e578*/
   }
 
   real_size = (size_t)(nitems * size);
-  ptr = LOS_MemAlloc((void *)OS_SYS_MEM_ADDR, (UINT32)real_size);
+  ptr = LOS_KernelMalloc((UINT32)real_size);
   if (ptr != NULL) {
     (void)memset_s((void *)ptr, real_size, 0, real_size);
   }
@@ -67,7 +67,7 @@ void free(void* ptr) {
     return;
   }
 
-  (void)LOS_MemFree((void *)OS_SYS_MEM_ADDR, ptr);
+  LOS_KernelFree(ptr);
 }
 
 /*
@@ -80,7 +80,7 @@ void* malloc(size_t size) { /*lint !e31 !e10*/
     return NULL;
   }
 
-  return (void *)LOS_MemAlloc((void *)OS_SYS_MEM_ADDR, (UINT32)size);
+  return LOS_KernelMalloc((UINT32)size);
 }
 
 void* zalloc(size_t size) { /*lint !e10*/
@@ -90,7 +90,7 @@ void* zalloc(size_t size) { /*lint !e10*/
     return NULL;
   }
 
-  ptr = LOS_MemAlloc((void *)OS_SYS_MEM_ADDR, (UINT32)size);
+  ptr = LOS_KernelMalloc((UINT32)size);
   if (ptr != NULL) {
     (void)memset_s(ptr, size, 0, size);
   }
@@ -107,7 +107,7 @@ void* memalign(size_t boundary, size_t size) {
     return NULL;
   }
 
-  return (void *)LOS_MemAllocAlign((void *)OS_SYS_MEM_ADDR, (UINT32)size, (UINT32)boundary);
+  return LOS_KernelMallocAlign((UINT32)size, (UINT32)boundary);
 }
 
 /*
@@ -135,5 +135,5 @@ void* realloc(void* ptr, size_t size) {
     return NULL;
   }
 
-  return (void *)LOS_MemRealloc((void *)OS_SYS_MEM_ADDR, (void *)ptr, (UINT32)size);
+  return LOS_KernelRealloc(ptr, (UINT32)size);
 }

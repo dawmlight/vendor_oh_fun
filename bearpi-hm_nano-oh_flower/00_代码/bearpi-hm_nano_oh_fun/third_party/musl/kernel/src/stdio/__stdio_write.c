@@ -1,7 +1,5 @@
 #include "stdio_impl.h"
 #include <sys/uio.h>
-#include "fs/fs.h"
-#include "fs/file.h"
 
 size_t __stdio_write(FILE *f, const unsigned char *buf, size_t len)
 {

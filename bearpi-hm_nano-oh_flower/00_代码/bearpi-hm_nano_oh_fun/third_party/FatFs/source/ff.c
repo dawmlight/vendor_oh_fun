@@ -19,7 +19,9 @@
 
 
 #include "ff.h"			/* Declarations of FatFs API */
+#ifndef __LITEOS_M__
 #include <user_copy.h>
+#endif
 #include "diskio.h"		/* Declarations of device I/O functions */
 
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
@@ -2109,6 +2111,7 @@ static void get_fileinfo (
 )
 {
 	UINT si, di;
+	UINT pointposition = 0;
 #if FF_USE_LFN
 	WCHAR wc, hs;
 	FATFS *fs = dp->obj.fs;
@@ -2142,7 +2145,10 @@ static void get_fileinfo (
 		wc = dp->dir[si++];			/* Get a char */
 		if (wc == ' ') continue;	/* Skip padding spaces */
 		if (wc == RDDEM) wc = DDEM;	/* Restore replaced DDEM character */
-		if (si == 9 && di < FF_SFN_BUF) fno->altname[di++] = '.';	/* Insert a . if extension is exist */
+		if (si == 9 && di < FF_SFN_BUF) {
+			pointposition = di;
+			fno->altname[di++] = '.'; /* Insert a . if extension is exist */
+		}
 #if FF_LFN_UNICODE >= 1	/* Unicode output */
 		if (dbc_1st((BYTE)wc) && si != 8 && si != 11 && dbc_2nd(dp->dir[si])) {	/* Make a DBC if needed */
 			wc = wc << 8 | dp->dir[si++];
@@ -2162,9 +2168,12 @@ static void get_fileinfo (
 		if (di == 0) {	/* If LFN and SFN both are invalid, this object is inaccesible */
 			fno->fname[di++] = '?';
 		} else {
+			pointposition = (pointposition != 0) ? pointposition : 9;
 			for (si = di = 0; fno->altname[si]; si++, di++) {	/* Copy altname[] to fname[] with case information */
 				wc = (WCHAR)fno->altname[si];
-				if (IsUpper(wc) && (dp->dir[DIR_NTres] & ((si >= 9) ? NS_EXT : NS_BODY))) wc += 0x20;
+				if (IsUpper(wc) && (dp->dir[DIR_NTres] & ((si >= pointposition) ? NS_EXT : NS_BODY))) {
+					wc += 0x20;
+				}
 				fno->fname[di] = (TCHAR)wc;
 			}
 		}
@@ -2710,7 +2719,7 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: an error occurred */
 	bsect = 0;
 	fmt = check_fs(fs, bsect);		/* Load sector 0 and check if it is an FAT-VBR as SFD */
 	if (fmt == 2 || (fmt < 2 && LD2PT(vol) != 0)) {	/* Not an FAT-VBR or forced partition number */
-		if (fs->win[MBR_Table + 4] != 0xEE) {	/* The partition type is GPT, not MBR */
+		if (fs->win[MBR_Table + 4] != 0xEE) {	/* The partition type is MBR, not GPT */
 			/* Read MBR and EBR to get right boot sector. */
 			extended_br = LD2PT(vol) - 4;
 			if (extended_br > 0) {
@@ -2722,14 +2731,25 @@ FRESULT find_volume (	/* FR_OK(0): successful, !=0: an error occurred */
 				bsect = ld_dword(&pt[8]);
 				do {
 					mem_set(fs->win, 0, SS(fs));
+#ifndef __LITEOS_M__
 					if (disk_raw_read(LD2DI(vol), fs->win, bsect + offset, 1) != RES_OK) return FR_DISK_ERR;
+#else
+					if (disk_read(LD2PD(vol), fs->win, bsect + offset, 1) != RES_OK) return FR_DISK_ERR;
+#endif
 					pt = fs->win + MBR_Table;
 					offset = ld_dword(&pt[SZ_PTE + 8]);
 				} while (--extended_br);
 			}
 			i = LD2PT(vol);				/* Partition number: 0:auto, 1-4:primary, >4:logical */
 			if (i) {					/* Find an FAT volume */
+#ifndef __LITEOS_M__
 				bsect = LD2PS(vol);
+#else
+				i = LD2PT(vol);					/* Partition number: 0:auto, 1-4:forced */
+				if (i != 0) i--;
+				pt = fs->win + (MBR_Table + i * SZ_PTE);
+				bsect = pt[PTE_System] ? ld_dword(pt + PTE_StLba) : 0;
+#endif
 			} else {
 				pt = fs->win + MBR_Table;
 				bsect = pt[4] ? ld_dword(&pt[8]) : 0;
@@ -2970,7 +2990,9 @@ FRESULT f_open (
 	FRESULT res;
 	DIR dj;
 	FATFS *fs;
+#if FF_FS_REENTRANT
 	FATFS *fs_bak;
+#endif
 #if !FF_FS_READONLY
 	DWORD clst, cl, bcs;
 	QWORD sc, dw;
@@ -2984,15 +3006,25 @@ FRESULT f_open (
 	/* Get logical drive number */
 	mode &= FF_FS_READONLY ? FA_READ : FA_READ | FA_WRITE | FA_CREATE_ALWAYS | FA_CREATE_NEW | FA_OPEN_ALWAYS | FA_OPEN_APPEND | FA_SEEKEND;
 	res = find_volume(&path, &fs, mode);
+#if FF_FS_REENTRANT
 	fs_bak = fs;
+#endif
 	if (res == FR_OK) {
 		dj.obj.fs = fs;
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
+#if FF_FS_REENTRANT
 		if (ISCHILD(fs)) LEAVE_FF(fs_bak,FR_INVAILD_FATFS);
+#else
+		if (ISCHILD(fs)) LEAVE_FF(fs,FR_INVAILD_FATFS);
+#endif
 		if (ISVIRPART(fs)) {
 			/* Check the virtual partition top directory, and match the virtual fs */
 			res = follow_virentry(&dj.obj,path);
+#if FF_FS_REENTRANT
 			if (res == FR_INT_ERR) LEAVE_FF(fs_bak,res);
+#else
+			if (res == FR_INT_ERR) LEAVE_FF(fs,res);
+#endif
 			if (res == FR_OK)
 			 	fs = dj.obj.fs;
 			}
@@ -3189,8 +3221,11 @@ FRESULT f_open (
 	}
 
 	if (res != FR_OK) fp->obj.fs = 0;	/* Invalidate file object on error */
-
+#if FF_FS_REENTRANT
 	LEAVE_FF(fs_bak, res);
+#else
+	LEAVE_FF(fs, res);
+#endif
 }
 
 
@@ -3214,7 +3249,9 @@ FRESULT f_read (
 	FSIZE_t remain;
 	UINT rcnt, cc, csect;
 	BYTE *rbuff = (BYTE*)buff;
+#ifndef __LITEOS_M__
 	UINT copy_ret;
+#endif
 
 	*br = 0;	/* Clear read byte counter */
 	res = validate(&fp->obj, &fs);				/* Check validity of the file object */
@@ -3256,13 +3293,21 @@ FRESULT f_read (
 #if !FF_FS_READONLY && FF_FS_MINIMIZE <= 2		/* Replace one of the read sectors with cached data if it contains a dirty sector */
 #if FF_FS_TINY
 				if (fs->wflag && fs->winsect - sect < cc) {
+#ifndef __LITEOS_M__
 					copy_ret = LOS_CopyFromKernel(rbuff + ((fs->winsect - sect) * SS(fs)), SS(fs), fs->win, SS(fs));
 					if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
+#else
+					mem_cpy(rbuff + ((fs->winsect - sect) * SS(fs)), fs->win, SS(fs));
+#endif
 				}
 #else
 				if ((fp->flag & FA_DIRTY) && fp->sect - sect < cc) {
+#ifndef __LITEOS_M__
 					copy_ret = LOS_CopyFromKernel(rbuff + ((fp->sect - sect) * SS(fs)), SS(fs), fp->buf, SS(fs));
 					if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
+#else
+					mem_cpy(rbuff + ((fp->sect - sect) * SS(fs)), fp->buf, SS(fs));
+#endif
 				}
 #endif
 #endif
@@ -3291,8 +3336,12 @@ FRESULT f_read (
 		if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
 #else
 		/* Extract partial sector */
+#ifndef __LITEOS_M__
 		copy_ret = LOS_CopyFromKernel(rbuff, rcnt, fp->buf + fp->fptr % SS(fs), rcnt);
 		if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
+#else
+		mem_cpy(rbuff, fp->buf + fp->fptr % SS(fs), rcnt);	/* Extract partial sector */
+#endif
 #endif
 	}
 
@@ -3317,7 +3366,9 @@ FRESULT f_write (
 	DWORD clst;
 	UINT wcnt, cc, csect;
 	const BYTE *wbuff = (const BYTE*)buff;
+#ifndef __LITEOS_M__
 	UINT copy_ret;
+#endif
 
 	*bw = 0;	/* Clear write byte counter */
 	res = validate(&fp->obj, &fs);			/* Check validity of the file object */
@@ -3381,8 +3432,12 @@ FRESULT f_write (
 				}
 #else
 				if (fp->sect - sect < cc) { /* Refill sector cache if it gets invalidated by the direct write */
+#ifndef __LITEOS_M__
 					copy_ret = LOS_CopyToKernel(fp->buf, SS(fs), wbuff + ((fp->sect - sect) * SS(fs)), SS(fs));
 					if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
+#else
+					mem_cpy(fp->buf, wbuff + ((fp->sect - sect) * SS(fs)), SS(fs));
+#endif
 					fp->flag &= (BYTE)~FA_DIRTY;
 				}
 #endif
@@ -3413,8 +3468,12 @@ FRESULT f_write (
 		if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
 		fs->wflag = 1;
 #else
+#ifndef __LITEOS_M__
 		copy_ret = LOS_CopyToKernel(fp->buf + fp->fptr % SS(fs), wcnt, wbuff, wcnt);
 		if (copy_ret != EOK) ABORT(fs, FR_INVALID_PARAMETER);
+#else
+		mem_cpy(fp->buf + fp->fptr % SS(fs), wbuff, wcnt);	/* Fit data to the sector */
+#endif
 		fp->flag |= FA_DIRTY;
 #endif
 
@@ -4215,7 +4274,9 @@ FRESULT f_unlink (
 	DIR dj, sdj;
 	DWORD dclst = 0;
 	FATFS *fs;
+#if FF_FS_REENTRANT
 	FATFS *fs_bak;
+#endif
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
 	DWORD rtclst = 0;
 	DWORD st_bak = 0;
@@ -4226,14 +4287,24 @@ FRESULT f_unlink (
 	/* Get logical drive */
 	res = find_volume(&path, &fs, FA_WRITE);
 	dj.obj.fs = fs;
+#if FF_FS_REENTRANT
 	fs_bak = fs;
+#endif
 	if (res == FR_OK) {
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
+#if FF_FS_REENTRANT
 		if (ISCHILD(fs)) LEAVE_FF(fs_bak,FR_INVAILD_FATFS);
+#else
+		if (ISCHILD(fs)) LEAVE_FF(fs,FR_INVAILD_FATFS);
+#endif
 		if (ISVIRPART(fs)) {
 			/* Check the virtual partition top directory, and match the virtual fs */
 			res = follow_virentry(&dj.obj,path);
+#if FF_FS_REENTRANT
 			if (res == FR_INT_ERR) LEAVE_FF(fs_bak,res);
+#else
+			if (res == FR_INT_ERR) LEAVE_FF(fs,res);
+#endif
 			if (res == FR_OK)
 				fs = dj.obj.fs;
 		}
@@ -4249,10 +4320,19 @@ FRESULT f_unlink (
 			st_bak = PARENTFS(dj.obj.fs)->winsect;
 			/* Follow the root directory cluster chain */
 			for (;;) {
+#if FF_FS_REENTRANT
 				if (rtclst == 0xFFFFFFFF) LEAVE_FF(fs_bak,FR_DISK_ERR);
+#else
+				if (rtclst == 0xFFFFFFFF) LEAVE_FF(fs,FR_DISK_ERR);
+#endif
 				if (rtclst == 0x0FFFFFFF) break;
+#if FF_FS_REENTRANT
 				if (rtclst < 2 || rtclst >= fs->n_fatent) LEAVE_FF(fs_bak,FR_INT_ERR);
 				if (rtclst == 0 || rtclst == 1) LEAVE_FF(fs_bak,FR_INT_ERR);
+#else
+				if (rtclst < 2 || rtclst >= fs->n_fatent) LEAVE_FF(fs,FR_INT_ERR);
+				if (rtclst == 0 || rtclst == 1) LEAVE_FF(fs,FR_INT_ERR);
+#endif
 				/* If current dirent is on rootdir clust chain */
 				if (dj.clust == rtclst) {
 					/* Set a flag */
@@ -4265,7 +4345,11 @@ FRESULT f_unlink (
 			if (dj.atrootdir == 1) {
 				if (ISCHILD(fs)) {
 					/* The FATFS is child object already, that means the operation is trying to delete the virtual partition directory */
+#if FF_FS_REENTRANT
 					LEAVE_FF(fs_bak,FR_DENIED);
+#else
+					LEAVE_FF(fs,FR_DENIED);
+#endif
 				}
 			}
 			res = move_window(dj.obj.fs,st_bak);
@@ -4313,8 +4397,11 @@ FRESULT f_unlink (
 		}
 		FREE_NAMBUF();
 	}
-
+#if FF_FS_REENTRANT
 	LEAVE_FF(fs_bak, res);
+#else
+	LEAVE_FF(fs, res);
+#endif
 }
 
 
@@ -4331,7 +4418,9 @@ FRESULT f_mkdir (
 	FRESULT res;
 	DIR dj;
 	FATFS *fs;
+#if FF_FS_REENTRANT
 	FATFS *fs_bak;
+#endif
 	BYTE *dir;
 	UINT n;
 	DWORD dcl, pcl, tm;
@@ -4342,16 +4431,26 @@ FRESULT f_mkdir (
 
 	/* Get logical drive */
 	res = find_volume(&path, &fs, FA_WRITE);
-	fs_bak = fs;
 	dj.obj.fs = fs;
+#if FF_FS_REENTRANT
+	fs_bak = fs;
+#endif
 	dj.obj.sclust = 0;
 	if (res == FR_OK) {
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
+#if FF_FS_REENTRANT
 		if (ISCHILD(fs)) LEAVE_FF(fs_bak,FR_INVAILD_FATFS);
+#else
+		if (ISCHILD(fs)) LEAVE_FF(fs,FR_INVAILD_FATFS);
+#endif
 		if (ISVIRPART(fs)) {
 			/* Check the virtual partition top directory, and match the virtual fs */
 			res = follow_virentry(&dj.obj,path);
+#if FF_FS_REENTRANT
 			if (res == FR_INT_ERR) LEAVE_FF(fs_bak,res);
+#else
+			if (res == FR_INT_ERR) LEAVE_FF(fs,res);
+#endif
 			if (res == FR_OK)
 				fs = dj.obj.fs;
 		}
@@ -4437,7 +4536,11 @@ FRESULT f_mkdir (
 		}
 		FREE_NAMBUF();
 	}
+#if FF_FS_REENTRANT
 	LEAVE_FF(fs_bak, res);
+#else
+	LEAVE_FF(fs, res);
+#endif
 }
 
 /*-----------------------------------------------------------------------*/
@@ -4452,7 +4555,9 @@ FRESULT f_rename (
 	FRESULT res;
 	DIR djo, djn;
 	FATFS *fs;
+#if FF_FS_REENTRANT
 	FATFS *fs_bak;
+#endif
 	BYTE buf[SZDIRE], *dir;
 	QWORD dw;
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
@@ -4464,7 +4569,9 @@ FRESULT f_rename (
 
 	get_ldnumber(&path_new);						/* Snip the drive number of new name off */
 	res = find_volume(&path_old, &fs, FA_WRITE);	/* Get logical drive of the old object */
+#if FF_FS_REENTRANT
 	fs_bak = fs;
+#endif
 	if (res == FR_OK) {
 		djo.obj.fs = fs;
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
@@ -4472,7 +4579,11 @@ FRESULT f_rename (
 		if (ISVIRPART(fs)) {
 			/* Check the virtual partition top directory, and match the virtual fs */
 			res = follow_virentry(&djo.obj,path_old);
+#if FF_FS_REENTRANT
 			if (res == FR_INT_ERR) LEAVE_FF(fs_bak,res);
+#else
+			if (res == FR_INT_ERR) LEAVE_FF(fs,res);
+#endif
 			if (res == FR_OK)
 				fs = djo.obj.fs;
 		}
@@ -4491,10 +4602,17 @@ FRESULT f_rename (
 			st_bak = PARENTFS(djo.obj.fs)->winsect;
 			/* Follow the root directory cluster chain */
 			for (;;) {
+#if FF_FS_REENTRANT
 				if (rtclst == 0xFFFFFFFF) LEAVE_FF(fs_bak,FR_DISK_ERR);
 				if (rtclst == 0x0FFFFFFF) break;
 				if (rtclst < 2 || rtclst >= fs->n_fatent) LEAVE_FF(fs_bak,FR_INT_ERR);
 				if (rtclst == 0 || rtclst == 1) LEAVE_FF(fs_bak,FR_INT_ERR);
+#else
+				if (rtclst == 0xFFFFFFFF) LEAVE_FF(fs,FR_DISK_ERR);
+				if (rtclst == 0x0FFFFFFF) break;
+				if (rtclst < 2 || rtclst >= fs->n_fatent) LEAVE_FF(fs,FR_INT_ERR);
+				if (rtclst == 0 || rtclst == 1) LEAVE_FF(fs,FR_INT_ERR);
+#endif
 				/* If current dirent is on rootdir clust chain */
 				if (djo.clust == rtclst) {
 					/* Set a flag */
@@ -4506,7 +4624,11 @@ FRESULT f_rename (
 			if (djo.atrootdir == 1) {
 				if (ISCHILD(fs)) {
 					/* The FATFS is child object already, that means the operation is trying to delete the virtual partition directory */
+#if FF_FS_REENTRANT
 					LEAVE_FF(fs_bak,FR_DENIED);
+#else
+					LEAVE_FF(fs,FR_DENIED);
+#endif
 				}
 			}
 			res = move_window(djo.obj.fs,st_bak);
@@ -4566,8 +4688,11 @@ FRESULT f_rename (
 		}
 		FREE_NAMBUF();
 	}
-
+#if FF_FS_REENTRANT
 	LEAVE_FF(fs_bak, res);
+#else
+	LEAVE_FF(fs, res);
+#endif
 }
 
 #endif /* !FF_FS_READONLY */
@@ -4591,20 +4716,32 @@ FRESULT f_chmod (
 	FRESULT res;
 	DIR dj;
 	FATFS *fs;
+#if FF_FS_REENTRANT
 	FATFS *fs_bak;
+#endif
 	DEF_NAMBUF
 
 
 	res = find_volume(&path, &fs, FA_WRITE);	/* Get logical drive */
 	dj.obj.fs = fs;
+#if FF_FS_REENTRANT
 	fs_bak = fs;
+#endif
 	if (res == FR_OK) {
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
+#if FF_FS_REENTRANT
 		if (ISCHILD(fs)) LEAVE_FF(fs_bak,FR_INVAILD_FATFS);
+#else
+		if (ISCHILD(fs)) LEAVE_FF(fs,FR_INVAILD_FATFS);
+#endif
 		if (ISVIRPART(fs)) {
 			/* Check the virtual partition top directory, and match the virtual fs */
 			res = follow_virentry(&dj.obj,path);
+#if FF_FS_REENTRANT
 			if (res == FR_INT_ERR) LEAVE_FF(fs_bak,res);
+#else
+			if (res == FR_INT_ERR) LEAVE_FF(fs,res);
+#endif
 			if (res == FR_OK)
 				fs = dj.obj.fs;
 		}
@@ -4626,8 +4763,11 @@ FRESULT f_chmod (
 		}
 		FREE_NAMBUF();
 	}
-
+#if FF_FS_REENTRANT
 	LEAVE_FF(fs_bak, res);
+#else
+	LEAVE_FF(fs, res);
+#endif
 }
 
 
@@ -4860,7 +5000,7 @@ FRESULT f_expand (
 	if (fp->obj.sclust != 0) {
 	    count = get_clustinfo(fp, &fclust);
 	}
-	if (offset + fsz <= n * count) LEAVE_FF(fs, FR_DENIED);
+	if (offset + fsz <= n * count) LEAVE_FF(fs, FR_OK);
 
 	exsz = offset + fsz - n * count;
 	tcl = (DWORD)(exsz / n) + ((exsz & (n - 1)) ? 1 : 0);	/* Number of clusters required */
@@ -5080,7 +5220,11 @@ FRESULT f_mkfs (
 	static const WORD cst[] = {1, 4, 16, 64, 256, 512, 0};	/* Cluster size boundary for FAT volume (4Ks unit) */
 	static const WORD cst32[] = {1, 2, 4, 8, 16, 32, 0};	/* Cluster size boundary for FAT32 volume (128Ks unit) */
 	BYTE fmt, sys, *buf, *pte, pdrv, part;
+#ifndef __LITEOS_M__
 	size_t ss;
+#else
+	WORD ss;
+#endif
 	DWORD au;
 	QWORD szb_buf, sz_buf, sz_blk, n_clst, pau, sect, nsect, n;
 	QWORD b_vol, b_fat, b_data;		/* Base LBA for volume, fat, data */
@@ -5147,19 +5291,35 @@ FRESULT f_mkfs (
 				}
 				pte = &buf[MBR_Table + extended_pos * SZ_PTE];
 				extended_base = ld_dword(pte + 8);
+#ifndef __LITEOS_M__
 				if (disk_raw_read(LD2DI(vol), buf, extended_base, 1) != RES_OK) return FR_DISK_ERR;
+#else
+				if (disk_read(LD2PD(vol), buf, extended_base, 1) != RES_OK) return FR_DISK_ERR;
+#endif
 				pte = &buf[MBR_Table];
 				for (; extended_br > 1; --extended_br) {
 					pte = &buf[MBR_Table];
 					extended_offset = ld_dword(pte + SZ_PTE + 8);
 					mem_set(buf, 0, len);
+#ifndef __LITEOS_M__
 					if (disk_raw_read(LD2DI(vol), buf, extended_base + extended_offset, 1) != RES_OK) return FR_DISK_ERR;
+#else
+					if (disk_read(LD2PD(vol), buf, extended_base + extended_offset, 1) != RES_OK) return FR_DISK_ERR;
+#endif
 				}
 			}
 			if (!pte[4]) return FR_MKFS_ABORTED;	/* No partition? */
+#ifdef __LITEOS_M__
+			b_vol = ld_dword(pte + PTE_StLba);		/* Get volume start sector */
+			sz_vol = ld_dword(pte + PTE_SizLba);	/* Get volume size */
+#else
+			b_vol = LD2PS(vol);		/* Volume start sector */
+			sz_vol = LD2PC(vol);	/* Volume size */
+#endif
 		} else {
 			gpt_part = 1;
 			b_vol = LD2PS(vol);		/* Volume start sector */
+			sz_vol = LD2PC(vol);	/* Volume size */
 			if (disk_read(pdrv, buf, b_vol, 1) != RES_OK) return FR_DISK_ERR;	/* Load GPT partition info */
 			if (ld_word(buf + BS_55AA) != 0xAA55) return FR_MKFS_ABORTED;		/* Check if GPT partition is valid */
 		}
@@ -5171,9 +5331,6 @@ FRESULT f_mkfs (
 		mem_cpy(multi_buf, buf, ss);
 		if (!gpt_part)
 			if (!pte[4]) {res = FR_MKFS_ABORTED; goto EXIT;}	/* No partition? */
-		b_vol = LD2PS(vol);		/* Volume start sector */
-		sz_vol = LD2PC(vol);	/* Volume size */
-
 	} else
 #endif
 	{
@@ -5384,13 +5541,25 @@ FRESULT f_mkfs (
 			}
 			n = (part > 4) ? extended_base + extended_offset : 0;
 			pte[4] = sys;
+#ifndef __LITEOS_M__
 			if (disk_raw_write(LD2DI(vol), multi_buf, n, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }	/* Write it to teh MBR */
+#else
+			if (disk_write(LD2PD(vol), multi_buf, n, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }	/* Write it to teh MBR */
+#endif
 		} else {
 			b_vol = LD2PS(vol);		/* Volume start sector */
+#ifndef __LITEOS_M__
 			if (disk_raw_read(LD2DI(vol), multi_buf, b_vol, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }
+#else
+			if (disk_read(LD2PD(vol), multi_buf, b_vol, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }
+#endif
 			pte = &multi_buf[MBR_Table];
 			pte[4] = sys;
+#ifndef __LITEOS_M__
 			if (disk_raw_write(LD2DI(vol), multi_buf, b_vol, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }	/* Write it to the MBR */
+#else
+			if (disk_write(LD2PD(vol), multi_buf, b_vol, 1) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }	/* Write it to the MBR */
+#endif
 		}
 	} else
 #endif
@@ -5415,7 +5584,7 @@ FRESULT f_mkfs (
 	}
 
 	if (disk_ioctl(pdrv, CTRL_SYNC, 0) != RES_OK) { res = FR_DISK_ERR; goto EXIT; }
-
+#ifndef __LITEOS_M__
 	switch(fmt) {
 	case FS_FAT12:
 		PRINTK("format to FAT12, %lld sectors per cluster.\n", pau);
@@ -5426,7 +5595,7 @@ FRESULT f_mkfs (
 	case FS_FAT32:
 		PRINTK("Format to FAT32, %lld sectors per cluster.\n", pau);
 	}
-
+#endif
 EXIT:
 #if FF_MULTI_PARTITION
 	ff_memfree(multi_buf);

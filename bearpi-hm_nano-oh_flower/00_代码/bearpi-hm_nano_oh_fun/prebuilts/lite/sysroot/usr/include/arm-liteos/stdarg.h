@@ -1,6 +1,10 @@
 #ifndef _STDARG_H
 #define _STDARG_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <stdarg.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,4 +22,5 @@ extern "C" {
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

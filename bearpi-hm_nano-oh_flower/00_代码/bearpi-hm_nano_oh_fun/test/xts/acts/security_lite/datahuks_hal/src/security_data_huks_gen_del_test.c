@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Huawei Device Co., Ltd.
+/* Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,7 +70,7 @@ int TestSecShuksGenerateKeyNormal(void)
     keyParam.key_len = 0;
     keyParam.key_usage = 0;
     keyParam.key_pad = 0;
-    int32_t status = hks_generate_key(&keyAlias, &keyParam);    
+    int32_t status = hks_generate_key(&keyAlias, &keyParam);
     TEST_ASSERT_EQUAL_INT(0, status);
     return 0;
 }
@@ -168,7 +168,7 @@ void TestInitKeyParam1(struct hks_key_param *keyParam, uint32_t keyType, uint32_
     const char tmpData1[] = "111111";
     BuildBlobData(&keyParam->key_auth_id, tmpData1, HKS_BLOB_TYPE_AUTH_ID, NUM3, 0);
 }
-    
+
 int TestSecShuksImportPublicNormal(void)
 {
     char testFileName[] = "keyalias1";
@@ -236,13 +236,11 @@ static BOOL SecurityDataHuksGenDelTestSuiteTearDown(void)
 // begin+++++++++++++++++++++++++++++++++++++++++++++++++++0000-0120
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0000
+ * @tc.name      : Generate key, normal input parameters keyAlias and keyParam
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0000, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0000, Function | MediumTest | Level1)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -264,7 +262,9 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0000, LEV
         return;
     }
     char tmpGenerate[3] = { 0 };
-    if (strcat_s((char *)keyAliasGenerate.data, strlen((char *)keyAliasGenerate.data) + strlen(tmpGenerate) + 1, tmpGenerate) != EOK) {
+    if (strcat_s((char *)keyAliasGenerate.data,
+        strlen((char *)keyAliasGenerate.data) + strlen(tmpGenerate) + 1,
+        tmpGenerate) != EOK) {
         HksBlobDestroyT1(&keyAliasGenerate);
         TEST_FAIL();
         return;
@@ -281,7 +281,9 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0000, LEV
         return;
     }
     char tmpDelete[3] = { 0 };
-    if (strcat_s((char *)keyAliasDelete.data, strlen((char *)keyAliasDelete.data) + strlen(tmpDelete) + 1, tmpDelete) != EOK) {
+    if (strcat_s((char *)keyAliasDelete.data,
+        strlen((char *)keyAliasDelete.data) + strlen(tmpDelete) + 1,
+        tmpDelete) != EOK) {
         HksBlobDestroyT1(&keyAliasDelete);
         TEST_FAIL();
         return;
@@ -293,16 +295,14 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0000, LEV
 };
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0010
+ * @tc.name      : Generate key, abnormal input parameters keyAlias is null
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0010, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0010, Function | MediumTest | Level2)
 {
     char testFileName1[] = "key_auth_id1";
-    struct hks_blob *keyAlias = NULL; // = NULL
+    struct hks_blob *keyAlias = NULL;
     int32_t status;
 
     struct hks_key_param keyParam;
@@ -319,13 +319,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0010, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0020
+ * @tc.name      : Generate key, abnormal input parameters keyAlias.size is 0
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0020, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0020, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -334,7 +332,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0020, LEV
 
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = 0; // = 0
+    keyAlias.size = 0;
 
     struct hks_key_param keyParam;
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
@@ -350,13 +348,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0020, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0030
+ * @tc.name      : Generate key, abnormal input parameters keyAlias.size is more than 64
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0030, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0030, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -365,7 +361,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0030, LEV
 
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = NUM65; // > 64
+    keyAlias.size = NUM65;
 
     struct hks_key_param keyParam;
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
@@ -381,20 +377,18 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0030, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0040
+ * @tc.name      : Generate key, abnormal input parameters keyAlias.type is not equal to HKS_BLOB_TYPE_ALIAS
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0040, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0040, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
     struct hks_blob keyAlias;
     int32_t status;
 
-    keyAlias.type = 0; // != HKS_BLOB_TYPE_ALIAS
+    keyAlias.type = 0;
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
 
@@ -412,13 +406,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0040, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0050
+ * @tc.name      : Generate key, abnormal input parameters keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0050, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0050, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -426,7 +418,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0050, LEV
     int32_t status;
 
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
 
     struct hks_key_param keyParam;
@@ -443,13 +435,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0050, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0060
+ * @tc.name      : Generate key, abnormal input parameters keyParam is null
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0060, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0060, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     struct hks_blob keyAlias;
@@ -459,20 +449,19 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0060, LEV
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
 
-    struct hks_key_param *keyParam = NULL; // = NULL
+    struct hks_key_param *keyParam = NULL;
 
     status = hks_generate_key(&keyAlias, keyParam);
     TEST_ASSERT_EQUAL_INT(NUM1000, status);
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0070
+ * @tc.name      : Generate key, abnormal input parameters keyParam.key_type
+                   is not equal to HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0070, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0070, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -487,7 +476,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0070, LEV
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
     keyParam.key_auth_id.size = sizeof(testFileName1);
     keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
-    keyParam.key_type = NUM1; // != HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519
+    keyParam.key_type = NUM1;
     keyParam.key_len = 0;
     keyParam.key_usage = 0;
     keyParam.key_pad = 0;
@@ -497,13 +486,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0070, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0080
+ * @tc.name      : Generate key, abnormal input parameters keyParam.key_auth_id.size is 0
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0080, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0080, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -516,7 +503,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0080, LEV
 
     struct hks_key_param keyParam;
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
-    keyParam.key_auth_id.size = 0; // = 0
+    keyParam.key_auth_id.size = 0;
     keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
     keyParam.key_len = 0;
@@ -528,13 +515,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0080, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0090
+ * @tc.name      : Generate key, abnormal input parameters keyParam.key_auth_id.size is more than 64
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0090, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0090, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -547,7 +532,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0090, LEV
 
     struct hks_key_param keyParam;
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
-    keyParam.key_auth_id.size = NUM65; // > 64
+    keyParam.key_auth_id.size = NUM65;
     keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
     keyParam.key_len = 0;
@@ -560,12 +545,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0090, LEV
 
 /* *
  * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.name      : Generate key, abnormal input parameters keyParam.key_auth_id.type
+                   is not equal to HKS_BLOB_TYPE_AUTHID
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0100, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0100, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -579,7 +563,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0100, LEV
     struct hks_key_param keyParam;
     keyParam.key_auth_id.data = (uint8_t *)testFileName1;
     keyParam.key_auth_id.size = sizeof(testFileName1);
-    keyParam.key_auth_id.type = 0; // != HKS_BLOB_TYPE_AUTHID
+    keyParam.key_auth_id.type = 0;
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
     keyParam.key_len = 0;
     keyParam.key_usage = 0;
@@ -590,13 +574,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0100, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0110
+ * @tc.name      : Generate key, abnormal input parameters keyParam.key_auth_id.data is null
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0110, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0110, Function | MediumTest | Level2)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -608,7 +590,7 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0110, LEV
     keyAlias.size = sizeof(testFileName);
 
     struct hks_key_param keyParam;
-    keyParam.key_auth_id.data = NULL; // = NULL
+    keyParam.key_auth_id.data = NULL;
     keyParam.key_auth_id.size = sizeof(testFileName1);
     keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
@@ -621,37 +603,29 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0110, LEV
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0100
- * @tc.name      : Generate key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0120
+ * @tc.name      : Generate key, the number of stored keys is more than 20
  * @tc.desc      : [C- SECURITY -1400]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0120, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0120, Function | MediumTest | Level2)
 {
     int status;
     char testFileName[] = "keyalias1", testFileName1[] = "key_auth_id1";
     struct hks_key_param keyParam;
-    keyParam.key_auth_id.data = (uint8_t*)testFileName1;
-    keyParam.key_auth_id.size = sizeof(testFileName1);
-    keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
-    keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
-    keyParam.key_len = 0;
-    keyParam.key_usage = 0;
-    keyParam.key_pad = 0;
+    keyParam.key_auth_id.data = (uint8_t*)testFileName1; keyParam.key_auth_id.size = sizeof(testFileName1);
+    keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID; keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
+    keyParam.key_len = 0; keyParam.key_usage = 0; keyParam.key_pad = 0;
     for (int j = 0; j < NUM21; j++) {
         struct hks_blob keyAlias;
         HksStBlobInit1(&keyAlias, sizeof(uint8_t), sizeof(testFileName) + NUM3, HKS_BLOB_TYPE_ALIAS);
         if (memcpy_s(keyAlias.data, sizeof(testFileName), testFileName, sizeof(testFileName)) != EOK) {
-            HksBlobDestroyT1(&keyAlias);
-            TEST_FAIL();
+            HksBlobDestroyT1(&keyAlias); TEST_FAIL();
             return;
         }
         char tmp[3] = { 0 };
         sprintf_s(tmp, sizeof(tmp), "%d", j);
-        if (strcat_s((char*)keyAlias.data, strlen((char*)keyAlias.data) + strlen(tmp) + 1, tmp) != EOK) {   
-            HksBlobDestroyT1(&keyAlias);
-            TEST_FAIL();
+        if (strcat_s((char*)keyAlias.data, strlen((char*)keyAlias.data) + strlen(tmp) + 1, tmp) != EOK){
+            HksBlobDestroyT1(&keyAlias); TEST_FAIL();
             return;
         }
         keyAlias.size = strlen((char*)keyAlias.data);
@@ -668,15 +642,13 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0120, LEV
         struct hks_blob keyAlias;
         HksStBlobInit1(&keyAlias, sizeof(uint8_t), sizeof(testFileName) + NUM3, HKS_BLOB_TYPE_ALIAS);
         if (memcpy_s(keyAlias.data, sizeof(testFileName), testFileName, sizeof(testFileName)) != EOK) {
-            HksBlobDestroyT1(&keyAlias);
-            TEST_FAIL();
+            HksBlobDestroyT1(&keyAlias); TEST_FAIL();
             return;
         }
         char tmp[3] = { 0 };
         sprintf_s(tmp, sizeof(tmp), "%d", j);
         if (strcat_s((char*)keyAlias.data, strlen((char*)keyAlias.data) + strlen(tmp) + 1, tmp) != EOK) {
-            HksBlobDestroyT1(&keyAlias);
-            TEST_FAIL();
+            HksBlobDestroyT1(&keyAlias); TEST_FAIL();
             return;
         }
         keyAlias.size = strlen((char*)keyAlias.data);
@@ -693,13 +665,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataGenerateKey0120, LEV
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Delete key
 // begin+++++++++++++++++++++++++++++++++++++++++++++++++++++0130-0190
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0130
+ * @tc.name      : Delete key, normal input parameters keyAlias and keyParam
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0130, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0130, Function | MediumTest | Level1)
 {
     char testFileName[] = "keyalias1";
     char testFileName1[] = "key_auth_id1";
@@ -721,7 +691,9 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0130, LEVEL
         return;
     }
     char tmpGenerate[3] = { 0 };
-    if (strcat_s((char *)keyAliasGenerate.data, strlen((char *)keyAliasGenerate.data) + strlen(tmpGenerate) + 1, tmpGenerate) != EOK) {
+    if (strcat_s((char *)keyAliasGenerate.data,
+        strlen((char *)keyAliasGenerate.data) + strlen(tmpGenerate) + 1,
+        tmpGenerate) != EOK) {
         HksBlobDestroyT1(&keyAliasGenerate);
         TEST_FAIL();
         return;
@@ -738,7 +710,9 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0130, LEVEL
         return;
     }
     char tmpDelete[3] = { 0 };
-    if (strcat_s((char *)keyAliasDelete.data, strlen((char *)keyAliasDelete.data) + strlen(tmpDelete) + 1, tmpDelete) != EOK) {
+    if (strcat_s((char *)keyAliasDelete.data,
+        strlen((char *)keyAliasDelete.data) + strlen(tmpDelete) + 1,
+        tmpDelete) != EOK) {
         HksBlobDestroyT1(&keyAliasDelete);
         TEST_FAIL();
         return;
@@ -750,35 +724,31 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0130, LEVEL
 };
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0140
+ * @tc.name      : Delete key, abnormal input parameters keyAlias is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0140, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0140, Function | MediumTest | Level2)
 {
     int32_t status;
-    struct hks_blob *keyAlias = NULL; // = NULL
+    struct hks_blob *keyAlias = NULL;
 
     status = hks_delete_key(keyAlias);
     TEST_ASSERT_EQUAL_INT(NUM1000, status);
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0150
+ * @tc.name      : Delete key, abnormal input parameters keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0150, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0150, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
     struct hks_blob keyAlias = { 0 };
 
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
@@ -787,13 +757,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0150, LEVEL
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0160
+ * @tc.name      : Delete key, abnormal input parameters keyAlias.type is not equal to HKS_BLOB_TYPE_ALIAS
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0160, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0160, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -801,19 +769,17 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0160, LEVEL
 
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
-    keyAlias.type = 0; // != HKS_BLOB_TYPE_ALIAS
+    keyAlias.type = 0;
 
     status = hks_delete_key(&keyAlias);
     TEST_ASSERT_EQUAL_INT(NUM135, status);
 }
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0170
+ * @tc.name      : Delete key, abnormal input parameters keyAlias.size is 0
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0170, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0170, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -827,13 +793,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0170, LEVEL
     TEST_ASSERT_EQUAL_INT(NUM135, status);
 }
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0180
+ * @tc.name      : Delete key, abnormal input parameters keyAlias.size is more than 64
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0180, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0180, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -848,13 +812,11 @@ LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0180, LEVEL
 }
 
 /* *
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
- * @tc.name      : Delete key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0190
+ * @tc.name      : Delete key, the key does not exist
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0190, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksGenDelTestSuite, securityDataDeleteKey0190, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";

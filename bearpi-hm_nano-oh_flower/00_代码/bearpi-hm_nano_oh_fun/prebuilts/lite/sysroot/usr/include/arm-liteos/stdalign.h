@@ -1,6 +1,10 @@
 #ifndef _STDALIGN_H
 #define _STDALIGN_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <stdalign.h>
+#else
+
 #ifndef __cplusplus
 
 /* this whole header only works in C11 or with compiler extensions */
@@ -17,4 +21,5 @@
 #define __alignas_is_defined 1
 #define __alignof_is_defined 1
 
+#endif /* __ICCARM__ */
 #endif

@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/startup_syspara_lite",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "根据OpenHarmony产品兼容性规范提供获取设备信息的接口，如：产品名、品牌名、厂家名等，同时提供设置、读取系统属性的接口",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/base/startup/syspara_lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/startup_syspara_lite",
+    "tags": [
+        "base"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "base",
+        "startupsysparalite"
+    ]
+}

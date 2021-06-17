@@ -23,8 +23,8 @@ namespace OHOS {
 namespace ACELite {
 class NativeapiFs {
 public:
-    NativeapiFs() {}
-    ~NativeapiFs() {}
+    NativeapiFs() = default;
+    ~NativeapiFs() = default;
 
     static JSIValue MoveFile(const JSIValue thisVal, const JSIValue* args, uint8_t argsNum);
     static JSIValue CopyFile(const JSIValue thisVal, const JSIValue* args, uint8_t argsNum);

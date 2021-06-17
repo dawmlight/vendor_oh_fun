@@ -19,6 +19,8 @@
 #include "ohos_errno.h"
 #include "ohos_types.h"
 
+#include <stdbool.h>
+
 #define BUFFER_SIZE 128
 
 int UtilsFileOpen(const char* path, int oflag, int mode)
@@ -31,22 +33,22 @@ int UtilsFileClose(int fd)
     return HalFileClose(fd);
 }
 
-int UtilsFileRead(int fd, char *buf, unsigned int len)
+int UtilsFileRead(int fd, char* buf, unsigned int len)
 {
     return HalFileRead(fd, buf, len);
 }
 
-int UtilsFileWrite(int fd, const char *buf, unsigned int len)
+int UtilsFileWrite(int fd, const char* buf, unsigned int len)
 {
     return HalFileWrite(fd, buf, len);
 }
 
-int UtilsFileDelete(const char *path)
+int UtilsFileDelete(const char* path)
 {
     return HalFileDelete(path);
 }
 
-int UtilsFileStat(const char *path, unsigned int *fileSize)
+int UtilsFileStat(const char* path, unsigned int* fileSize)
 {
     return HalFileStat(path, fileSize);
 }
@@ -70,28 +72,26 @@ int UtilsFileCopy(const char* src, const char* dest)
         UtilsFileClose(fpSrc);
         return fpDest;
     }
-    char *dataBuf = (char *)malloc(BUFFER_SIZE);
+    bool copyFailed = true;
+    char* dataBuf = (char *)malloc(BUFFER_SIZE);
     if (dataBuf == NULL) {
-        UtilsFileClose(fpSrc);
-        UtilsFileClose(fpDest);
-        UtilsFileDelete(dest);
-        return EC_FAILURE;
+        goto MALLOC_ERROR;
     }
     int nLen = UtilsFileRead(fpSrc, dataBuf, BUFFER_SIZE);
     while (nLen > 0) {
         if (UtilsFileWrite(fpDest, dataBuf, nLen) != nLen) {
-            free(dataBuf);
-            UtilsFileClose(fpSrc);
-            UtilsFileClose(fpDest);
-            UtilsFileDelete(dest);
-            return EC_FAILURE;
+            goto EXIT;
         }
         nLen = UtilsFileRead(fpSrc, dataBuf, BUFFER_SIZE);
     }
+    copyFailed = (nLen < 0);
+
+EXIT:
     free(dataBuf);
+MALLOC_ERROR:
     UtilsFileClose(fpSrc);
     UtilsFileClose(fpDest);
-    if (nLen < 0) {
+    if (copyFailed) {
         UtilsFileDelete(dest);
         return EC_FAILURE;
     }

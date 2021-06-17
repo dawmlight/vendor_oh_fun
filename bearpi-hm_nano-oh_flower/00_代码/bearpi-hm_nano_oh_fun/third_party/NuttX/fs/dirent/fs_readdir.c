@@ -49,6 +49,7 @@
 #include "fs/dirent_fs.h"
 
 #include "inode/inode.h"
+#include "sys/statfs.h"
 #include "user_copy.h"
 
 /****************************************************************************
@@ -77,8 +78,7 @@ static inline int readpseudodir(struct fs_dirent_s *idir)
     }
 
   /* Copy the inode name into the dirent structure */
-
-  ret = strncpy_s(idir->fd_dir.d_name, NAME_MAX + 1, idir->u.pseudo.fd_next->i_name, NAME_MAX);
+  ret = strncpy_s(idir->fd_dir[0].d_name, NAME_MAX + 1, idir->u.pseudo.fd_next->i_name, NAME_MAX);
   if (ret != EOK)
     {
       return -ENAMETOOLONG;
@@ -86,24 +86,22 @@ static inline int readpseudodir(struct fs_dirent_s *idir)
 
   /* If the node has file operations, we will say that it is a file. */
 
-  idir->fd_dir.d_type = 0;
-  idir->fd_dir.d_off = idir->fd_position;
-  idir->fd_dir.d_reclen = sizeof(struct dirent);
+  idir->fd_dir[0].d_type = 0;
   if (idir->u.pseudo.fd_next->u.i_ops)
     {
 #ifndef CONFIG_DISABLE_MOUNTPOINT
       if (INODE_IS_BLOCK(idir->u.pseudo.fd_next))
         {
-           idir->fd_dir.d_type |= DT_BLK;
+           idir->fd_dir[0].d_type |= DT_BLK;
         }
       if (INODE_IS_MOUNTPT(idir->u.pseudo.fd_next))
         {
-           idir->fd_dir.d_type |= DT_DIR;
+           idir->fd_dir[0].d_type |= DT_DIR;
         }
       else
 #endif
         {
-           idir->fd_dir.d_type |= DT_CHR;
+           idir->fd_dir[0].d_type |= DT_CHR;
         }
     }
 
@@ -114,7 +112,7 @@ static inline int readpseudodir(struct fs_dirent_s *idir)
 
   if (idir->u.pseudo.fd_next->i_child || !idir->u.pseudo.fd_next->u.i_ops)
     {
-      idir->fd_dir.d_type |= DT_DIR;
+      idir->fd_dir[0].d_type |= DT_DIR;
     }
 
   /* Now get the inode to vist next time that readdir() is called */
@@ -142,6 +140,47 @@ static inline int readpseudodir(struct fs_dirent_s *idir)
 }
 
 /****************************************************************************
+ * Private Functions
+ ****************************************************************************/
+
+/****************************************************************************
+ * Name: handlezpfsdir
+ * Description:
+ *   The handlezpfsdir() function handle with the inode with zpfs magic
+ *
+ * Input Parameters:
+ *   idir -- the pointer of one dir
+ *
+ * Returned Value:
+ *   none
+ ****************************************************************************/
+#ifdef LOSCFG_FS_ZPFS
+static inline void handlezpfsdir(struct fs_dirent_s *idir)
+{
+  struct statfs buf;
+  int           ret;
+  /* Maybe there are two or more zpfs nodes together, so we need one loop */
+  do
+    {
+      if (!idir->u.pseudo.fd_next || !INODE_IS_MOUNTPT(idir->u.pseudo.fd_next) ||
+          !idir->u.pseudo.fd_next->u.i_mops || !idir->u.pseudo.fd_next->u.i_mops->statfs)
+        {
+          return;
+        }
+      ret = idir->u.pseudo.fd_next->u.i_mops->statfs(idir->u.pseudo.fd_next, &buf);
+      if (ret != OK || buf.f_type != ZPFS_MAGIC)
+        {
+          return;
+        }
+      if (readpseudodir(idir) == OK)
+        {
+          idir->fd_position++;
+        }
+    } while (1);
+}
+#endif
+
+/****************************************************************************
  * Public Functions
  ****************************************************************************/
 
@@ -165,12 +204,12 @@ static inline int readpseudodir(struct fs_dirent_s *idir)
  *   EBADF   - Invalid directory stream descriptor dir
  *
  ****************************************************************************/
-static struct dirent *__readdir(DIR *dirp)
+static struct dirent *__readdir(DIR *dirp, int *lencnt)
 {
   FAR struct fs_dirent_s *idir = (struct fs_dirent_s *)dirp;
   struct inode *inode_ptr = NULL;
   int ret = 0;
-
+  int file_cnt = 0;
   /* Verify that we were provided with a valid directory structure */
 
   if (!idir || idir->fd_status != DIRENT_MAGIC)
@@ -200,13 +239,20 @@ static struct dirent *__readdir(DIR *dirp)
    */
   if (DIRENT_ISPSEUDONODE(idir->fd_flags))
     {
+#ifdef LOSCFG_FS_ZPFS
+      /* if the current node has the zpfs magic, we continue to skip the node */
+      handlezpfsdir(idir);
+#endif
       /* The node is part of the root pseudo file system */
 
       ret = readpseudodir(idir);
-      if (!ret)
+      if (ret == OK)
         {
-            idir->fd_position++;
-            return &idir->fd_dir;
+          idir->fd_position++;
+          idir->fd_dir[0].d_off = idir->fd_position;
+          idir->fd_dir[0].d_reclen = (uint16_t)sizeof(struct dirent);
+          *lencnt = sizeof(struct dirent);
+          return &(idir->fd_dir[0]);
         }
     }
 
@@ -223,22 +269,32 @@ static struct dirent *__readdir(DIR *dirp)
         }
 
       /* Perform the readdir() operation */
-
-      ret = inode_ptr->u.i_mops->readdir(inode_ptr, idir);
-      if (!ret)
+#ifdef LOSCFG_ENABLE_READ_BUFFER
+      idir->read_cnt = MAX_DIRENT_NUM;
+#else
+      idir->read_cnt = 1;
+#endif
+      file_cnt = inode_ptr->u.i_mops->readdir(inode_ptr, idir);
+      if (file_cnt > 0)
         {
-            idir->fd_position++;
-            return &idir->fd_dir;
+          *lencnt = file_cnt * sizeof(struct dirent);
+          return &(idir->fd_dir[0]);
         }
     }
 #endif
 
-  ret = -ret;
-
 errout:
   if (ret != OK)
     {
+      if (ret < 0)
+        {
+          ret = -ret;
+        }
       set_errno(ret);
+    }
+  else if (file_cnt <= 0)
+    {
+      set_errno(ENOENT);
     }
   return (struct dirent *)NULL;
 }
@@ -272,16 +328,40 @@ FAR struct dirent *readdir(DIR *dirp)
 {
   int ret;
   int old_err = get_errno();
-  struct dirent *de = __readdir(dirp);
+  int lencnt = 0;
+  struct dirent *de = NULL;
+  FAR struct fs_dirent_s *idir = (struct fs_dirent_s *)dirp;
+  int dirlen;
 
-  if (de == NULL)
+#ifdef LOSCFG_ENABLE_READ_BUFFER
+  dirlen = MAX_DIRENT_NUM;
+#else
+  dirlen = 1;
+#endif
+  if (idir->cur_pos != 0 && idir->cur_pos < dirlen && idir->cur_pos < idir->end_pos)
     {
-      ret = get_errno();
-      /* Special case: ret = -ENOENT is end of file */
-
-      if (ret == ENOENT)
+      de = &(idir->fd_dir[idir->cur_pos]);
+      if (idir->cur_pos == dirlen)
         {
-          set_errno(old_err);
+          idir->cur_pos = 0;
+        }
+      idir->cur_pos++;
+      return de;
+    } else {
+      de = __readdir(dirp, &lencnt);
+      idir->end_pos = lencnt / sizeof(struct dirent);
+      idir->cur_pos = 1;
+
+      if (de == NULL)
+        {
+          idir->cur_pos = 0;
+          ret = get_errno();
+          /* Special case: ret = -ENOENT is end of file */
+
+          if (ret == ENOENT)
+            {
+              set_errno(old_err);
+            }
         }
     }
   return de;
@@ -292,7 +372,7 @@ FAR struct dirent *readdir(DIR *dirp)
 int do_readdir(int fd, struct dirent **de, unsigned int count)
 {
   struct dirent *de_src = NULL;
-
+  int lencnt = 0;
   /* Did we get a valid file descriptor? */
 
 #if CONFIG_NFILE_DESCRIPTORS > 0
@@ -321,8 +401,7 @@ int do_readdir(int fd, struct dirent **de, unsigned int count)
         }
 
       /* Then let do_readdir do all of the work */
-
-      de_src = __readdir(filep->f_dir);
+      de_src = __readdir(filep->f_dir, &lencnt);
       if (de_src == NULL)
         {
           /* Special case: ret = -ENOENT is end of file */
@@ -330,7 +409,8 @@ int do_readdir(int fd, struct dirent **de, unsigned int count)
         }
       *de = de_src;
 
-      return sizeof(*de_src);
+      lencnt = (lencnt != 0) ? lencnt : sizeof(*de_src);
+      return lencnt;
     }
 #endif
 

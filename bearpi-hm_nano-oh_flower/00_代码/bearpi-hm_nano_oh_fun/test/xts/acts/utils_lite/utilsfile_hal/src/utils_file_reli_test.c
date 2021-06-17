@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "hos_types.h"
+#include "ohos_types.h"
 #include <securec.h>
 #include "hctest.h"
 #include "utils_file.h"
@@ -56,19 +56,16 @@ static BOOL UtilsFileReliTestSuiteTearDown(void)
 }
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1300
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5200
  * @tc.name      : Creat file after max files opened
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testCreatFileAfterMaxFilesOpened, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testCreatFileAfterMaxFilesOpened, Function | MediumTest | Level1)
 {
     // Open 32 files
     int fd32[MAX_NUM_OF_OPENED_FILES] = {0};
     for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
-    { 
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -77,8 +74,8 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCreatFileAfterMaxFilesOpened, LEVEL1)
         }
         fd32[i] = UtilsFileOpen(fileName32, O_RDWR_FS | O_CREAT_FS, 0);
         TEST_ASSERT_GREATER_THAN_INT(0, fd32[i]);
-    } 
-    // Open the 33th file  
+    }
+    // Open the 33th file
     char* fileName33 = "testReli101-33";
     int fd33 = UtilsFileOpen(fileName33, O_RDWR_FS | O_CREAT_FS, 0);
     TEST_ASSERT_EQUAL_INT(-1, fd33);
@@ -88,8 +85,12 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCreatFileAfterMaxFilesOpened, LEVEL1)
     TEST_ASSERT_GREATER_THAN_INT(0, fd33);
     UtilsFileClose(fd33);
     // Delete all files
-    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    for (int i = 1; i < MAX_NUM_OF_OPENED_FILES; i++)
     { 
+        UtilsFileClose(fd32[i]);
+    } 
+    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -97,24 +98,21 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCreatFileAfterMaxFilesOpened, LEVEL1)
         TEST_ASSERT_EQUAL_INT(0, 1);
         }
         UtilsFileDelete(fileName32);
-    } 
+    }
     UtilsFileDelete(fileName33);
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1300
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5300
  * @tc.name      : Delete file after max files opened
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testDeleteFileAfterMaxFilesOpened, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testDeleteFileAfterMaxFilesOpened, Function | MediumTest | Level1)
 {
     // Open 32 files
     int fd32[MAX_NUM_OF_OPENED_FILES] = {0};
     for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
-    { 
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -123,18 +121,19 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testDeleteFileAfterMaxFilesOpened, LEVEL1
         }
         fd32[i] = UtilsFileOpen(fileName32, O_RDWR_FS | O_CREAT_FS, 0);
         UtilsFileWrite(fd32[i], g_def, strlen(g_def));
-    } 
+    }
     // Delete file
     char* fileName1 = "testReli101-1";
+    UtilsFileClose(fd32[0]);   
     int ret = UtilsFileDelete(fileName1);
-    TEST_ASSERT_EQUAL_INT(-1, ret);
-    // Close file
-    UtilsFileClose(fd32[FILE_INDEX_31]);
-    ret = UtilsFileDelete(fileName1);
     TEST_ASSERT_EQUAL_INT(0, ret);
     // Delete all files
-    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    for (int i = 1; i < MAX_NUM_OF_OPENED_FILES; i++)
     { 
+        UtilsFileClose(fd32[i]);
+    } 
+    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -142,23 +141,20 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testDeleteFileAfterMaxFilesOpened, LEVEL1
         TEST_ASSERT_EQUAL_INT(0, 1);
         }
         UtilsFileDelete(fileName32);
-    } 
+    }
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1300
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5400
  * @tc.name      : Copy file after max files opened
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testCopyFileAfterMaxFilesOpened, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testCopyFileAfterMaxFilesOpened, Function | MediumTest | Level1)
 {
     // Open 32 files
     int fd32[MAX_NUM_OF_OPENED_FILES] = {0};
     for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
-    { 
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -167,7 +163,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCopyFileAfterMaxFilesOpened, LEVEL1)
         }
         fd32[i] = UtilsFileOpen(fileName32, O_RDWR_FS | O_CREAT_FS, 0);
         UtilsFileWrite(fd32[i], g_def, strlen(g_def));
-    } 
+    }
     // Copy file
     char* fileName1 = "testReli101-1";
     char* fileNameCopy = "testReliCopy";
@@ -182,8 +178,12 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCopyFileAfterMaxFilesOpened, LEVEL1)
     ret = UtilsFileCopy(fileName1, fileNameCopy);
     TEST_ASSERT_EQUAL_INT(0, ret);
     // Delete all files
-    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    for (int i = 2; i < MAX_NUM_OF_OPENED_FILES; i++)
     { 
+        UtilsFileClose(fd32[i]);
+    }
+    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -191,24 +191,21 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testCopyFileAfterMaxFilesOpened, LEVEL1)
         TEST_ASSERT_EQUAL_INT(0, 1);
         }
         UtilsFileDelete(fileName32);
-    } 
+    }
     UtilsFileDelete(fileNameCopy);
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1300
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5500
  * @tc.name      : Move file after max files opened
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testMoveFileAfterMaxFilesOpened, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testMoveFileAfterMaxFilesOpened, Function | MediumTest | Level1)
 {
     // Open 32 files
     int fd32[MAX_NUM_OF_OPENED_FILES] = {0};
     for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
-    { 
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -218,7 +215,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testMoveFileAfterMaxFilesOpened, LEVEL1)
         fd32[i] = UtilsFileOpen(fileName32, O_RDWR_FS | O_CREAT_FS, 0);
         UtilsFileWrite(fd32[i], g_def, strlen(g_def));
     }
-    // Move file  
+    // Move file
     char* fileName1 = "testReli101-1";
     char* fileNameMove = "testReliMove";
     int ret = UtilsFileMove(fileName1, fileNameMove);
@@ -232,8 +229,12 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testMoveFileAfterMaxFilesOpened, LEVEL1)
     ret = UtilsFileMove(fileName1, fileNameMove);
     TEST_ASSERT_EQUAL_INT(0, ret);
     // Delete all files
-    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    for (int i = 2; i < MAX_NUM_OF_OPENED_FILES; i++)
     { 
+        UtilsFileClose(fd32[i]);
+    }
+    for (int i = 0; i < MAX_NUM_OF_OPENED_FILES; i++)
+    {
         int j = i + 1;
         char fileName32[LENGTH_OF_FILE_NAME_BUF] = {0};
         int size = sprintf_s(fileName32, sizeof(fileName32), "%s%d", "testReli101-", j);
@@ -241,19 +242,16 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testMoveFileAfterMaxFilesOpened, LEVEL1)
         TEST_ASSERT_EQUAL_INT(0, 1);
         }
         UtilsFileDelete(fileName32);
-    } 
+    }
     UtilsFileDelete(fileNameMove);
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1400 
- * @tc.name      : File operation flow
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5600
+ * @tc.name      : File operation flow for copied file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow001, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow001, Function | MediumTest | Level1)
 {
     char* fileName1 = "testReli102a";
     char* fileName2 = "testReli102b";
@@ -265,7 +263,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow001, LEVEL1)
     UtilsFileCopy(fileName1, fileName2);
     // File operation for copied file
     unsigned int fileLen = 0;
-    int ret = UtilsFileStat(fileName2, &fileLen); 
+    int ret = UtilsFileStat(fileName2, &fileLen);
     TEST_ASSERT_EQUAL_INT(0, ret);
     int fd2 = UtilsFileOpen(fileName2, O_RDWR_FS | O_APPEND_FS, 0);
     TEST_ASSERT_GREATER_THAN_INT(0, fd2);
@@ -286,14 +284,11 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1400 
- * @tc.name      : File operation flow
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5700
+ * @tc.name      : File operation flow for moved file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow002, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow002, Function | MediumTest | Level1)
 {
     char* fileName1 = "testReli102a";
     char* fileName2 = "testReli102b";
@@ -309,7 +304,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow002, LEVEL1)
     TEST_ASSERT_EQUAL_INT(0, ret);
     // File operation for moved file
     unsigned int fileLen = 0;
-    ret = UtilsFileStat(fileName3, &fileLen); 
+    ret = UtilsFileStat(fileName3, &fileLen);
     TEST_ASSERT_EQUAL_INT(0, ret);
     int fd2 = UtilsFileOpen(fileName3, O_RDWR_FS | O_APPEND_FS, 0);
     TEST_ASSERT_GREATER_THAN_INT(0, fd2);
@@ -332,14 +327,11 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testFileOperFlow002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1500
- * @tc.name      : File operation flow for empty file
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5800
+ * @tc.name      : File operation flow for copied empty file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow001, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow001, Function | MediumTest | Level1)
 {
     char* fileName1 = "testReli103a";
     char* fileName2 = "testReli103b";
@@ -351,7 +343,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow001, LEVEL1)
     TEST_ASSERT_EQUAL_INT(0, ret);
     // File operation for copied file
     unsigned int fileLen = 0;
-    ret = UtilsFileStat(fileName2, &fileLen); 
+    ret = UtilsFileStat(fileName2, &fileLen);
     TEST_ASSERT_EQUAL_INT(0, ret);
     int fd2 = UtilsFileOpen(fileName2, O_RDWR_FS, 0);
     TEST_ASSERT_GREATER_THAN_INT(0, fd2);
@@ -370,14 +362,11 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1500
- * @tc.name      : File operation flow for empty file
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5900
+ * @tc.name      : File operation flow for moved empty file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : RELI
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow002, LEVEL1)
+LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow002, Function | MediumTest | Level1)
 {
     char* fileName1 = "testReli103a";
     char* fileName2 = "testReli103b";
@@ -392,7 +381,7 @@ LITE_TEST_CASE(UtilsFileReliTestSuite, testEmptyFileOperFlow002, LEVEL1)
     TEST_ASSERT_EQUAL_INT(0, ret);
     // File operation for moved file
     unsigned int fileLen = 0;
-    ret = UtilsFileStat(fileName3, &fileLen); 
+    ret = UtilsFileStat(fileName3, &fileLen);
     TEST_ASSERT_EQUAL_INT(0, ret);
     int fd2 = UtilsFileOpen(fileName3, O_RDWR_FS, 0);
     TEST_ASSERT_GREATER_THAN_INT(0, fd2);

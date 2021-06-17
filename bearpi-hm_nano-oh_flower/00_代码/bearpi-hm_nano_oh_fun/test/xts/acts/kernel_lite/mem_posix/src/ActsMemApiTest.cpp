@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@
 
 #include "gtest/gtest.h"
 #include "XtsActsUtil.h"
-#include "XtsActsMemApiExpect.h"
+#include "KernelConstants.h"
 
 using namespace testing::ext;
 
@@ -55,7 +55,7 @@ protected:
 * @tc.name       test bcmp api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemBcmp_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemBcmp_0100, Function | MediumTest | Level1) {
     char str1[] = "this is string1";
     char str2[] = "this is string2";
     int returnVal;
@@ -72,7 +72,7 @@ HWTEST_F(ActsMemApiTest, testMemBcmp_0100, TestSize.Level1) {
 * @tc.name       test bcmp api NE
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemBcmp_1000, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemBcmp_1000, Function | MediumTest | Level1) {
     char str1[] = "this is string1";
     char str2[] = "this is string2";
     int returnVal;
@@ -89,7 +89,7 @@ HWTEST_F(ActsMemApiTest, testMemBcmp_1000, TestSize.Level1) {
 * @tc.name       test bcopy api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemBcopy_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemBcopy_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this";
     char destStr[] = "00000000";
     int iRtn = 1;
@@ -116,7 +116,7 @@ HWTEST_F(ActsMemApiTest, testMemBcopy_0100, TestSize.Level1) {
 * @tc.name       test bzero api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemBzero_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemBzero_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this is string1";
     char destStr[] = "this is string1";
     int iFlag = 1;
@@ -145,7 +145,7 @@ HWTEST_F(ActsMemApiTest, testMemBzero_0100, TestSize.Level1) {
 * @tc.name       test malloc_usable_size api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMallocUsableSize_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMallocUsableSize_0100, Function | MediumTest | Level1) {
     char *pt = nullptr;
     size_t size;
 	
@@ -159,7 +159,7 @@ HWTEST_F(ActsMemApiTest, testMallocUsableSize_0100, TestSize.Level1) {
     size = malloc_usable_size(pt);
     LogPrint("    malloc_usable_size *ptr:='%x',   --> return size:='%d'\n", pt, size);
 
-    EXPECT_GT(size, 1)
+    EXPECT_GT((int)size, 1)
         << "ErrInfo: malloc_usable_size *ptr:='" << pt << "',   --> return size:='" << size << "'";
     free(pt);
 }
@@ -169,15 +169,14 @@ HWTEST_F(ActsMemApiTest, testMallocUsableSize_0100, TestSize.Level1) {
 * @tc.name       test malloc_usable_size api exception null
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMallocUsableSize_1000, TestSize.Level1) {
-    char *pt = nullptr;
+HWTEST_F(ActsMemApiTest, testMallocUsableSize_1000, Function | MediumTest | Level1) {
     size_t size;
 	
-    size = malloc_usable_size(NULL);
-    LogPrint("    malloc_usable_size *ptr:='NULL',   --> return size:='%d'\n", size);
+    size = malloc_usable_size(nullptr);
+    LogPrint("    malloc_usable_size *ptr:='nullptr',   --> return size:='%d'\n", size);
 
-    EXPECT_EQ(size, 0)
-        << "ErrInfo: malloc_usable_size *ptr:='NULL',   --> return size:='" << size << "'";
+    EXPECT_EQ((int)size, 0)
+        << "ErrInfo: malloc_usable_size *ptr:='nullptr',   --> return size:='" << size << "'";
 }
 
 /**
@@ -185,7 +184,7 @@ HWTEST_F(ActsMemApiTest, testMallocUsableSize_1000, TestSize.Level1) {
 * @tc.name       test memccpy api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemCcpy_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemCcpy_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this is str1:stop here";
     char destStr[] = "000000000000000000000000";
     char *pt = nullptr;
@@ -203,7 +202,7 @@ HWTEST_F(ActsMemApiTest, testMemCcpy_0100, TestSize.Level1) {
 * @tc.name       test memccpy api not find c
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemCcpy_0200, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemCcpy_0200, Function | MediumTest | Level1) {
     char srcStr[] = "this is str1:stop here";
     char destStr[] = "000000000000000000000000";
     char *pt = nullptr;
@@ -221,10 +220,9 @@ HWTEST_F(ActsMemApiTest, testMemCcpy_0200, TestSize.Level1) {
 * @tc.name       test mempcpy api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMempcpy_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMempcpy_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this is str1";
     char destStr[] = "00000000000000000000";
-    size_t size;
     char *pt = nullptr;
 
     LogPrint("    mempcpy *dest:='%s' *src:='%s' size:='16',", destStr, srcStr);
@@ -240,7 +238,7 @@ HWTEST_F(ActsMemApiTest, testMempcpy_0100, TestSize.Level1) {
 * @tc.name       test memchr api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemchr_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemchr_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this is str a;";
     char *pos = nullptr;
 
@@ -258,7 +256,7 @@ HWTEST_F(ActsMemApiTest, testMemchr_0100, TestSize.Level1) {
 * @tc.name       test memchr api para len not enough
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemchr_1000, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemchr_1000, Function | MediumTest | Level1) {
     char srcStr[] = "this is str a;";
     char *pos = nullptr;
 
@@ -275,7 +273,7 @@ HWTEST_F(ActsMemApiTest, testMemchr_1000, TestSize.Level1) {
 * @tc.name       test memchr api para c not found
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemchr_1100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemchr_1100, Function | MediumTest | Level1) {
     char srcStr[] = "this is str a;";
     char *pos = nullptr;
 
@@ -292,7 +290,7 @@ HWTEST_F(ActsMemApiTest, testMemchr_1100, TestSize.Level1) {
 * @tc.name       test memmem api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemmem_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemmem_0100, Function | MediumTest | Level1) {
     char srcStr[] = "this is str a;";
     char srcSubStr[] = "str";
     char *pos = nullptr;
@@ -313,7 +311,7 @@ HWTEST_F(ActsMemApiTest, testMemmem_0100, TestSize.Level1) {
 * @tc.name       test memmem api para not found
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemmem_1000, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testMemmem_1000, Function | MediumTest | Level1) {
     char srcStr[] = "this is str a;";
     char srcSubStr[] = "strb";
     char *pos = nullptr;
@@ -334,7 +332,7 @@ HWTEST_F(ActsMemApiTest, testMemmem_1000, TestSize.Level1) {
 * @tc.name       test open_memstream api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testOpenMemStream_0100, TestSize.Level1) {
+HWTEST_F(ActsMemApiTest, testOpenMemStream_0100, Function | MediumTest | Level1) {
     FILE *memStream;
     char *ptr = nullptr;
     size_t sizeLoc;
@@ -364,12 +362,12 @@ HWTEST_F(ActsMemApiTest, testOpenMemStream_0100, TestSize.Level1) {
 * @tc.name       test getpagesize api
 * @tc.desc       [C- SOFTWARE -0200]
 */
-HWTEST_F(ActsMemApiTest, testMemGetpagesize_0100, TestSize.Level1) {
-    int returnVal;
+HWTEST_F(ActsMemApiTest, testMemGetpagesize_0100, Function | MediumTest | Level1) {
+    size_t returnVal;
 
     returnVal = getpagesize();
     LogPrint("    getpagesize,   --> returnVal:='%d'\n", returnVal);
-    EXPECT_GE(returnVal, 0);
-    EXPECT_EQ(returnVal, XTS_ACTS_MEM_API_EXPECT_PAGESIZE)
+    EXPECT_GE(returnVal, 0U);
+    EXPECT_EQ(returnVal, PAGE_SIZE)
         << "ErrInfo: getpagesize,   --> returnVal:='" << returnVal << "'";
 }

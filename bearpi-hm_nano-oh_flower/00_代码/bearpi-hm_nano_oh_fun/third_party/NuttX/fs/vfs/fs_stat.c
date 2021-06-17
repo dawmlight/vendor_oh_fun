@@ -229,6 +229,11 @@ int stat(FAR const char *path, FAR struct stat *buf)
   else
 #endif
     {
+      if (strlen(relpath) > 0)
+        {
+          ret = ENOENT;
+          goto errout_with_inode;
+        }
       /* The node is part of the root pseudo file system */
 
       if (VfsPermissionCheck(desc.parent->i_uid, desc.parent->i_gid, desc.parent->i_mode, EXEC_OP))

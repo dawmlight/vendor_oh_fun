@@ -28,13 +28,21 @@ const unsigned int PREFIX_LEN = strlen(FILE_PREFIX);
 
 bool IsValidPath(const char* path)
 {
-    if ((path == nullptr) || (strlen(path) > URI_NAME_MAX_LEN)) {
+    if (path == nullptr) {
         return false;
     }
-    if ((strlen(path) < PREFIX_LEN) || (strncmp(path, FILE_PREFIX, PREFIX_LEN) != 0)) {
+
+    size_t pathLen = strnlen(path, URI_NAME_MAX_LEN + 1);
+    if (pathLen > URI_NAME_MAX_LEN) {
+        return false;
+    }
+    if ((pathLen < PREFIX_LEN) || (strncmp(path, FILE_PREFIX, PREFIX_LEN) != 0)) {
         return false;
     }
     if ((strstr(path, "/./") != nullptr) || (strstr(path, "/../") != nullptr)) {
+        return false;
+    }
+    if (strpbrk(path + PREFIX_LEN, "\"*+,:;<=>\?[]|\x7F")) {
         return false;
     }
     return true;
@@ -161,7 +169,7 @@ int GetFileListInner(const char* path, const char* key, JSIValue& result)
     if (fileNum <= 0) {
         return fileNum;
     }
-    FileMetaInfo *fileList = reinterpret_cast<FileMetaInfo *>(malloc(fileNum * sizeof(FileMetaInfo)));
+    FileMetaInfo* fileList = reinterpret_cast<FileMetaInfo *>(malloc(fileNum * sizeof(FileMetaInfo)));
     if (fileList == nullptr) {
         return ERROR_CODE_GENERAL;
     }

@@ -1,6 +1,10 @@
 #ifndef _TGMATH_H
 #define _TGMATH_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <tgmath.h>
+#else
+
 /*
 the return types are only correct with gcc (__GNUC__)
 otherwise they are long double or long double complex
@@ -267,4 +271,5 @@ so they can be in null pointer constants
 #define tgamma(x)       __tg_real(tgamma, (x))
 #define trunc(x)        __tg_real(trunc, (x))
 
+#endif /* __ICCARM__ */
 #endif

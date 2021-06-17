@@ -1,7 +1,6 @@
 #include "stdio_impl.h"
 #include <fcntl.h>
 #include <unistd.h>
-#include <unsupported_api.h>
 
 /* The basic idea of this implementation is to open a new FILE,
  * hack the necessary parts of the new FILE into the old one, then
@@ -16,7 +15,6 @@ FILE *freopen(const char *restrict filename, const char *restrict mode, FILE *re
 	int fl = __fmodeflags(mode);
 	FILE *f2;
 
-	unsupported_api(__FUNCTION__);
 	FLOCK(f);
 
 	fflush(f);

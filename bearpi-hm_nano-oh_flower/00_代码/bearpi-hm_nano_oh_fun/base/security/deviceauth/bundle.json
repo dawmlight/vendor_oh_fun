@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/hichainsdk",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "提供设备互连安全认证能力",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/base/security/deviceauth && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/security_deviceauth",
+    "tags": [
+        "base"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "base",
+        "hichainsdk"
+    ]
+}

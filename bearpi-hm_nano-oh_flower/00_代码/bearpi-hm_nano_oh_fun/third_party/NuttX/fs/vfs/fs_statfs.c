@@ -131,17 +131,39 @@ int statfs(FAR const char *path, FAR struct statfs *buf)
        * supports the statfs() method
        */
 
-      if (inode->u.i_mops && inode->u.i_mops->statfs)
+      if (inode->u.i_mops && inode->u.i_mops->stat && inode->u.i_mops->statfs)
         {
-          /* Perform the statfs() operation */
+          struct stat *statbuf = LOS_MemAlloc(m_aucSysMem0, sizeof(struct stat));
+          if (statbuf == NULL)
+            {
+              ret = ENOMEM;
+            }
+          else
+            {
+              /* Check whether the path is available or not */
 
-          ret = inode->u.i_mops->statfs(inode, buf);
+              ret = inode->u.i_mops->stat(inode, desc.relpath, statbuf);
+              if (ret == 0)
+                {
+                  /* Perform the statfs() operation */
+
+                  (void)memset_s((void *)buf, sizeof(struct statfs), 0, sizeof(struct statfs));
+                  ret = inode->u.i_mops->statfs(inode, buf);
+                }
+              (VOID)LOS_MemFree(m_aucSysMem0, statbuf);
+            }
         }
     }
   else
 #endif
     {
       /* The node is part of the root pseudo file system */
+
+      if (strlen(desc.relpath) > 0)
+        {
+          ret = ENOENT;
+          goto errout_with_inode;
+        }
 
       ret = statpseudofs(inode, buf);
     }

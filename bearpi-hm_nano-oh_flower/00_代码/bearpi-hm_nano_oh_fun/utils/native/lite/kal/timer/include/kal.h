@@ -36,7 +36,7 @@ typedef enum {
     KAL_ERR_TIMER_STATE = 0x100,
 } KalErrCode;
 
-KalTimerId KalTimerCreate(KalTimerProc func, KalTimerType type, void *arg, unsigned int millisec);
+KalTimerId KalTimerCreate(KalTimerProc func, KalTimerType type, void* arg, unsigned int millisec);
 KalErrCode KalTimerStart(KalTimerId timerId);
 KalErrCode KalTimerChange(KalTimerId timerId, unsigned int millisec);
 KalErrCode KalTimerStop(KalTimerId timerId);

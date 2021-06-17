@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Huawei Device Co., Ltd.
+/* Copyright (c) 2020-2021 Huawei Device Co., Ltd.
     * Licensed under the Apache License, Version 2.0 (the "License");
     * you may not use this file except in compliance with the License.
     * You may obtain a copy of the License at
@@ -58,13 +58,12 @@ static BOOL SecurityDataHuksExportHashRandomHmacTestSuiteTearDown(void)
 // begin++++++++++++++++++++++++++++++++++++++++++++++1000-1090
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
+ * @tc.name      : Export Public Key, normal input parameters keyAlias and publicKey
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1000, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1000, Function | MediumTest | Level1)
 {
     int32_t status;
     char testFileName[] = "keyalias1";
@@ -85,16 +84,15 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1010
+ * @tc.name      : Export Public Key, abnormal input parameters keyAlias is null
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1010, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1010, Function | MediumTest | Level2)
 {
     int32_t status;
-    struct hks_blob *keyAlias = NULL; // = NULL
+    struct hks_blob *keyAlias = NULL;
     struct hks_blob publicKey1 = { 0 };
 
     publicKey1.data = (uint8_t *)malloc(NUM32);
@@ -110,19 +108,18 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1020
+ * @tc.name      : Export Public Key, abnormal input parameters keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1020, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1020, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
     struct hks_blob keyAlias = { 0 };
     struct hks_blob publicKey1 = { 0 };
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
@@ -139,13 +136,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1030
+ * @tc.name      : Export Public Key, abnormal input parameters keyAlias.type is not equal to HKS_BLOB_TYPE_ALIAS
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1030, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1030, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -153,7 +149,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
     struct hks_blob publicKey1 = { 0 };
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
-    keyAlias.type = 0; // != HKS_BLOB_TYPE_ALIAS
+    keyAlias.type = 0;
 
     publicKey1.data = (uint8_t *)malloc(NUM32);
     if (publicKey1.data == NULL) {
@@ -168,13 +164,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1040
+ * @tc.name      : Export Public Key, abnormal input parameters keyAlias.size is 0
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1040, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1040, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -182,7 +177,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
     struct hks_blob publicKey1 = { 0 };
 
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = 0; // = 0
+    keyAlias.size = 0;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     publicKey1.data = (uint8_t *)malloc(NUM32);
@@ -198,13 +193,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1050
+ * @tc.name      : Export Public Key, abnormal input parameters keyAlias.size is more than 64
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1050, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1050, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -212,7 +206,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
     struct hks_blob publicKey1 = { 0 };
 
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = NUM65; // > 64
+    keyAlias.size = NUM65;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     publicKey1.data = (uint8_t *)malloc(NUM32);
@@ -228,18 +222,17 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1060
+ * @tc.name      : Export Public Key, abnormal input parameters publicKey is null
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1060, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1060, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
     struct hks_blob keyAlias = { 0 };
-    struct hks_blob *publicKey1 = NULL; // = NULL
+    struct hks_blob *publicKey1 = NULL;
 
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
@@ -251,13 +244,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1070
+ * @tc.name      : Export Public Key, abnormal input parameters publicKey.size is less than 32
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1070, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1070, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -272,7 +264,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
     if (publicKey1.data == NULL) {
         return;
     }
-    publicKey1.size = NUM31; // < 32
+    publicKey1.size = NUM31;
     publicKey1.type = HKS_BLOB_TYPE_KEY;
 
     status = hks_export_public_key(&keyAlias, &publicKey1);
@@ -281,13 +273,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1080
+ * @tc.name      : Export Public Key, abnormal input parameters publicKey.data is null
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1080, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1080, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -298,7 +289,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
-    publicKey1.data = NULL; // = NULL
+    publicKey1.data = NULL;
     publicKey1.size = NUM32;
     publicKey1.type = HKS_BLOB_TYPE_KEY;
 
@@ -308,13 +299,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0700
- * @tc.name      : Export Public Key
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1090
+ * @tc.name      : Export Public Key, the key does not exist
  * @tc.desc      : [C- SECURITY -1800]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExportPublicKey1090, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataExportPublicKey1090, Function | MediumTest | Level2)
 {
     int32_t status;
     char testFileName[] = "Test_file_north_interfaces";
@@ -344,13 +334,11 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataExport
 // begin+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++1100-1190
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1100
+ * @tc.name      : Hash, normal input parameters SHA256, src, dst
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1100, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1100, Function | MediumTest | Level1)
 {
     struct hks_blob src, dst;
     src.data = (uint8_t *)"123456";
@@ -367,13 +355,11 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1110
+ * @tc.name      : Hash, normal input parameters SHA512, src, dst
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1110, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1110, Function | MediumTest | Level1)
 {
     struct hks_blob src, dst;
     src.data = (uint8_t *)"123456";
@@ -390,13 +376,11 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1120
+ * @tc.name      : Hash, normal input parameters alg is not equal to HKS_ALG_HASH_SHA_256 or HKS_ALG_HASH_SHA_512
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1120, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1120, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
@@ -406,7 +390,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
     const char tmpData7[] = "3031323334353637383961626364656630313233343536373839616263646566";
     BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM32, 0);
 
-    uint32_t alg = HKS_ALG_HASH_SHA_1; // != HKS_ALG_HASH_SHA_256 HKS_ALG_HASH_SHA_512
+    uint32_t alg = HKS_ALG_HASH_SHA_1;
     int32_t status = hks_hash(alg, &srcData, &hash);
     HksBlobDestroyT1(&srcData);
     HksBlobDestroyT1(&hash);
@@ -414,15 +398,13 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1130
+ * @tc.name      : Hash, normal input parameters srcData is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1130, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1130, Function | MediumTest | Level2)
 {
-    struct hks_blob *srcData = NULL; // = NULL
+    struct hks_blob *srcData = NULL;
 
     struct hks_blob hash = { 0 };
     const char tmpData7[] = "3031323334353637383961626364656630313233343536373839616263646566";
@@ -435,17 +417,15 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1140
+ * @tc.name      : Hash, normal input parameters srcData.data is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1140, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1140, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
-    BuildBlobData(&srcData, tmpData6, HKS_BLOB_TYPE_RAW, NUM16, 1); // srcData.data = NULL
+    BuildBlobData(&srcData, tmpData6, HKS_BLOB_TYPE_RAW, NUM16, 1);
 
     struct hks_blob hash = { 0 };
     const char tmpData7[] = "3031323334353637383961626364656630313233343536373839616263646566";
@@ -459,17 +439,15 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1150
+ * @tc.name      : Hash, normal input parameters srcData.size is 0
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1150, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1150, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     srcData.data = (uint8_t *)"1234567890abcdefghigkl0123456789";
-    srcData.size = 0; // = 0
+    srcData.size = 0;
     srcData.type = HKS_BLOB_TYPE_RAW;
 
     struct hks_blob hash = { 0 };
@@ -483,19 +461,17 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1160
+ * @tc.name      : Hash, normal input parameters hash is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1160, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1160, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
     BuildBlobData(&srcData, tmpData6, HKS_BLOB_TYPE_RAW, NUM16, 0);
 
-    struct hks_blob *hash = NULL; //  = NULL
+    struct hks_blob *hash = NULL;
 
     uint32_t alg = HKS_ALG_HASH_SHA_256;
     int32_t status = hks_hash(alg, &srcData, hash);
@@ -504,13 +480,11 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1170
+ * @tc.name      : Hash, normal input parameters hash.data is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1170, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1170, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
@@ -518,7 +492,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 
     struct hks_blob hash = { 0 };
     const char tmpData7[] = "3031323334353637383961626364656630313233343536373839616263646566";
-    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM32, 1); // hash.data = NULL
+    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM32, 1);
 
     uint32_t alg = HKS_ALG_HASH_SHA_256;
     int32_t status = hks_hash(alg, &srcData, &hash);
@@ -528,13 +502,11 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1180
+ * @tc.name      : Hash, normal input parameters hash.size is less than 32
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1180, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1180, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
@@ -542,7 +514,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 
     struct hks_blob hash = { 0 };
     const char tmpData7[] = "303132333435363738396162636465663031323334353637383961626361";
-    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM30, 0); // hash.size < 32
+    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM30, 0);
 
     uint32_t alg = HKS_ALG_HASH_SHA_256;
     int32_t status = hks_hash(alg, &srcData, &hash);
@@ -552,21 +524,20 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1600
- * @tc.name      : Hash
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1190
+ * @tc.name      : Hash, normal input parameters hash.size is less than 64
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1190, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash1190, Function | MediumTest | Level2)
 {
     struct hks_blob srcData = { 0 };
     const char tmpData6[] = "30313233343536373839616263646566";
     BuildBlobData(&srcData, tmpData6, HKS_BLOB_TYPE_RAW, NUM16, 0);
 
     struct hks_blob hash = { 0 };
-    const char tmpData7[] = "303132333435363738396162636465663031323334353637383961626361303132333435363738396162636465663031323334353637383961626361";
-    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM60, 0); // hash.size < 64
+    const char tmpData7[] = "3031323334353637383961626364656630313233343536373839616263613031323334353637383961626"
+    "36465663031323334353637383961626361";
+    BuildBlobData(&hash, tmpData7, HKS_BLOB_TYPE_RAW, NUM60, 0);
 
     uint32_t alg = HKS_ALG_HASH_SHA_512;
     int32_t status = hks_hash(alg, &srcData, &hash);
@@ -583,13 +554,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataHash11
 // beign++++++++++++++++++++++++++++++++++++++++++++++++1200-1230
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0800
- * @tc.name      : Generate Random
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1200
+ * @tc.name      : Generate Random, normal input parameters random
  * @tc.desc      : [C- SECURITY -1700]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenerateRandom1200, LEVEL1)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataGenerateRandom1200, Function | MediumTest | Level1)
 {
     int32_t statusFirst;
     int32_t statusSecond;
@@ -609,34 +579,32 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenera
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0800
- * @tc.name      : Generate Random
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1210
+ * @tc.name      : Generate Random, normal input parameters random is null
  * @tc.desc      : [C- SECURITY -1700]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenerateRandom1210, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataGenerateRandom1210, Function | MediumTest | Level2)
 {
     int32_t status;
-    struct hks_blob *random = NULL; // = NULL
+    struct hks_blob *random = NULL;
 
     status = hks_generate_random(random);
     TEST_ASSERT_EQUAL_INT(NUM1000, status);
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0800
- * @tc.name      : Generate Random
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1220
+ * @tc.name      : Generate Random, normal input parameters random.data is null
  * @tc.desc      : [C- SECURITY -1700]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenerateRandom1220, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataGenerateRandom1220, Function | MediumTest | Level2)
 {
     int32_t status;
     struct hks_blob random = { 0 };
 
-    random.data = NULL; // = NULL
+    random.data = NULL;
     random.size = NUM32;
     random.type = HKS_BLOB_TYPE_KEY;
 
@@ -646,13 +614,12 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenera
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0800
- * @tc.name      : Generate Random
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_1230
+ * @tc.name      : Generate Random, normal input parameters random.size is more than 1024
  * @tc.desc      : [C- SECURITY -1700]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenerateRandom1230, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite,
+securityDataGenerateRandom1230, Function | MediumTest | Level2)
 {
     int32_t status;
     struct hks_blob random = { 0 };
@@ -661,7 +628,7 @@ LITE_TEST_CASE(SecurityDataHuksExportHashRandomHmacTestSuite, securityDataGenera
     if (random.data == NULL) {
         return;
     }
-    random.size = NUM1025; // > 1024
+    random.size = NUM1025;
     random.type = HKS_BLOB_TYPE_KEY;
 
     status = hks_generate_random(&random);

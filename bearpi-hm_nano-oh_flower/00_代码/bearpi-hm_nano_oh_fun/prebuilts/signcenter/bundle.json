@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/signcenter_tool",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "在OpenHarmony构建中需要对应用进行签名，以此保证应用完整性和来源可靠。本仓提供二进制签名工具（hapsigntoolv2.jar），用于OpenHarmony应用签名",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/prebuilts/signcenter && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/signcenter_tool",
+    "tags": [
+        "prebuilts"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2, The Bouncy Castle License",
+    "keywords": [
+        "prebuilts",
+        "signcentertool"
+    ]
+}

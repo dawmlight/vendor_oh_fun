@@ -2,9 +2,47 @@
 
 # ssl-opt.sh
 #
-# This file is part of mbed TLS (https://tls.mbed.org)
+# Copyright The Mbed TLS Contributors
+# SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
 #
-# Copyright (c) 2016, ARM Limited, All Rights Reserved
+# This file is provided under the Apache License 2.0, or the
+# GNU General Public License v2.0 or later.
+#
+# **********
+# Apache License 2.0:
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# **********
+#
+# **********
+# GNU General Public License v2.0 or later:
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# **********
 #
 # Purpose
 #
@@ -365,7 +403,7 @@ fail() {
     fi
     echo "  ! outputs saved to o-XXX-${TESTS}.log"
 
-    if [ "X${USER:-}" = Xbuildbot -o "X${LOGNAME:-}" = Xbuildbot -o "${LOG_FAILURE_ON_STDOUT:-0}" != 0 ]; then
+    if [ "${LOG_FAILURE_ON_STDOUT:-0}" != 0 ]; then
         echo "  ! server output:"
         cat o-srv-${TESTS}.log
         echo "  ! ========================================================"
@@ -581,15 +619,25 @@ run_test() {
         return
     fi
 
+    # update DTLS variable
+    detect_dtls "$SRV_CMD"
+
+    # if the test uses DTLS but no custom proxy, add a simple proxy
+    # as it provides timing info that's useful to debug failures
+    if [ -z "$PXY_CMD" ] && [ "$DTLS" -eq 1 ]; then
+        PXY_CMD="$P_PXY"
+        case " $SRV_CMD " in
+            *' server_addr=::1 '*)
+                PXY_CMD="$PXY_CMD server_addr=::1 listen_addr=::1";;
+        esac
+    fi
+
     # fix client port
     if [ -n "$PXY_CMD" ]; then
         CLI_CMD=$( echo "$CLI_CMD" | sed s/+SRV_PORT/$PXY_PORT/g )
     else
         CLI_CMD=$( echo "$CLI_CMD" | sed s/+SRV_PORT/$SRV_PORT/g )
     fi
-
-    # update DTLS variable
-    detect_dtls "$SRV_CMD"
 
     # prepend valgrind to our commands if active
     if [ "$MEMCHECK" -gt 0 ]; then
@@ -607,19 +655,19 @@ run_test() {
 
         # run the commands
         if [ -n "$PXY_CMD" ]; then
-            echo "$PXY_CMD" > $PXY_OUT
+            printf "# %s\n%s\n" "$NAME" "$PXY_CMD" > $PXY_OUT
             $PXY_CMD >> $PXY_OUT 2>&1 &
             PXY_PID=$!
             wait_proxy_start "$PXY_PORT" "$PXY_PID"
         fi
 
         check_osrv_dtls
-        echo "$SRV_CMD" > $SRV_OUT
+        printf "# $NAME\n$SRV_CMD\n" > $SRV_OUT
         provide_input | $SRV_CMD >> $SRV_OUT 2>&1 &
         SRV_PID=$!
         wait_server_start "$SRV_PORT" "$SRV_PID"
 
-        echo "$CLI_CMD" > $CLI_OUT
+        printf "# $NAME\n$CLI_CMD\n" > $CLI_OUT
         eval "$CLI_CMD" >> $CLI_OUT 2>&1 &
         wait_client_done
 

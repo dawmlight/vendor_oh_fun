@@ -1,6 +1,10 @@
 #ifndef _THREADS_H
 #define _THREADS_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <threads.h>
+#else
+
 #include <features.h>
 #include <time.h>
 
@@ -90,4 +94,5 @@ __REDIR(cnd_timedwait, __cnd_timedwait_time64);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

@@ -88,7 +88,7 @@ typedef struct Timer
 
 typedef struct Mutex
 {
-	osMutexId_t mutex;
+	osSemaphoreId_t sem;
 } Mutex;
 
 void MutexInit(Mutex*);

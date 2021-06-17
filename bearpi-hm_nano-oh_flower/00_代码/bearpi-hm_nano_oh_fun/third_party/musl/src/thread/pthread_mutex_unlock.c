@@ -6,6 +6,7 @@ int __pthread_mutex_unlock(pthread_mutex_t *m)
 	int waiters = m->_m_waiters;
 	int cont;
 	int type = m->_m_type & PTHREAD_MUTEX_TYPE_MASK;
+	int priv = (m->_m_type & 128) ^ 128;
 	int new = 0;
 	int old;
 
@@ -23,7 +24,7 @@ int __pthread_mutex_unlock(pthread_mutex_t *m)
 	cont = a_swap(&m->_m_lock, new);
 
 	if (waiters || cont<0)
-		__wake(&m->_m_lock, 1, 0);
+		__wake(&m->_m_lock, 1, priv);
 	return 0;
 }
 

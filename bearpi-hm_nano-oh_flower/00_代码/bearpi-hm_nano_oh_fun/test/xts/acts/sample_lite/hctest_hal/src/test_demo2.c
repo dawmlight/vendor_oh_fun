@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,11 +47,8 @@ static BOOL StringTestSuiteTearDown()
  * @tc.number    : Test_Case_300
  * @tc.name      : Verify string check function
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(StringTestSuite, TestCase003, LEVEL1)
+LITE_TEST_CASE(StringTestSuite, TestCase003, Function | MediumTest | Level1)
 {
     const char* value = "testing";
     TEST_ASSERT_EQUAL_STRING(value, "testing1");
@@ -61,11 +58,8 @@ LITE_TEST_CASE(StringTestSuite, TestCase003, LEVEL1)
  * @tc.number    : Test_Case_400
  * @tc.name      : Verify string check function
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(StringTestSuite, TestCase004, LEVEL2)
+LITE_TEST_CASE(StringTestSuite, TestCase004, Function | MediumTest | Level2)
 {
     const char* value = "testing";
     TEST_ASSERT_EQUAL_STRING(value, "testing");

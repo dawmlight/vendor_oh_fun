@@ -1,6 +1,10 @@
 #ifndef _WCHAR_H
 #define _WCHAR_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <wchar.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -202,4 +206,5 @@ wctype_t  wctype(const char *);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

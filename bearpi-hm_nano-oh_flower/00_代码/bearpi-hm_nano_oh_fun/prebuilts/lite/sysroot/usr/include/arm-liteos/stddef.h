@@ -1,6 +1,10 @@
 #ifndef _STDDEF_H
 #define _STDDEF_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <stddef.h>
+#else
+
 #ifdef __cplusplus
 #define NULL 0L
 #else
@@ -22,4 +26,5 @@
 #define offsetof(type, member) ((size_t)( (char *)&(((type *)0)->member) - (char *)0 ))
 #endif
 
+#endif /* __ICCARM__ */
 #endif

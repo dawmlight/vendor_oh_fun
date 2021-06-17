@@ -319,6 +319,10 @@ dns_init(void)
   ip_addr_t dnsserver;
   DNS_SERVER_ADDRESS(&dnsserver);
   dns_setserver(0, &dnsserver);
+#ifdef DNS_SERVER_ADDRESS_SECONDARY
+  DNS_SERVER_ADDRESS_SECONDARY(&dnsserver);
+  dns_setserver(1, &dnsserver);
+#endif
 #endif /* DNS_SERVER_ADDRESS */
 
   LWIP_ASSERT("sanity check SIZEOF_DNS_QUERY",

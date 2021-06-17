@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/freebsd",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "Third-party open-source software FreeBSD | 三方开源软件FreeBSD",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/third_party/FreeBSD && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/FreeBSD",
+    "tags": [
+        "third_party"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "",
+        "board": ""
+    },
+    "license": "BSD 2-Clause License",
+    "keywords": [
+        "thirdparty",
+        "freebsd"
+    ]
+}

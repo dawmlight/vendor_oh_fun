@@ -1,6 +1,6 @@
 {
     "name": "@bearpi/hm_nano_paho_mqtt",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "paho_mqtt",
     "publishAs": "code-segment",
     "scripts": {

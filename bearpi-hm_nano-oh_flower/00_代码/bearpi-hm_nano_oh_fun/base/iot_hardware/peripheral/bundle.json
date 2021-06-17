@@ -1,0 +1,24 @@
+{
+    "name": "@bearpi/bearpi_iot_controller",
+    "version": "1.1.2",
+    "publishAs": "code-segment",
+    "description": "IoT硬件设备操作的接口",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/base/iot_hardware/peripheral && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/iothardware_peripheral",
+    "tags": [
+        "base"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "bearpi_hm_nano"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "base",
+        "iotcontroller",
+        "bearpi"
+    ]
+}

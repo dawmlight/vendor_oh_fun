@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@ static bool g_installState = false;
 static int g_errorCode = -1;
 static sem_t g_sem;
 static const int32_t WAIT_TIMEOUT = 60;
+static string g_testPath;
 
 extern "C" {
 void __attribute__((weak)) HOS_SystemInit(void){};
@@ -40,14 +41,27 @@ static void TestBundleStateCallback(const uint8_t resultCode, const void *result
 {
     HILOG_DEBUG(HILOG_MODULE_APP, "TestBundleStateCallback resultCode: %d", resultCode);
     HILOG_DEBUG(HILOG_MODULE_APP, "TestBundleStateCallback resultMessage: %s", (char *) resultMessage);
-    if (resultCode == 0) {
-        g_installState = true;
-        g_errorCode = resultCode;
-    } else {
-        g_installState = false;
-        g_errorCode = resultCode;
-    }
+    g_installState = (resultCode == 0);
+    g_errorCode = resultCode;
     sem_post(&g_sem);
+}
+
+/* *
+ * get current dir
+ * @return  string current file path of the test suits
+ */
+static string GetCurDir()
+{
+    string filePath = "";
+    char *buffer;
+    if ((buffer = getcwd(NULL, 0)) == NULL) {
+        perror("get file path error");
+    } else {
+        printf("Current Dir: %s\r\n", buffer);
+        filePath = buffer;
+        free(buffer);
+    }
+    return filePath + "/";
 }
 
 class BundleMgrTest : public testing::Test {
@@ -57,30 +71,33 @@ protected:
         printf("----------test case with BundleMgrTest start-------------\n");
         HOS_SystemInit();
         sem_init(&g_sem, 0, 0);
-        bool installResult = Install("/test_root/appexecfwk/testjsdemo.hap", nullptr, TestBundleStateCallback);
+        InstallParam installParam = { .installLocation = 1, .keepData = false };
+        g_testPath = GetCurDir();
+        string hapPath = g_testPath + "testjsdemo.hap";
+        Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
         sem_wait(&g_sem);
-        EXPECT_TRUE(installResult);
+        printf("callback installresult is %d \n", g_errorCode);
+        EXPECT_EQ(g_errorCode, 0);
     }
     static void TearDownTestCase(void)
     {
         sem_init(&g_sem, 0, 0);
-        bool uninstallState = Uninstall("com.huawei.testjsdemo", nullptr, TestBundleStateCallback);
+        InstallParam installParam = { .installLocation = 1, .keepData = false };
+        Uninstall("com.huawei.testjsdemo", &installParam, TestBundleStateCallback);
         sem_wait(&g_sem);
-        EXPECT_TRUE(uninstallState);
+        printf("callback uninstallresult is %d \n", g_errorCode);
+        EXPECT_EQ(g_errorCode, 0);
         printf("----------test case with BundleMgrTest end-------------\n");
     }
 };
 
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_044
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0044
  * @tc.name      : ClearAbilityInfo parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testClearAbilityInfoIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testClearAbilityInfoIllegal, Function | MediumTest | Level2)
 {
     printf("------start testClearAbilityInfoIllegal------\n");
     // abilityInfo is nullptr
@@ -94,14 +111,11 @@ HWTEST_F(BundleMgrTest, testClearAbilityInfoIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_045
- * @tc.name      : ClearAbilityInfo parameter legal test
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0045
+ * @tc.name      : ClearAbilityInfo parameter legal test with bundle name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testClearBundleInfoIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testClearBundleInfoIllegal, Function | MediumTest | Level2)
 {
     printf("------start testClearBundleInfoIllegal------\n");
     BundleInfo bundleInfo;
@@ -115,22 +129,17 @@ HWTEST_F(BundleMgrTest, testClearBundleInfoIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_046
- * @tc.name      : ClearAbilityInfo parameter legal test
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0046
+ * @tc.name      : ClearAbilityInfo parameter legal test with module info
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-HWTEST_F(BundleMgrTest, testClearModuleInfoIllegal, TestSize.Level1)
+HWTEST_F(BundleMgrTest, testClearModuleInfoIllegal, Function | MediumTest | Level1)
 {
     printf("------start testClearModuleInfoIllegal------\n");
     ModuleInfo moduleInfo;
     memset_s(&moduleInfo, sizeof(moduleInfo), 0, sizeof(moduleInfo));
     moduleInfo.description = (char*)"test app";
     moduleInfo.moduleType = (char*)"entry";
-    printf("mouduleInfo.description  is %s \n", moduleInfo.description);
-    printf("mouduleInfo.moduleType  is %s \n", moduleInfo.moduleType);
     ClearModuleInfo(nullptr);
     EXPECT_STREQ(moduleInfo.description, "test app");
     EXPECT_STREQ(moduleInfo.moduleType, "entry");
@@ -138,14 +147,11 @@ HWTEST_F(BundleMgrTest, testClearModuleInfoIllegal, TestSize.Level1)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_009
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0009
  * @tc.name      : testAbilityMgrSetWantElement parameter legal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(BundleMgrTest, testSetElementAbilityName, TestSize.Level0)
+HWTEST_F(BundleMgrTest, testSetElementAbilityName, Function | MediumTest | Level0)
 {
     printf("------start testSetElementAbilityName------\n");
     Want want = { nullptr };
@@ -162,14 +168,11 @@ HWTEST_F(BundleMgrTest, testSetElementAbilityName, TestSize.Level0)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_010
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0010
  * @tc.name      : testSetElementAbilityName parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(BundleMgrTest, testSetElementAbilityNameIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testSetElementAbilityNameIllegal, Function | MediumTest | Level2)
 {
     printf("------start testSetElementAbilityNameIllegal------\n");
     Want want = { nullptr };
@@ -189,14 +192,11 @@ HWTEST_F(BundleMgrTest, testSetElementAbilityNameIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_007
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0007
  * @tc.name      : testSetElementBundleName parameter legal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(BundleMgrTest, testSetElementBundleName, TestSize.Level0)
+HWTEST_F(BundleMgrTest, testSetElementBundleName, Function | MediumTest | Level0)
 {
     printf("------start testSetElementBundleName------\n");
     Want want = { nullptr };
@@ -212,14 +212,11 @@ HWTEST_F(BundleMgrTest, testSetElementBundleName, TestSize.Level0)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_008
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0008
  * @tc.name      : testAbilityMgrSetWantElement parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testSetElementBundleNameIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testSetElementBundleNameIllegal, Function | MediumTest | Level2)
 {
     printf("------start testSetElementBundleNameIllegal------\n");
     Want want = { nullptr };
@@ -239,21 +236,17 @@ HWTEST_F(BundleMgrTest, testSetElementBundleNameIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_005
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0005
  * @tc.name      : testSetElementDeviceID parameter legal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(BundleMgrTest, testSetElementDeviceID, TestSize.Level0)
+HWTEST_F(BundleMgrTest, testSetElementDeviceID, Function | MediumTest | Level0)
 {
     printf("------start testSetElementDeviceID------\n");
     Want want = { nullptr };
     ElementName element = { nullptr };
     SetElementDeviceID(&element, "0001000");
     SetWantElement(&want, element);
-    printf("element is %s \n", want.element->deviceId);
     char dID[] = "0001000";
     EXPECT_STREQ(want.element->deviceId, dID);
     ClearElement(&element);
@@ -262,26 +255,21 @@ HWTEST_F(BundleMgrTest, testSetElementDeviceID, TestSize.Level0)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_AMS_API_006
+ * @tc.number    : SUB_APPEXECFWK_AMS_API_0006
  * @tc.name      : testSetElementDeviceID parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0100]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(BundleMgrTest, testSetElementDeviceIDIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testSetElementDeviceIDIllegal, Function | MediumTest | Level2)
 {
     printf("------start testSetElementDeviceIDIllegal------\n");
     Want want = { nullptr };
     ElementName element = { nullptr };
     SetElementDeviceID(&element, "");
     SetWantElement(&want, element);
-    printf("element is %s \n", want.element->deviceId);
     char dID[] = "";
     EXPECT_STREQ(want.element->deviceId, dID);
     SetElementDeviceID(&element, nullptr);
     SetWantElement(&want, element);
-    printf("element is %s \n", want.element->deviceId);
     EXPECT_STREQ(want.element->deviceId, nullptr);
     ClearElement(&element);
     ClearWant(&want);
@@ -289,55 +277,49 @@ HWTEST_F(BundleMgrTest, testSetElementDeviceIDIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_007
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0007
  * @tc.name      : Install parameter illegal test that callback is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testInstallWithNullptr, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testInstallWithNullptr, Function | MediumTest | Level2)
 {
     printf("------start testInstallWithNullptr------\n");
-    string hapPath = "/test_root/appexecfwk/testnative.hap";
-    bool isInstallSuccess = Install(hapPath.c_str(), nullptr, nullptr);
+    string hapPath = g_testPath + "testnative.hap";
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool isInstallSuccess = Install(hapPath.c_str(), &installParam, nullptr);
     EXPECT_FALSE(isInstallSuccess);
     printf("install result is %d \n", isInstallSuccess);
     printf("------end testInstallWithNullptr------\n");
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_004
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0004
  * @tc.name      : Install parameter illegal test that path is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testInstallWithNullPath, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testInstallWithNullPath, Function | MediumTest | Level2)
 {
     printf("------start testInstallWithNullPath------\n");
-    bool isInstallSuccess = Install(nullptr, nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool isInstallSuccess = Install(nullptr, &installParam, TestBundleStateCallback);
     EXPECT_FALSE(isInstallSuccess);
     printf("install result is %d \n", isInstallSuccess);
     printf("------end testInstallWithNullPath------\n");
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_002
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0002
  * @tc.name      : Install parameter illegal test that ErrorPath is wrong
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testInstallWithErrorPath, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testInstallWithErrorPath, Function | MediumTest | Level2)
 {
     printf("------start testBundleMgrInstallWithErrorPath------\n");
-    string hapPath = "/test_root/appexecfwk/nothishap.hap";
+    string hapPath = "appexecfwk/nothishap.hap";
     bool isInstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool installResult = Install(hapPath.c_str(), nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     if (g_errorCode == 0) {
         isInstallSuccess = true;
@@ -351,20 +333,42 @@ HWTEST_F(BundleMgrTest, testInstallWithErrorPath, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_003
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0001
+ * @tc.name      : Install parameter legal test
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testBundleMgrInstallright, Function | MediumTest | Level0)
+{
+    printf("------start testBundleMgrInstallright------\n");
+    string hapPath = g_testPath + "testnative.hap";
+    bool isInstallSuccess = false;
+    sem_init(&g_sem, 0, 0);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
+    sem_wait(&g_sem);
+    if (g_errorCode == 0) {
+        isInstallSuccess = true;
+    }else if (g_errorCode > 0) {
+        isInstallSuccess = false;
+        HILOG_DEBUG(HILOG_MODULE_APP, "TestBundleMgrInstall failed,g_errorCode is: %d", g_errorCode);
+    }
+    EXPECT_TRUE(isInstallSuccess);
+    printf("install result is %d \n", installResult);
+    printf("------end testBundleMgrInstallright------\n");
+}
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0003
  * @tc.name      : Install parameter illegal test that Path is empty
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testBundleMgrInstallEmpty, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testBundleMgrInstallEmpty, Function | MediumTest | Level2)
 {
     printf("------start testBundleMgrInstallEmpty------\n");
     string hapPath = "";
     bool isInstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool installResult = Install(hapPath.c_str(), nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     if (g_errorCode == 0) {
         isInstallSuccess = true;
@@ -378,20 +382,18 @@ HWTEST_F(BundleMgrTest, testBundleMgrInstallEmpty, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_009
- * @tc.name      : Install parameter illegal test that file is *.bin
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0009
+ * @tc.name      : Install parameter illegal test that file is bin
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-HWTEST_F(BundleMgrTest, testBundleMgrInstallBin, TestSize.Level1)
+HWTEST_F(BundleMgrTest, testBundleMgrInstallBin, Function | MediumTest | Level1)
 {
     printf("------start testBundleMgrInstallBin------\n");
-    string hapPath = "/test_root/appexecfwk/testdemo.bin";
+    string hapPath = g_testPath + "testdemo.bin";
     bool isInstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool installResult = Install(hapPath.c_str(), nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     if (g_errorCode == 0) {
         isInstallSuccess = true;
@@ -405,62 +407,80 @@ HWTEST_F(BundleMgrTest, testBundleMgrInstallBin, TestSize.Level1)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_014
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0008
+ * @tc.name      : Install parameter illegal test that hap is destroyed
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testBundleMgrInstallBadfile, Function | MediumTest | Level2)
+{
+    printf("------start testBundleMgrInstallBadfile------\n");
+    string hapPath = g_testPath + "errpinjie.hap";
+    bool isInstallSuccess = false;
+    sem_init(&g_sem, 0, 0);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
+    sem_wait(&g_sem);
+    if (g_errorCode == 0) {
+        isInstallSuccess = true;
+    }else if (g_errorCode > 0) {
+        isInstallSuccess = false;
+        HILOG_DEBUG(HILOG_MODULE_APP, "TestBundleMgrInstall failed,g_errorCode is: %d", g_errorCode);
+    }
+    EXPECT_FALSE(isInstallSuccess);
+    printf("install result is %d", installResult);
+    printf("------start testBundleMgrInstallBadfile------\n");
+}
+
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0014
  * @tc.name      : Uninstall parameter illegal test that callback is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testUninstallNullCallback, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testUninstallNullCallback, Function | MediumTest | Level2)
 {
     printf("------start testUninstallNullCallback------\n");
     const char *bundleName = (char*)"com.huawei.testdemo";
-    bool isUninstallSuccess = Uninstall(bundleName, nullptr, nullptr);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool isUninstallSuccess = Uninstall(bundleName, &installParam, nullptr);
     EXPECT_FALSE(isUninstallSuccess);
     printf("uninstall result is %d", isUninstallSuccess);
     printf("------end testUninstallNullCallback------\n");
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_013
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0013
  * @tc.name      : Uninstall parameter illegal test that bundleName is null
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testUninstallnullBundleName, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testUninstallnullBundleName, Function | MediumTest | Level2)
 {
     printf("------start testUninstallnullBundleName------\n");
-    const char *bundleName = (char*)"com.huawei.testnative";
-    bool isUninstallSuccess = Uninstall(nullptr, nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool isUninstallSuccess = Uninstall(nullptr, &installParam, TestBundleStateCallback);
     EXPECT_FALSE(isUninstallSuccess);
     printf("uninstall result is %d", isUninstallSuccess);
     printf("------end testUninstallnullBundleName------\n");
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_010
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0010
  * @tc.name      : Uninstall parameter legal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(BundleMgrTest, testUninstallright, TestSize.Level0)
+HWTEST_F(BundleMgrTest, testUninstallright, Function | MediumTest | Level0)
 {
     printf("------start testUninstallright------\n");
-    string hapPath = "/test_root/appexecfwk/testnative.hap";
+    string hapPath = g_testPath + "testnative.hap";
     sem_init(&g_sem, 0, 0);
-    bool installResult = Install(hapPath.c_str(), nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool installResult = Install(hapPath.c_str(), &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     EXPECT_TRUE(installResult);
     sleep(1);
     const char *bundleName = (char*)"com.huawei.testnative";
     bool isUninstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool uninstallState = Uninstall(bundleName, nullptr, TestBundleStateCallback);
+    bool uninstallState = Uninstall(bundleName, &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     printf("uninstall result is %d", uninstallState);
     if (g_installState) {
@@ -475,22 +495,20 @@ HWTEST_F(BundleMgrTest, testUninstallright, TestSize.Level0)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_011
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0011
  * @tc.name      : Uninstall parameter illegal test that bundleName is wrong
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testUninstallErrorName, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testUninstallErrorName, Function | MediumTest | Level2)
 {
     printf("------start testUninstallErrorName------\n");
     const char *bundleName = (char*)"com.huawei.nothisBundleName";
     bool isUninstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool uninstallState = Uninstall(bundleName, nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool uninstallState = Uninstall(bundleName, &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
-    printf("uninstall resute is %d", uninstallState);
+    printf("uninstall result is %d", uninstallState);
     if (g_installState) {
         isUninstallSuccess = true;
     }else if (g_errorCode > 0) {
@@ -503,20 +521,18 @@ HWTEST_F(BundleMgrTest, testUninstallErrorName, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_012
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0012
  * @tc.name      : Uninstall parameter illegal test that bundleName is empty
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testUninstallEmptyName, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testUninstallEmptyName, Function | MediumTest | Level2)
 {
     printf("------start testUninstallEmptyName------\n");
     const char *bundleName = (char*)"";
     bool isUninstallSuccess = false;
     sem_init(&g_sem, 0, 0);
-    bool uninstallState = Uninstall(bundleName, nullptr, TestBundleStateCallback);
+    InstallParam installParam = { .installLocation = 1, .keepData = false };
+    bool uninstallState = Uninstall(bundleName, &installParam, TestBundleStateCallback);
     sem_wait(&g_sem);
     printf("uninstall resute is %d", uninstallState);
     if (g_installState) {
@@ -532,14 +548,39 @@ HWTEST_F(BundleMgrTest, testUninstallEmptyName, TestSize.Level2)
 
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_041
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0040
+ * @tc.name      : QueryAbilityInfo parameter legal test
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testQueryAbilityInfoRight, Function | MediumTest | Level1)
+{
+    printf("------start testQueryAbilityInfoRight------\n");
+    Want want;
+    memset_s(&want, sizeof(Want), 0, sizeof(Want));
+    ElementName element;
+    memset_s(&element, sizeof(ElementName), 0, sizeof(ElementName));
+    SetElementAbilityName(&element, "MainAbility");
+    SetElementBundleName(&element, "com.huawei.testjsdemo");
+    SetWantElement(&want, element);
+    SetWantData(&want, "test", 4);
+    AbilityInfo abilityInfo;
+    memset_s(&abilityInfo, sizeof(abilityInfo), 0, sizeof(abilityInfo));
+    printf("element.elementname is %s \n",  want.element->bundleName);
+    printf("AbilityName2 is %s \n", want.element->abilityName);
+    g_errorCode = QueryAbilityInfo(&want, &abilityInfo);
+    printf("abilityInfo.bundleName is %s \n", abilityInfo.bundleName);
+    printf("abilityInfo.label is %s \n", abilityInfo.label);
+    printf("abilityInfo.iconPath is %s \n", abilityInfo.iconPath);
+    printf("ret is %d \n", g_errorCode);
+    EXPECT_TRUE(g_errorCode == 0);
+    printf("------end testQueryAbilityInfoRight------\n");
+}
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0041
  * @tc.name      : QueryAbilityInfo parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testQueryAbilityInfoIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testQueryAbilityInfoIllegal, Function | MediumTest | Level2)
 {
     printf("------start testQueryAbilityInfoIllegal------\n");
     AbilityInfo abilityInfo;
@@ -575,14 +616,42 @@ HWTEST_F(BundleMgrTest, testQueryAbilityInfoIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_030
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0029
+ * @tc.name      : GetBundleInfo parameter legal test.
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testGetBundleInfoRight, Function | MediumTest | Level1)
+{
+    printf("------start testGetBundleInfoRight------\n");
+    BundleInfo bundleInfo;
+    memset_s(&bundleInfo, sizeof(bundleInfo), 0, sizeof(bundleInfo));
+    const char *bundleName = (char*)"com.huawei.testjsdemo";
+    int32_t flags = 0;
+    printf("bundleName is %s \n", bundleName);
+    sleep(2);
+    g_errorCode = GetBundleInfo(bundleName, flags, &bundleInfo);
+    printf("getBundleInfo result is %d \n", g_errorCode);
+    EXPECT_STREQ(bundleInfo.bundleName, bundleName);
+    EXPECT_EQ(bundleInfo.numOfAbility, 0);
+    EXPECT_EQ(g_errorCode, 0);
+    flags = 1;
+    printf("bundleName is %s \n", bundleName);
+    g_errorCode = GetBundleInfo(bundleName, flags, &bundleInfo);
+    sleep(2);
+    printf("getBundleInfo result is %d \n", g_errorCode);
+    EXPECT_EQ(g_errorCode, 0);
+    EXPECT_STREQ(bundleInfo.bundleName, bundleName);
+    EXPECT_EQ(bundleInfo.numOfAbility, 3);
+    ClearBundleInfo(&bundleInfo);
+    printf("------end testGetBundleInfoRight------\n");
+}
+
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0030
  * @tc.name      : GetBundleInfo parameter illegal test.
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testGetBundleInfoIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testGetBundleInfoIllegal, Function | MediumTest | Level2)
 {
     printf("------start testGetBundleInfoIllegal------\n");
     BundleInfo bundleInfo;
@@ -619,27 +688,55 @@ HWTEST_F(BundleMgrTest, testGetBundleInfoIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_043
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0042
+ * @tc.name      : GetBundleInfos parameter legal test
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testGetBundleInfosRight, Function | MediumTest | Level1)
+{
+    printf("------start testGetBundleInfosRight------\n");
+    BundleInfo *bundleInfos = nullptr;
+    int32_t flags = 0;
+    int32_t length = 0;
+    g_errorCode = GetBundleInfos(flags, &bundleInfos, &length);
+    sleep(2);
+    printf("getBundleInfo result is %d \n", g_errorCode);
+    EXPECT_EQ(g_errorCode, 0);
+    if (g_errorCode == 0){
+        printf("bundleInfos.codePath is %s \n", bundleInfos[0].codePath);
+        printf("bundleInfos.bundleName is %s \n", bundleInfos[0].bundleName);
+        printf("bundleInfos.versionCode is %d \n", bundleInfos[0].versionCode);
+    }
+    flags = 1;
+    g_errorCode = GetBundleInfos(flags, &bundleInfos, &length);
+    printf("getBundleInfo result is %d \n", g_errorCode);
+    sleep(2);
+    EXPECT_EQ(g_errorCode, 0);
+        if (g_errorCode == 0){
+        printf("bundleInfos.codePath is %s \n", bundleInfos[0].codePath);
+        printf("bundleInfos.bundleName is %s \n", bundleInfos[0].bundleName);
+        printf("bundleInfos.versionCode is %d \n", bundleInfos[0].versionCode);
+    }
+    free(bundleInfos);
+    printf("------end testGetBundleInfosRight------\n");
+}
+
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0043
  * @tc.name      : GetBundleInfos parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testGetBundleInfosIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testGetBundleInfosIllegal, Function | MediumTest | Level2)
 {
     printf("------start testGetBundleInfosIllegal------\n");
     BundleInfo *bundleInfos = {nullptr};
     int32_t *length = nullptr;
-    const char *bundleName = (char*)"com.huawei.nothishap";
     int32_t flags = 0;
     g_errorCode = GetBundleInfos(flags, nullptr, length);
-    printf("bundleInfos1 is %x \n", bundleInfos);
     EXPECT_EQ(g_errorCode, 4);
     g_errorCode = GetBundleInfos(flags, &bundleInfos, nullptr);
     printf("g_errorCode is %d \n", g_errorCode);
     EXPECT_TRUE(g_errorCode == 4);
-    printf("bundleInfos2 is %x \n", bundleInfos);
     g_errorCode = GetBundleInfos(2, &bundleInfos, length);
     printf("g_errorCode is %d \n", g_errorCode);
     EXPECT_EQ(g_errorCode, 4);
@@ -647,26 +744,21 @@ HWTEST_F(BundleMgrTest, testGetBundleInfosIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_039
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0039
  * @tc.name      : GetBundleInfosByMetaData parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testGetBundleInfosByMetaDataIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testGetBundleInfosByMetaDataIllegal, Function | MediumTest | Level2)
 {
     printf("------start testGetBundleInfosByMetaDataIllegal------\n");
     BundleInfo *bundleInfos = {nullptr};
     int32_t length = 0;
     const char *metaDataKey = "appId";
     g_errorCode = GetBundleInfosByMetaData(nullptr, &bundleInfos, &length);
-    printf("bundleInfos1 is %x \n", bundleInfos);
     EXPECT_EQ(g_errorCode, 4);
     g_errorCode = GetBundleInfosByMetaData(metaDataKey, &bundleInfos, nullptr);
     printf("g_errorCode is %d \n", g_errorCode);
     EXPECT_TRUE(g_errorCode == 4);
-    printf("bundleInfos2 is %x \n", bundleInfos);
     g_errorCode = GetBundleInfosByMetaData(metaDataKey, nullptr, &length);
     printf("g_errorCode is %d \n", g_errorCode);
     EXPECT_TRUE(g_errorCode == 4);
@@ -683,19 +775,38 @@ HWTEST_F(BundleMgrTest, testGetBundleInfosByMetaDataIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_037
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0038
+ * @tc.name      : GetBundleInfosByMetaData parameter legal test
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testGetBundleInfosByMetaDataRight, Function | MediumTest | Level1)
+{
+    printf("------start testGetBundleInfosByMetaDataRight------\n");
+    BundleInfo *bundleInfos = nullptr;
+    const char *metaDataKey = "appId";
+    int32_t length = 0;
+    printf("metaDataKey is %s \n", metaDataKey);
+    g_errorCode = GetBundleInfosByMetaData(metaDataKey, &bundleInfos, &length);
+    sleep(2);
+    printf("GetBundleInfosByMetaData result is %d \n", g_errorCode);
+    EXPECT_EQ(g_errorCode, 0);
+    if (g_errorCode == 0){
+        printf("bundleInfos.bundleName is %s \n", bundleInfos[0].bundleName);
+    }
+
+    printf("------end testGetBundleInfosByMetaDataRight------\n");
+}
+
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0037
  * @tc.name      : QueryKeepAliveBundleInfos parameter illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testQueryKeepAliveBundleInfosIllegal, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testQueryKeepAliveBundleInfosIllegal, Function | MediumTest | Level2)
 {
     printf("------start testQueryKeepAliveBundleInfosIllegal------\n");
     BundleInfo *bundleInfos = {nullptr};
     int32_t length = 0;
-    const char *metaDataKey = "appId";
     g_errorCode = QueryKeepAliveBundleInfos(nullptr, &length);
     printf("g_errorCode1 is %d \n", g_errorCode);
     EXPECT_EQ(g_errorCode, 4);
@@ -706,18 +817,34 @@ HWTEST_F(BundleMgrTest, testQueryKeepAliveBundleInfosIllegal, TestSize.Level2)
 }
 
 /**
- * @tc.number    : SUB_APPEXECFWK_BMS_API_034
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0034
  * @tc.name      : GetBundleNameForUid parameter nullptr test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(BundleMgrTest, testGetBundleNameForUidWithNullptr, TestSize.Level2)
+HWTEST_F(BundleMgrTest, testGetBundleNameForUidWithNullptr, Function | MediumTest | Level2)
 {
     printf("------start testGetBundleNameForUidWithNullptr------\n");
     int32_t resultCode = GetBundleNameForUid(0, nullptr);
     EXPECT_EQ(resultCode, 4);
     printf("GetBundleNameForUid result is %d \n", resultCode);
     printf("------end testGetBundleNameForUidWithNullptr------\n");
+}
+
+/**
+ * @tc.number    : SUB_APPEXECFWK_BMS_API_0035
+ * @tc.name      : GetBundleNameForUid parameter illegal test
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+HWTEST_F(BundleMgrTest, testGetBundleNameForUidWithIllegal, Function | MediumTest | Level2)
+{
+    printf("------start testGetBundleNameForUidWithIllegal------\n");
+    char *bundleName = nullptr;
+    int32_t resultCode = GetBundleNameForUid(0, &bundleName);
+    printf("GetBundleNameForUid content of bundleName is %s \n", bundleName);
+    EXPECT_EQ(resultCode, 114);
+    printf("GetBundleNameForUid result is %d \n", resultCode);
+    if (bundleName != nullptr) {
+        free(bundleName);
+    }
+    printf("------end testGetBundleNameForUidWithIllegal------\n");
 }

@@ -30,6 +30,7 @@ int fstatfs (int, struct statfs *);
 #define NFS_SUPER_MAGIC       0x6969
 #define PROCFS_MAGIC          0x434f5250
 #define JFFS2_SUPER_MAGIC     0x72b6
+#define ZPFS_MAGIC            0xa000e93
 
 #ifdef __cplusplus
 }

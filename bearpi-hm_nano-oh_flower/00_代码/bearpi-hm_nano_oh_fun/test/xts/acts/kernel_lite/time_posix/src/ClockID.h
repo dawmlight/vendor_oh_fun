@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,10 +16,11 @@
 #ifndef TIMER_CLOCK_ID
 #define TIMER_CLOCK_ID
 
+#include <time.h>
 #include <gtest/gtest.h>
 
 // defined in musl/include/time.h
-static const char* ALL_CLOCKS[CLOCK_TAI + 1] = {
+static const char* ALL_CLOCKS_NAME[CLOCK_TAI + 1] = {
     "CLOCK_REALTIME",
     "CLOCK_MONOTONIC",
     "CLOCK_PROCESS_CPUTIME_ID",
@@ -35,7 +36,7 @@ static const char* ALL_CLOCKS[CLOCK_TAI + 1] = {
 };
 
 static const auto ALL_CLOCK_IDS = testing::Values(CLOCK_REALTIME, CLOCK_MONOTONIC, CLOCK_PROCESS_CPUTIME_ID,
-    CLOCK_THREAD_CPUTIME_ID, CLOCK_MONOTONIC_RAW, CLOCK_REALTIME_COARSE, CLOCK_MONOTONIC_COARSE, 
+    CLOCK_THREAD_CPUTIME_ID, CLOCK_MONOTONIC_RAW, CLOCK_REALTIME_COARSE, CLOCK_MONOTONIC_COARSE,
     CLOCK_BOOTTIME, CLOCK_REALTIME_ALARM, CLOCK_BOOTTIME_ALARM, CLOCK_SGI_CYCLE, CLOCK_TAI);
 
 static const auto ALL_SUPPORTED_IDS = testing::Values(CLOCK_MONOTONIC, CLOCK_REALTIME,

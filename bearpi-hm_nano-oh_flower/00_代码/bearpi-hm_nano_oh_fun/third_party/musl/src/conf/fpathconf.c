@@ -1,7 +1,6 @@
 #include <unistd.h>
 #include <limits.h>
 #include <errno.h>
-#include <unsupported_api.h>
 
 long fpathconf(int fd, int name)
 {
@@ -28,7 +27,6 @@ long fpathconf(int fd, int name)
 		[_PC_SYMLINK_MAX] = -1,
 		[_PC_2_SYMLINKS] = 1
 	};
-	unsupported_api(__FUNCTION__);
 	if (name >= sizeof(values)/sizeof(values[0])) {
 		errno = EINVAL;
 		return -1;

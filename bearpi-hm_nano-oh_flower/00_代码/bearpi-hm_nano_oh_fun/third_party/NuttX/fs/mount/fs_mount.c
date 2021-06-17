@@ -51,13 +51,17 @@
 #include "inode/inode.h"
 #include "stdlib.h"
 #include "driver/driver.h"
-#if defined(LOSCFG_FS_JFFS)
+#ifdef LOSCFG_DRIVERS_MTD
 #include "mtd_partition.h"
 #endif
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
 #include "errcode_fat.h"
 #endif
 #include "los_tables.h"
+
+#ifdef LOSCFG_FS_ZPFS
+#include "vfs_zpfs.h"
+#endif
 
 /* At least one filesystem must be defined, or this file will not compile.
  * It may be desire-able to make filesystems dynamically registered at
@@ -161,7 +165,7 @@ int mount(const char *source, const char *target,
   const struct fsmap_t *fsmap = NULL;
   const struct mountpt_operations *mops = NULL;
 
-#if defined(LOSCFG_FS_JFFS)
+#ifdef LOSCFG_DRIVERS_MTD
   mtd_partition *partition = NULL;
 #endif
 
@@ -220,7 +224,20 @@ int mount(const char *source, const char *target,
    */
 
   inode_semtake();
-
+#ifdef LOSCFG_FS_ZPFS
+  if (strcmp(filesystemtype, ZPFS_NAME) == 0)
+    {
+      ret = ZpfsPrepare(source, fullpath, &mountpt_inode, true);
+      if (ret < 0)
+        {
+            errcode = -ret;
+            goto errout_with_semaphore;
+        }
+      data = (const void *)mountpt_inode->i_private;
+    }
+  else
+    {
+#endif
   mountpt_inode = inode_search((const char **)&fullpath, (struct inode **)NULL, (struct inode **)NULL, \
                                (const char **)NULL);
 
@@ -244,6 +261,9 @@ int mount(const char *source, const char *target,
       errcode = EINVAL;
       goto errout_with_semaphore;
     }
+#ifdef LOSCFG_FS_ZPFS
+   }
+#endif
 
   mountpt_inode ->mountflags = mountflags;
 
@@ -277,7 +297,7 @@ int mount(const char *source, const char *target,
           goto errout_with_mountpt;
         }
     }
-#if defined(LOSCFG_FS_JFFS)
+#ifdef LOSCFG_DRIVERS_MTD
   if (fsmap->is_mtd_support && (blkdrvr_inode != NULL))
     {
       partition = (mtd_partition *)blkdrvr_inode->i_private;
@@ -316,7 +336,7 @@ int mount(const char *source, const char *target,
         }
 
       errcode = -ret;
-#if defined(LOSCFG_FS_JFFS)
+#ifdef LOSCFG_DRIVERS_MTD
       if (fsmap->is_mtd_support && (blkdrvr_inode != NULL) && (partition != NULL))
         {
           free(partition->mountpoint_name);

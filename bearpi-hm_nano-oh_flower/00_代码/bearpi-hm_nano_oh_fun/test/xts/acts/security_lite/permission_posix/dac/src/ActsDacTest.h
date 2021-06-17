@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,49 +15,11 @@
 #ifndef XTS_ACTS_SECURITY_LITE_PERMISSSION_POSIX_DAC_SRC_ACTSDACTEST_H
 #define XTS_ACTS_SECURITY_LITE_PERMISSSION_POSIX_DAC_SRC_ACTSDACTEST_H
 
-#include <csignal>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <dirent.h>
-#include <fcntl.h>
-#include <sched.h>
-#include <securec.h>
-#include <sys/ioctl.h>
-#include <sys/resource.h>
+#include <cstddef>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include "gtest/gtest.h"
-
-#ifdef __LINUX__
-#include <grp.h>
-#include <sys/cdefs.h>
-#include <linux/capability.h>
-#else
-#include <sys/capability.h>
-#endif
-
-#ifdef __LINUX__
-__BEGIN_DECLS
-extern int capget(cap_user_header_t hdrp, cap_user_data_t datap);
-extern int capset(cap_user_header_t hdrp, const cap_user_data_t datap);
-__END_DECLS
-#endif
-
-constexpr int WRONGNUM = -1;
-constexpr int NUM3 = 3;
-constexpr int NUM500 = 500;
-constexpr int NUM1000 = 1000;
-constexpr int NUM3000 = 3000;
 
 constexpr int ABNORMALINT = -100;
 constexpr int SINGLESIZE = 1;
-constexpr int CAP_NUM = 2;
-constexpr int SLEEP_NUM = 500000;
 constexpr unsigned int MAX_INT = 2147483647;
 
 constexpr size_t SIZE1 = 1;
@@ -66,124 +28,115 @@ constexpr size_t SIZE3 = 3;
 constexpr size_t SIZE253 = 253;
 constexpr size_t SIZE254 = 254;
 constexpr size_t SIZE255 = 255;
-constexpr size_t SIZE512 = 512;
 constexpr size_t MAX_SIZE = 65536;
 constexpr size_t INVAILD_SIZE = 65537;
 
-constexpr uid_t UID0 = 0;
-constexpr uid_t UID555 = 555;
-constexpr uid_t UID1000 = 1000;
-constexpr uid_t UID10000 = 10000;
-constexpr gid_t GID0 = 0;
-constexpr gid_t GID555 = 555;
-constexpr gid_t GID1000 = 1000;
-constexpr gid_t GID10000 = 10000;
+constexpr mode_t CHMOD000 = 0000;
+constexpr mode_t CHMOD013 = 0013;
+constexpr mode_t CHMOD016 = 0016;
+constexpr mode_t CHMOD027 = 0027;
+constexpr mode_t CHMOD031 = 0031;
+constexpr mode_t CHMOD044 = 0044;
+constexpr mode_t CHMOD045 = 0045;
+constexpr mode_t CHMOD052 = 0052;
+constexpr mode_t CHMOD063 = 0063;
+constexpr mode_t CHMOD074 = 0074;
+constexpr mode_t CHMOD076 = 0076;
+constexpr mode_t CHMOD077 = 0077;
+constexpr mode_t CHMOD105 = 0105;
+constexpr mode_t CHMOD111 = 0111;
+constexpr mode_t CHMOD116 = 0116;
+constexpr mode_t CHMOD120 = 0120;
+constexpr mode_t CHMOD123 = 0123;
+constexpr mode_t CHMOD124 = 0124;
+constexpr mode_t CHMOD132 = 0132;
+constexpr mode_t CHMOD143 = 0143;
+constexpr mode_t CHMOD151 = 0151;
+constexpr mode_t CHMOD166 = 0166;
+constexpr mode_t CHMOD167 = 0167;
+constexpr mode_t CHMOD175 = 0175;
+constexpr mode_t CHMOD203 = 0203;
+constexpr mode_t CHMOD210 = 0210;
+constexpr mode_t CHMOD222 = 0222;
+constexpr mode_t CHMOD230 = 0230;
+constexpr mode_t CHMOD235 = 0235;
+constexpr mode_t CHMOD241 = 0241;
+constexpr mode_t CHMOD242 = 0242;
+constexpr mode_t CHMOD256 = 0256;
+constexpr mode_t CHMOD257 = 0257;
+constexpr mode_t CHMOD261 = 0261;
+constexpr mode_t CHMOD274 = 0274;
+constexpr mode_t CHMOD305 = 0305;
+constexpr mode_t CHMOD306 = 0306;
+constexpr mode_t CHMOD310 = 0310;
+constexpr mode_t CHMOD312 = 0312;
+constexpr mode_t CHMOD325 = 0325;
+constexpr mode_t CHMOD333 = 0333;
+constexpr mode_t CHMOD334 = 0334;
+constexpr mode_t CHMOD342 = 0342;
+constexpr mode_t CHMOD347 = 0347;
+constexpr mode_t CHMOD354 = 0354;
+constexpr mode_t CHMOD362 = 0362;
+constexpr mode_t CHMOD371 = 0371;
+constexpr mode_t CHMOD401 = 0401;
+constexpr mode_t CHMOD406 = 0406;
+constexpr mode_t CHMOD407 = 0407;
+constexpr mode_t CHMOD415 = 0415;
+constexpr mode_t CHMOD422 = 0422;
+constexpr mode_t CHMOD430 = 0430;
+constexpr mode_t CHMOD444 = 0444;
+constexpr mode_t CHMOD446 = 0446;
+constexpr mode_t CHMOD453 = 0453;
+constexpr mode_t CHMOD456 = 0456;
+constexpr mode_t CHMOD457 = 0457;
+constexpr mode_t CHMOD460 = 0460;
+constexpr mode_t CHMOD473 = 0473;
+constexpr mode_t CHMOD507 = 0507;
+constexpr mode_t CHMOD511 = 0511;
+constexpr mode_t CHMOD521 = 0521;
+constexpr mode_t CHMOD526 = 0526;
+constexpr mode_t CHMOD536 = 0536;
+constexpr mode_t CHMOD543 = 0543;
+constexpr mode_t CHMOD555 = 0555;
+constexpr mode_t CHMOD560 = 0560;
+constexpr mode_t CHMOD562 = 0562;
+constexpr mode_t CHMOD564 = 0564;
+constexpr mode_t CHMOD570 = 0570;
+constexpr mode_t CHMOD604 = 0604;
+constexpr mode_t CHMOD611 = 0611;
+constexpr mode_t CHMOD614 = 0614;
+constexpr mode_t CHMOD623 = 0623;
+constexpr mode_t CHMOD637 = 0637;
+constexpr mode_t CHMOD640 = 0640;
+constexpr mode_t CHMOD655 = 0655;
+constexpr mode_t CHMOD657 = 0657;
+constexpr mode_t CHMOD665 = 0665;
+constexpr mode_t CHMOD666 = 0666;
+constexpr mode_t CHMOD670 = 0670;
+constexpr mode_t CHMOD671 = 0671;
+constexpr mode_t CHMOD672 = 0672;
+constexpr mode_t CHMOD700 = 0700;
+constexpr mode_t CHMOD702 = 0702;
+constexpr mode_t CHMOD703 = 0703;
+constexpr mode_t CHMOD712 = 0712;
+constexpr mode_t CHMOD716 = 0716;
+constexpr mode_t CHMOD717 = 0717;
+constexpr mode_t CHMOD724 = 0724;
+constexpr mode_t CHMOD731 = 0731;
+constexpr mode_t CHMOD743 = 0743;
+constexpr mode_t CHMOD750 = 0750;
+constexpr mode_t CHMOD765 = 0765;
+constexpr mode_t CHMOD777 = 0777;
 
-constexpr mode_t ZEROUMASK = 0000;
-constexpr mode_t NORWX = 0001;
-constexpr mode_t RWX = 0777;
-constexpr mode_t CHMOD000 = 00000;
-constexpr mode_t CHMOD111 = 00111;
-constexpr mode_t CHMOD700 = 00700;
-constexpr mode_t CHMOD777 = 00777;
-
-extern "C" {
-#define LOG(format, ...) fprintf(stdout, format "\n", ##__VA_ARGS__)
-}
-
-static int RemoveDir(const char* dirname)
-{
-    char curDir[] = ".";
-    char upDir[] = "..";
-    char updirname[SIZE512];
-    DIR* dir = nullptr;
-    struct dirent* dp = nullptr;
-    struct stat upDirStat;
-    struct __user_cap_header_struct capheader;
-    struct __user_cap_data_struct capdata[CAP_NUM];
-    memset_s(&capheader, sizeof(struct __user_cap_header_struct), 0, sizeof(struct __user_cap_header_struct));
-    memset_s(capdata, CAP_NUM * sizeof(struct __user_cap_data_struct), 0,
-        CAP_NUM * sizeof(struct __user_cap_data_struct));
-    capdata[0].permitted = 0xffffffff;
-    capdata[1].permitted = 0xffffffff;
-    capdata[0].effective = 0xffffffff;
-    capdata[1].effective = 0xffffffff;
-    capheader.version = _LINUX_CAPABILITY_VERSION_3;
-    capset(&capheader, &capdata[0]);
-    // 参数传递进来的目录不存在，直接返回
-    if (access(dirname, F_OK != 0)) {
-        return 0;
-    }
-    dir = opendir(dirname);
-    while ((dp = readdir(dir)) != nullptr) {
-        if ((strcmp(curDir, dp->d_name) == 0) || (strcmp(upDir, dp->d_name) == 0)) {
-            continue;
-        }
-        int spr = sprintf_s(updirname, SIZE512, "%s/%s", dirname, dp->d_name);
-        if (spr == -1) {
-            closedir(dir);
-            return -1;
-        }
-        stat(updirname, &upDirStat);
-        if (upDirStat.st_mode & S_IFDIR) { // 目录文件，递归删除目录中内容
-            RemoveDir(updirname);          // 递归调用
-        } else {                           // 普通文件直接删除
-            unlink(updirname);
-        }
-    }
-    closedir(dir);
-    int ret = rmdir(dirname); // 删除空目录
-    if (ret != 0) {
-        return -1;
-    }
-    capdata[CAP_TO_INDEX(CAP_DAC_OVERRIDE)].effective &= ~CAP_TO_MASK(CAP_DAC_OVERRIDE);
-    capdata[CAP_TO_INDEX(CAP_DAC_READ_SEARCH)].effective &= ~CAP_TO_MASK(CAP_DAC_READ_SEARCH);
-    capset(&capheader, &capdata[0]);
-    return 0;
-}
-
-static void SetUid0Gid0()
-{
-    struct __user_cap_header_struct capheader;
-    struct __user_cap_data_struct capdata[CAP_NUM];
-    int ret;
-    memset_s(&capheader, sizeof(struct __user_cap_header_struct), 0, sizeof(struct __user_cap_header_struct));
-    memset_s(capdata, CAP_NUM * sizeof(struct __user_cap_data_struct), 0,
-        CAP_NUM * sizeof(struct __user_cap_data_struct));
-    capdata[0].permitted = 0xffffffff;
-    capdata[1].permitted = 0xffffffff;
-    capheader.version = _LINUX_CAPABILITY_VERSION_3;
-    capdata[CAP_TO_INDEX(CAP_SETPCAP)].effective |= CAP_TO_MASK(CAP_SETPCAP);
-    capdata[CAP_TO_INDEX(CAP_SETUID)].effective |= CAP_TO_MASK(CAP_SETUID);
-    capdata[CAP_TO_INDEX(CAP_SETGID)].effective |= CAP_TO_MASK(CAP_SETGID);
-    ret = capset(&capheader, &capdata[0]);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Failed in setting privileges";
-    ret = setuid(UID0);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Set uid failed,now uid=" << getuid();
-    ret = setgid(GID0);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Set gid failed,now gid=" << getgid();
-}
-
-static void SetUid555Gid555()
-{
-    struct __user_cap_header_struct capheader;
-    struct __user_cap_data_struct capdata[CAP_NUM];
-    int ret;
-    memset_s(&capheader, sizeof(struct __user_cap_header_struct), 0, sizeof(struct __user_cap_header_struct));
-    memset_s(capdata, CAP_NUM * sizeof(struct __user_cap_data_struct), 0,
-        CAP_NUM * sizeof(struct __user_cap_data_struct));
-    capdata[0].permitted = 0xffffffff;
-    capdata[1].permitted = 0xffffffff;
-    capheader.version = _LINUX_CAPABILITY_VERSION_3;
-    capdata[CAP_TO_INDEX(CAP_SETPCAP)].effective |= CAP_TO_MASK(CAP_SETPCAP);
-    capdata[CAP_TO_INDEX(CAP_SETUID)].effective |= CAP_TO_MASK(CAP_SETUID);
-    capdata[CAP_TO_INDEX(CAP_SETGID)].effective |= CAP_TO_MASK(CAP_SETGID);
-    ret = capset(&capheader, &capdata[0]);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Failed in setting privileges";
-    ret = setuid(UID555);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Set uid failed,now uid=" << getuid();
-    ret = setgid(GID555);
-    EXPECT_EQ(ret, 0) << "ErrInfo: Set gid failed,now gid=" << getgid();
-}
+// Creating Folders and Files for the Test
+#define DACDIR0                  "DACDIR0"                        // DIR0/
+#define DACDIR0_DACFILE0         "DACDIR0_DACFILE0"               // ├── DIR0_FILE0
+#define DACDIR0_DACFILE1         "DACDIR0_DACFILE1"               // ├── DIR0_FILE1
+#define DACDIR0_DACDIR0          "DACDIR0_DACDIR0"                // ├── DIR0_DIR0/
+#define DACDIR0_DACDIR0_DACDIR0  "DACDIR0_DACDIR0_DACDIR0"        // |   └── DIR0_DIR0_DIR0/
+#define DACDIR0_DACDIR1          "DACDIR0_DACDIR1"                // └── DIR0_DIR1/
+#define DACDIR1                  "DACDIR1"                        // DIR1/
+#define DACDIR1_DACFILE0         "DACDIR1_DACFILE0"               // ├── DIR1_FILE0
+#define DACDIR1_DACDIR0          "DACDIR1_DACDIR0"                // └── DIR1_DIR0/
 
 #endif

@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/wifi_aware",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "The Wi-Fi Aware module provides near-field communication capabilities for applications. | Wi-Fi Aware模块提供了进场通信能力，该模块可被上层应用所使用。",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/foundation/communication/wifi_aware && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/communication_wifi_aware",
+    "tags": [
+        "foundation"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "foundation",
+        "wifiaware"
+    ]
+}

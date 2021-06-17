@@ -22,7 +22,7 @@ extern "C" {
 typedef unsigned long fd_mask;
 
 typedef struct {
-	unsigned long fds_bits[FD_SETSIZE / 8 / sizeof(long)];
+	unsigned long fds_bits[FD_SET_TOTAL_SIZE / 8 / sizeof(long)];
 } fd_set;
 
 #define FD_ZERO(s) do { int __i; unsigned long *__b=(s)->fds_bits; for(__i=sizeof (fd_set)/sizeof (long); __i; __i--) *__b++=0; } while(0)

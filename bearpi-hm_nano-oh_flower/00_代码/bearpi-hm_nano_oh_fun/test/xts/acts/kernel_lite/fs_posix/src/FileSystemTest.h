@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,6 +45,7 @@ protected:
 #define DIR0_DIR1       "DIR0_DIR1"             // └── DIR0_DIR1/
 #define DIR0_DIR1_FILE0 "DIR0_DIR1_FILE0"       //     ├── DIR0_DIR1_FILE0
 #define DIR0_DIR1_DIR0  "DIR0_DIR1_DIR0"        //     └── DIR0_DIR1_DIR0/
+#define FOURTY_MS 40
 
 // Creating Folders and Files for the Test
 #define CreateTestFolder()  do {                                                                                    \

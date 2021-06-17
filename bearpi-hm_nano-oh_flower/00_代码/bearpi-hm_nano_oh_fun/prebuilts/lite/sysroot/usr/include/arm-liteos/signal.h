@@ -1,6 +1,42 @@
 #ifndef _SIGNAL_H
 #define _SIGNAL_H
 
+#ifdef __ICCARM__ /* for iar */
+
+#include_next <signal.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define __NEED_pthread_attr_t
+
+#include <bits/alltypes.h>
+
+union sigval {
+	int sival_int;
+	void *sival_ptr;
+};
+
+struct sigevent {
+	union sigval sigev_value;
+	int sigev_signo;
+	int sigev_notify;
+	void (*sigev_notify_function)(union sigval);
+	pthread_attr_t *sigev_notify_attributes;
+	char __pad[56-3*sizeof(long)];
+};
+
+#define SIGEV_SIGNAL 0
+#define SIGEV_NONE 1
+#define SIGEV_THREAD 2
+
+#ifdef __cplusplus
+}
+#endif
+
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -283,4 +319,5 @@ __REDIR(sigtimedwait, __sigtimedwait_time64);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

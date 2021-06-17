@@ -1,3 +1,4 @@
+#ifndef __ICCARM__
 typedef int32_t int_fast16_t;
 typedef int32_t int_fast32_t;
 typedef uint32_t uint_fast16_t;
@@ -18,3 +19,4 @@ typedef uint32_t uint_fast32_t;
 #define PTRDIFF_MIN     INT32_MIN
 #define PTRDIFF_MAX     INT32_MAX
 #define SIZE_MAX        UINT32_MAX
+#endif

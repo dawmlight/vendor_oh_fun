@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2013-2019, Huawei Technologies Co., Ltd. All rights reserved.
- * Copyright (c) 2020, Huawei Device Co., Ltd. All rights reserved.
+ * Copyright (c) 2013-2019 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,40 +29,67 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @defgroup los_membox Static memory
+ * @ingroup kernel
+ */
+
 #ifndef _LOS_MEMBOX_H
 #define _LOS_MEMBOX_H
 
 #include "los_config.h"
-#if (LOSCFG_PLATFORM_EXC == YES)
-#include "los_memcheck.h"
-#endif
+#include "los_debug.h"
 
-#define BOX_ALIGN_8                   0x80000000
-/* ----------------------------------------------------------------------------
- *      Global Functions
- * --------------------------------------------------------------------------- */
+#ifdef __cplusplus
+#if __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+#endif /* __cplusplus */
+
+#define OS_MEMBOX_NEXT(addr, blkSize) (LOS_MEMBOX_NODE *)(VOID *)((UINT8 *)(addr) + (blkSize))
+
+#define OS_MEMBOX_NODE_HEAD_SIZE sizeof(LOS_MEMBOX_NODE)
+
 /**
  * @ingroup los_membox
- * Define whether to check the address validity
+ * Structure of a free node in a memory pool
  */
-#if (LOSCFG_PLATFORM_EXC == YES)
-#define LOS_MEMBOX_CHECK
-extern UINT8 g_memMang[];
+typedef struct tagMEMBOX_NODE {
+    struct tagMEMBOX_NODE *pstNext; /**< Free node's pointer to the next node in a memory pool */
+} LOS_MEMBOX_NODE;
+
+/**
+ * @ingroup los_membox
+ * Memory pool information structure
+ */
+typedef struct LOS_MEMBOX_INFO {
+    UINT32 uwBlkSize;            /**< Block size */
+    UINT32 uwBlkNum;             /**< Block number */
+    UINT32 uwBlkCnt;             /**< The number of allocated blocks */
+#if (LOSCFG_PLATFORM_EXC == 1)
+    struct LOS_MEMBOX_INFO *nextMemBox; /**< Point to the next membox */
+#endif
+    LOS_MEMBOX_NODE stFreeList;  /**< Free list */
+} LOS_MEMBOX_INFO;
+
+typedef LOS_MEMBOX_INFO OS_MEMBOX_S;
+
+#if (LOSCFG_PLATFORM_EXC == 1)
+UINT32 OsMemboxExcInfoGet(UINT32 memNumMax, MemInfoCB *memExcInfo);
 #endif
 
-typedef struct tagMemBoxCB {
-    UINT32  uwMaxBlk;
-    UINT32  uwBlkCnt;
-    UINT32  uwBlkSize;                  /* Memory block size */
-}OS_MEMBOX_S;
+/**
+ * @ingroup los_membox
+ * Memory pool alignment
+ */
+#define LOS_MEMBOX_ALLIGNED(memAddr) (((UINTPTR)(memAddr) + sizeof(UINTPTR) - 1) & (~(sizeof(UINTPTR) - 1)))
 
-typedef OS_MEMBOX_S *OS_MEMBOX_S_P;
-
-#ifdef LOS_MEMBOX_CHECK
-#define LOS_MEMBOX_MAGIC_SIZE    4
-#else
-#define LOS_MEMBOX_MAGIC_SIZE    0
-#endif
+/**
+ * @ingroup los_membox
+ * Memory pool size
+ */
+#define LOS_MEMBOX_SIZE(blkSize, blkNum) \
+    (sizeof(LOS_MEMBOX_INFO) + (LOS_MEMBOX_ALLIGNED((blkSize) + OS_MEMBOX_NODE_HEAD_SIZE) * (blkNum)))
 
 /**
  * @ingroup los_membox
@@ -74,13 +101,14 @@ typedef OS_MEMBOX_S *OS_MEMBOX_S_P;
  * </ul>
  * @attention
  * <ul>
- * <li>The boxSize parameter value should match the following two conditions :</li>
- * <li>1) Be less than or equal to the Memory pool size; 2) Be greater than the size of LOS_MEMBOX_INFO.</li>
+ * <li>The poolSize parameter value should match the following two conditions :
+ * 1) Be less than or equal to the Memory pool size;
+ * 2) Be greater than the size of LOS_MEMBOX_INFO.</li>
  * </ul>
  *
- * @param boxMem    [IN] Memory pool address.
- * @param boxSize   [IN] Memory pool size.
- * @param blkSize   [IN] Memory block size.
+ * @param pool     [IN] Memory pool address.
+ * @param poolSize [IN] Memory pool size.
+ * @param blkSize  [IN] Memory block size.
  *
  * @retval #LOS_NOK   The memory pool fails to be initialized.
  * @retval #LOS_OK    The memory pool is successfully initialized.
@@ -90,7 +118,7 @@ typedef OS_MEMBOX_S *OS_MEMBOX_S_P;
  * </ul>
  * @see None.
  */
-extern UINT32 LOS_MemboxInit(VOID *boxMem, UINT32 boxSize, UINT32 blkSize);
+extern UINT32 LOS_MemboxInit(VOID *pool, UINT32 poolSize, UINT32 blkSize);
 
 /**
  * @ingroup los_membox
@@ -105,7 +133,7 @@ extern UINT32 LOS_MemboxInit(VOID *boxMem, UINT32 boxSize, UINT32 blkSize);
  * <li>The input pool parameter must be initialized via func LOS_MemboxInit.</li>
  * </ul>
  *
- * @param boxMem     [IN] Memory pool address.
+ * @param pool    [IN] Memory pool address.
  *
  * @retval #VOID*      The request is accepted, and return a memory block address.
  * @retval #NULL       The request fails.
@@ -115,7 +143,7 @@ extern UINT32 LOS_MemboxInit(VOID *boxMem, UINT32 boxSize, UINT32 blkSize);
  * </ul>
  * @see LOS_MemboxFree
  */
-extern VOID *LOS_MemboxAlloc(VOID *boxMem);
+extern VOID *LOS_MemboxAlloc(VOID *pool);
 
 /**
  * @ingroup los_membox
@@ -128,11 +156,11 @@ extern VOID *LOS_MemboxAlloc(VOID *boxMem);
  * @attention
  * <ul>
  * <li>The input pool parameter must be initialized via func LOS_MemboxInit.</li>
- * <li>The input pBox parameter must be allocated by LOS_MemboxAlloc.</li>
+ * <li>The input box parameter must be allocated by LOS_MemboxAlloc.</li>
  * </ul>
  *
- * @param boxMem     [IN] Memory pool address.
- * @param box        [IN] Memory block address.
+ * @param pool     [IN] Memory pool address.
+ * @param box      [IN] Memory block address.
  *
  * @retval #LOS_NOK   This memory block fails to be freed.
  * @retval #LOS_OK    This memory block is successfully freed.
@@ -142,7 +170,7 @@ extern VOID *LOS_MemboxAlloc(VOID *boxMem);
  * </ul>
  * @see LOS_MemboxAlloc
  */
-extern UINT32 LOS_MemboxFree(const VOID *boxMem, VOID *box);
+extern UINT32 LOS_MemboxFree(VOID *pool, VOID *box);
 
 /**
  * @ingroup los_membox
@@ -155,11 +183,11 @@ extern UINT32 LOS_MemboxFree(const VOID *boxMem, VOID *box);
  * @attention
  * <ul>
  * <li>The input pool parameter must be initialized via func LOS_MemboxInit.</li>
- * <li>The input pBox parameter must be allocated by LOS_MemboxAlloc.</li>
+ * <li>The input box parameter must be allocated by LOS_MemboxAlloc.</li>
  * </ul>
  *
- * @param boxMem     [IN] Memory pool address.
- * @param box        [IN] Memory block address.
+ * @param pool    [IN] Memory pool address.
+ * @param box     [IN] Memory block address.
  *
  * @retval VOID
  * @par Dependency:
@@ -168,8 +196,31 @@ extern UINT32 LOS_MemboxFree(const VOID *boxMem, VOID *box);
  * </ul>
  * @see None.
  */
-extern VOID LOS_MemboxClr(const VOID *boxMem, VOID *box);
+extern VOID LOS_MemboxClr(VOID *pool, VOID *box);
 
+/**
+ * @ingroup los_membox
+ * @brief show membox info.
+ *
+ * @par Description:
+ * <ul>
+ * <li>This API is used to show the memory pool info.</li>
+ * </ul>
+ * @attention
+ * <ul>
+ * <li>The input pool parameter must be initialized via func LOS_MemboxInit.</li>
+ * </ul>
+ *
+ * @param pool    [IN] Memory pool address.
+ *
+ * @retval VOID
+ * @par Dependency:
+ * <ul>
+ * <li>los_membox.h: the header file that contains the API declaration.</li>
+ * </ul>
+ * @see None.
+ */
+extern VOID LOS_ShowBox(VOID *pool);
 
 /**
  * @ingroup los_membox
@@ -181,11 +232,11 @@ extern VOID LOS_MemboxClr(const VOID *boxMem, VOID *box);
  * </ul>
  * @attention
  * <ul>
- * <li>One parameter of this interface is a pointer, it should be a correct value, otherwise, the system may be
- * abnormal.</li>
+ * <li>One parameter of this interface is a pointer, it should be a correct value, otherwise, the system may
+ * be abnormal.</li>
  * </ul>
  *
- * @param  boxMem       [IN]  Type  #VOID*   Pointer to the calculate membox.
+ * @param  boxMem        [IN]  Type  #VOID*   Pointer to the calculate membox.
  * @param  maxBlk       [OUT] Type  #UINT32* Record membox max block.
  * @param  blkCnt       [OUT] Type  #UINT32* Record membox block count alreay allocated.
  * @param  blkSize      [OUT] Type  #UINT32* Record membox block size.
@@ -198,4 +249,10 @@ extern VOID LOS_MemboxClr(const VOID *boxMem, VOID *box);
  */
 extern UINT32 LOS_MemboxStatisticsGet(const VOID *boxMem, UINT32 *maxBlk, UINT32 *blkCnt, UINT32 *blkSize);
 
-#endif
+#ifdef __cplusplus
+#if __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* __cplusplus */
+
+#endif /* _LOS_MEMBOX_H */

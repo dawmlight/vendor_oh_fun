@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "hos_types.h"
+#include "ohos_types.h"
 #include <securec.h>
 #include "hctest.h"
 #include "utils_file.h"
@@ -57,14 +57,11 @@ static BOOL UtilsFileFuncTestSuiteTearDown(void)
 }
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0100
+ * @tc.name      : File operation for file creat and close with parameter RDONLY
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose001, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose001, Function | MediumTest | Level1)
 {
     char* fileName = "testfile101";
     int fd = UtilsFileOpen(fileName, O_RDONLY_FS | O_CREAT_FS, 0);
@@ -75,14 +72,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0200
+ * @tc.name      : File operation for file creat and close with parameter WRONLY
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose002, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose002, Function | MediumTest | Level1)
 {
     char* fileName = "testfile102";
     int fd = UtilsFileOpen(fileName, O_WRONLY_FS | O_CREAT_FS, 0);
@@ -93,14 +87,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0300
+ * @tc.name      : File operation for file creat and close with parameter RDWR
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose003, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose003, Function | MediumTest | Level1)
 {
     char* fileName = "testfile103";
     int fd = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -111,14 +102,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file open/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0400
+ * @tc.name      : File operation for file open and close with parameter RDONLY
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose001, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose001, Function | MediumTest | Level1)
 {
     char* fileName = "testfile104";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -131,14 +119,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file open/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0500
+ * @tc.name      : File operation for file open and close with parameter WRONLY
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose002, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose002, Function | MediumTest | Level1)
 {
     char* fileName = "testfile105";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -151,14 +136,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file open/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0600
+ * @tc.name      : File operation for file open and close with parameter RDWR
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose003, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose003, Function | MediumTest | Level1)
 {
     char* fileName = "testfile106";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -171,14 +153,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file open/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0700
+ * @tc.name      : File operation for file open and close with parameter TRUNC
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose004, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose004, Function | MediumTest | Level1)
 {
     char* fileName = "testfile107";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -191,14 +170,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file open/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0800
+ * @tc.name      : File operation for file open and close with parameter APPEND
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose005, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose005, Function | MediumTest | Level1)
 {
     char* fileName = "testfile108";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -211,14 +187,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileOpenAndClose005, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_0900
+ * @tc.name      : File operation for file creat and close with parameter RDONLY and EXCL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose004, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose004, Function | MediumTest | Level1)
 {
     char* fileName = "testfile109";
     int fd = UtilsFileOpen(fileName, O_RDONLY_FS | O_CREAT_FS | O_EXCL_FS, 0);
@@ -233,14 +206,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1000
+ * @tc.name      : File operation for file creat and close with parameter WRONLY and EXCL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose005, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose005, Function | MediumTest | Level1)
 {
     char* fileName = "testfile110";
     int fd = UtilsFileOpen(fileName, O_WRONLY_FS | O_CREAT_FS | O_EXCL_FS, 0);
@@ -255,14 +225,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose005, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1100
+ * @tc.name      : File operation for file creat and close with parameter RDWR and EXCL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose006, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose006, Function | MediumTest | Level1)
 {
     char* fileName = "testfile111";
     int fd = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS | O_EXCL_FS, 0);
@@ -277,14 +244,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose006, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1200
+ * @tc.name      : File operation for file creat and close with parameter TRUNC and EXCL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose007, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose007, Function | MediumTest | Level1)
 {
     char* fileName = "testfile112";
     int fd = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS | O_EXCL_FS | O_TRUNC_FS, 0);
@@ -299,14 +263,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose007, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
- * @tc.name      : File operation for file creat/close
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1300
+ * @tc.name      : File operation for file creat and close with parameter APPEND and EXCL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose008, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose008, Function | MediumTest | Level1)
 {
     char* fileName = "testfile113";
     int fd = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS | O_EXCL_FS | O_APPEND_FS, 0);
@@ -321,14 +282,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCreatAndClose008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1400
  * @tc.name      : File operation for file write
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite001, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite001, Function | MediumTest | Level1)
 {
     char* fileName = "testfile114";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -341,14 +299,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
- * @tc.name      : File operation for file write
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1500
+ * @tc.name      : File write operation with parameter APPEND and TRUNC
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite002, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite002, Function | MediumTest | Level1)
 {
     char* fileName = "testfile115";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -366,14 +321,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileWrite002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1600
  * @tc.name      : Creat file with long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatLongNameFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatLongNameFile, Function | MediumTest | Level1)
 {
     char* fileName = "testLongFileName116-Ab123456789";
     int fd = UtilsFileOpen(fileName, O_RDONLY_FS | O_CREAT_FS, 0);
@@ -383,14 +335,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatLongNameFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_100
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1700
  * @tc.name      : Creat file with special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatFileWithSpecChar, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatFileWithSpecChar, Function | MediumTest | Level1)
 {
     char* fileName = "case117-~!@#$%^&*()+_/:?<;>|\\";
     int fd = UtilsFileOpen(fileName, O_RDONLY_FS | O_CREAT_FS, 0);
@@ -400,14 +349,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatFileWithSpecChar, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1800
  * @tc.name      : Open none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testOpenNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testOpenNotExistFile, Function | MediumTest | Level1)
 {
     char* fileName = "fileNotExist118";
     int fd = UtilsFileOpen(fileName, O_RDONLY_FS, 0);
@@ -415,14 +361,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testOpenNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_1900
  * @tc.name      : Write none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testWriteNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testWriteNotExistFile, Function | MediumTest | Level1)
 {
     int fd = 1073;
     int ret = UtilsFileWrite(fd, g_def, strlen(g_def));
@@ -430,14 +373,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testWriteNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2000
  * @tc.name      : Close none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCloseNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCloseNotExistFile, Function | MediumTest | Level1)
 {
     int fd = 1073;
     int ret = UtilsFileClose(fd);
@@ -445,14 +385,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCloseNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_200 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2100
  * @tc.name      : Creat file with invalid long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatInvalidlongNameFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatInvalidlongNameFile, Function | MediumTest | Level1)
 {
     char* fileName = "copyLongFileName403-Abcdefg123456789Abcdefg123456789Abcdefg123456789\
                     Abcdefg123456789Abcdefg123456789";
@@ -461,14 +398,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCreatInvalidlongNameFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300 
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2200
+ * @tc.name      : File operation for fileseek moved offset 20 from begin
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek001, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek001, Function | MediumTest | Level1)
 {
     char* fileName = "testfile201";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -482,14 +416,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300 
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2300
+ * @tc.name      : File operation for fileseek moved offset 20 from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek002, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek002, Function | MediumTest | Level1)
 {
     char* fileName = "testfile202";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -503,14 +434,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300 
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2400
+ * @tc.name      : File operation for fileseek moved offset 20 backward from end
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek003, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek003, Function | MediumTest | Level1)
 {
     char* fileName = "testfile203";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -524,14 +452,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2500
+ * @tc.name      : File operation for fileseek moved offset 50 from begin
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek004, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek004, Function | MediumTest | Level1)
 {
     char* fileName = "testfile204";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -545,14 +470,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2600
+ * @tc.name      : File operation for fileseek moved offset 50 from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek005, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek005, Function | MediumTest | Level1)
 {
     char* fileName = "testfile205";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -566,14 +488,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek005, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2700
+ * @tc.name      : File operation for fileseek moved offset 50 backward from end
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek006, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek006, Function | MediumTest | Level1)
 {
     char* fileName = "testfile206";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -587,14 +506,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek006, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2800
+ * @tc.name      : File operation for fileseek moved offset 20 from begin, then moved offset 10 from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek007, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek007, Function | MediumTest | Level1)
 {
     char* fileName = "testfile207";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -609,14 +525,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek007, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_2900
+ * @tc.name      : File operation for fileseek moved offset 20 from begin, then moved offset 10 backward from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek008, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek008, Function | MediumTest | Level1)
 {
     char* fileName = "testfile208";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -631,14 +544,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3000
+ * @tc.name      : File operation for fileseek moved offset 20 from begin, then moved offset 50 from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek009, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek009, Function | MediumTest | Level1)
 {
     char* fileName = "testfile209";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -653,14 +563,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek009, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3100
+ * @tc.name      : File operation for fileseek moved offset 20 from begin, then moved offset 50 backward from current
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek010, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek010, Function | MediumTest | Level1)
 {
     char* fileName = "testfile210";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -675,14 +582,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek010, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_300
- * @tc.name      : File operation for fileseek
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3200
+ * @tc.name      : File operation for fileseek moved multiples times
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek011, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek011, Function | MediumTest | Level1)
 {
     char* fileName = "testfile211";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -698,14 +602,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeek011, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_400
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3300
  * @tc.name      : File seek for none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeekForNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeekForNotExistFile, Function | MediumTest | Level1)
 {
     int fd = 1073;
     int ret = UtilsFileSeek(fd, FILE_SEEK_OFFSET_20, SEEK_SET_FS);
@@ -713,14 +614,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileSeekForNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_500
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3400
  * @tc.name      : Obtaining file size
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainFileSize, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainFileSize, Function | MediumTest | Level1)
 {
     char* fileName = "testfile301";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -733,14 +631,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainFileSize, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_600
- * @tc.name      : Obtaining size for none exist file 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3500
+ * @tc.name      : Obtaining size for none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForNotExistFile, Function | MediumTest | Level1)
 {
     char* fileName = "fileNotExist302";
     unsigned int fileLen = 0;
@@ -749,14 +644,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_500
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3600
  * @tc.name      : File operation for file read
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileRead, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileRead, Function | MediumTest | Level1)
 {
     char* fileName = "testfile303";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -771,14 +663,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileRead, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_600
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3700
  * @tc.name      : Read none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testReadNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testReadNotExistFile, Function | MediumTest | Level1)
 {
     char buf[LENGTH_OF_READ_BUF] = {0};
     int fd = 1073;
@@ -787,14 +676,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testReadNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_500
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3800
  * @tc.name      : Obtaining size for file with long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainLongNameFileSize, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainLongNameFileSize, Function | MediumTest | Level1)
 {
     char* fileName = "testLongFileName305-Ab123456789";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -807,14 +693,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainLongNameFileSize, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_500
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_3900
  * @tc.name      : Obtaining size for file with special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForFileWithSpecChar, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForFileWithSpecChar, Function | MediumTest | Level1)
 {
     char* fileName = "case307-~!@#$%^&*()+_/:?<;>|\\";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -827,14 +710,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testObtainSizeForFileWithSpecChar, LEVEL1
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_700
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4000
  * @tc.name      : File operation for file copy
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCopy, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCopy, Function | MediumTest | Level1)
 {
     char* fileName = "testfile401";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -848,14 +728,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileCopy, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_800
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4100
  * @tc.name      : Copy none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyNotExistFile, Function | MediumTest | Level1)
 {
     char* fileName = "fileNotExist402";
     char* fileNameCopy = "copyFile402";
@@ -864,14 +741,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_700
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4200
  * @tc.name      : Copy file with long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyLongNameFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyLongNameFile, Function | MediumTest | Level1)
 {
     char* fileName = "testLongFileName403-Ab123456789";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -885,14 +759,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyLongNameFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_700
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4300
  * @tc.name      : Copy file with special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyFileWithSpecChar, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyFileWithSpecChar, Function | MediumTest | Level1)
 {
     char* fileName = "case404-~!@#$%^&*()+_/:?<;>|\\";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -906,14 +777,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testCopyFileWithSpecChar, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_900
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4400
  * @tc.name      : File operation for file move
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileMove, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileMove, Function | MediumTest | Level1)
 {
     char* fileName = "testfile501";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -926,14 +794,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileMove, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1000 
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4500
  * @tc.name      : Move none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveNotExistFile, Function | MediumTest | Level1)
 {
     char* fileName = "fileNotExist502";
     char* fileNameMove = "moveFile502";
@@ -942,14 +807,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_900
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4600
  * @tc.name      : Move file with long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveLongNameFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveLongNameFile, Function | MediumTest | Level1)
 {
     char* fileName = "testLongFileName503-Ab123456789";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -962,14 +824,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveLongNameFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_900
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4700
  * @tc.name      : Move file with special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveFileWithSpecChar, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveFileWithSpecChar, Function | MediumTest | Level1)
 {
     char* fileName = "case504-~!@#$%^&*()+_/:?<;>|\\";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -982,14 +841,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testMoveFileWithSpecChar, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1100
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4800
  * @tc.name      : File operation for file delete
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileDelete, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileDelete, Function | MediumTest | Level1)
 {
     char* fileName = "deleteFile601";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -1000,14 +856,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testFileDelete, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1200
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_4900
  * @tc.name      : Delete none exist file
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteNotExistFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteNotExistFile, Function | MediumTest | Level1)
 {
     char* fileName = "fileNotExist602";
     int ret = UtilsFileDelete(fileName);
@@ -1015,14 +868,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteNotExistFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1100
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5000
  * @tc.name      : Delete file with long file name
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteLongNameFile, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteLongNameFile, Function | MediumTest | Level1)
 {
     char* fileName = "deleteLongFileName603-Ab1234567";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);
@@ -1033,14 +883,11 @@ LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteLongNameFile, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_FILE_OPERATION_1100
+ * @tc.number    : SUB_UTILS_FILE_OPERATION_5100
  * @tc.name      : Delete file with special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteFileWithSpecChar, LEVEL1)
+LITE_TEST_CASE(UtilsFileFuncTestSuite, testDeleteFileWithSpecChar, Function | MediumTest | Level1)
 {
     char* fileName = "delete604-~!@#$%^&*()+_/:?<;>|\\";
     int fd0 = UtilsFileOpen(fileName, O_RDWR_FS | O_CREAT_FS, 0);

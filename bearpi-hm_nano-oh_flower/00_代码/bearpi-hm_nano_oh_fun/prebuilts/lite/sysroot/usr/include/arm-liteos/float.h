@@ -1,6 +1,10 @@
 #ifndef _FLOAT_H
 #define _FLOAT_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <float.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,4 +53,5 @@ int __flt_rounds(void);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

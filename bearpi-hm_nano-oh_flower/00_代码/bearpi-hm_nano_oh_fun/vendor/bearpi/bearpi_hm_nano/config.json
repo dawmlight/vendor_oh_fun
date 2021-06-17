@@ -1,0 +1,97 @@
+{
+    "product_name": "bearpi_hm_nano",
+    "ohos_version": "OpenHarmony 1.1.0",
+    "device_company": "bearpi",
+    "board": "bearpi_hm_nano",
+    "kernel_type": "liteos_m",
+    "kernel_version": "",
+    "subsystems": [
+      {
+        "subsystem": "applications",
+        "components": [
+          { "component": "bearpi_hm_nano_sample_app", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "iot_hardware",
+        "components": [
+          { "component": "iot_controller", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "hiviewdfx",
+        "components": [
+          { "component": "hilog_lite", "features":[] },
+          { "component": "hievent_lite", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "distributed_schedule",
+        "components": [
+          { "component": "samgr_lite", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "security",
+        "components": [
+          { "component": "hichainsdk", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "startup",
+        "components": [
+          { "component": "bootstrap_lite", "features":[] },
+          { "component": "syspara_lite", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "communication",
+        "components": [
+          { "component": "wifi_lite", "features":[] },
+          { "component": "wifi_aware", "features":[]}
+        ]
+      },
+      {
+        "subsystem": "update",
+        "components": [
+          { "component": "ota_lite", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "iot",
+        "components": [
+          { "component": "iot_link", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "utils",
+        "components": [
+          { "component": "file", "features":[] },
+          { "component": "kv_store", "features":[] },
+          { "component": "os_dump", "features":[] }
+        ]
+      },
+      {
+        "subsystem": "vendor",
+        "components": [
+          { "component": "bearpi_hi3861_sdk", "target": "//device/bearpi/bearpi_hm_nano/sdk_liteos:wifiiot_sdk", "features":[] }
+        ]
+      }
+    ],
+    "vendor_adapter_dir": "//device/bearpi/bearpi_hm_nano/hi3861_adapter",
+    "third_party_dir": "//device/bearpi/bearpi_hm_nano/sdk_liteos/third_party",
+    "product_adapter_dir": "//vendor/bearpi/bearpi_hm_nano/hals",
+    "ohos_product_type":"",
+    "ohos_manufacture":"",
+    "ohos_brand":"",
+    "ohos_market_name":"",
+    "ohos_product_series":"",
+    "ohos_product_model":"",
+    "ohos_software_model":"",
+    "ohos_hardware_model":"",
+    "ohos_hardware_profile":"",
+    "ohos_serial":"",
+    "ohos_bootloader_version":"",
+    "ohos_secure_patch_level":"",
+    "ohos_abi_list":""
+  }

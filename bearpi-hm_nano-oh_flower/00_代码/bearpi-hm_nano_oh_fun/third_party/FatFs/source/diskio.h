@@ -11,8 +11,12 @@ extern "C" {
 #endif /*__cplusplus */
 #endif /*__cplusplus */
 
+#ifndef __LITEOS_M__
 #include "integer.h"
 #include "ffconf.h"
+#else
+#include "ff.h"
+#endif
 
 /* Status of Disk Functions */
 typedef BYTE	DSTATUS;
@@ -32,10 +36,15 @@ typedef enum {
 DSTATUS disk_initialize (BYTE pdrv);
 DSTATUS disk_status (BYTE pdrv);
 DRESULT disk_read (BYTE pdrv, BYTE* buff, QWORD sector, UINT count);
-DRESULT disk_raw_read (int id, void* buff, QWORD sector, UINT32 count);
 DRESULT disk_write (BYTE pdrv, const BYTE* buff, QWORD sector, UINT count);
+#ifndef __LITEOS_M__
+DRESULT disk_raw_read (int id, void* buff, QWORD sector, UINT32 count);
 DRESULT disk_raw_write (int id, void* buff, QWORD sector, UINT32 count);
+#endif
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
+#ifdef __LITEOS_M__
+DWORD get_fattime (void);
+#endif
 
 /* Disk Status Bits (DSTATUS) */
 
@@ -64,6 +73,11 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define MMC_GET_CID			12	/* Get CID */
 #define MMC_GET_OCR			13	/* Get OCR */
 #define MMC_GET_SDSTAT		14	/* Get SD status */
+#ifdef __LITEOS_M__
+#define ISDIO_READ			55	/* Read data form SD iSDIO register */
+#define ISDIO_WRITE			56	/* Write data to SD iSDIO register */
+#define ISDIO_MRITE			57	/* Masked write data to SD iSDIO register */
+#endif
 
 /* ATA/CF specific ioctl command */
 #define ATA_GET_REV			20	/* Get F/W revision */

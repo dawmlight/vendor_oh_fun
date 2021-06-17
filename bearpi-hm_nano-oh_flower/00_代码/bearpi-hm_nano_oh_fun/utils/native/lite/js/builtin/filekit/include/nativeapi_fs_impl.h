@@ -34,10 +34,10 @@ typedef struct {
     mode_t fileMode;
 } FileMetaInfo;
 
-int StatImpl(const char *path, struct stat *buf);
+int StatImpl(const char* path, struct stat* buf);
 int DeleteFileImpl(const char* src);
 int CopyFileImpl(const char* src, const char* dest);
-int WriteTextFile(const char *fileName, const void *buf, size_t len, bool append);
+int WriteTextFile(const char* fileName, const void* buf, size_t len, bool append);
 int WriteArrayFile(const char* fileName, const void* buf, size_t len, unsigned int position, bool append);
 int ReadFileImpl(const char* fileName, void* text, size_t len, unsigned int position, size_t* actualLen);
 int GetFileListImpl(const char* dirName, FileMetaInfo* fileList, unsigned int listNum);

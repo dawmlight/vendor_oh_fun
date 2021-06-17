@@ -1616,5 +1616,5 @@ sha512_block_armv8:
 .size	sha512_block_armv8,.-sha512_block_armv8
 #endif
 #ifndef	__KERNEL__
-.comm	OPENSSL_armcap_P,4,4
+.hidden	OPENSSL_armcap_P
 #endif

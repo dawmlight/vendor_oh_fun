@@ -16,8 +16,7 @@ dtls_inc = [
     "../../inc",
     "../../link_misc",
     "//kernel/liteos_m/components/cmsis/2.0",
-    "//vendor/hisi/hi3861/hi3861/third_party/lwip_sack/include/",
-    "//vendor/hisi/hi3861/hi3861/third_party/mbedtls/include/",
+    "//third_party/mbedtls/include/",
 ]
 
 

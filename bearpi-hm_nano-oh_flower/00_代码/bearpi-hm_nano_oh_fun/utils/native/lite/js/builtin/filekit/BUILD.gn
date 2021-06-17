@@ -13,22 +13,24 @@
 # limitations under the License.
 #
 
-shared_library("ace_kit_file") {
-    sources = [
-        "src/nativeapi_fs_impl.c",
-        "src/nativeapi_fs.cpp",
-    ]
-    cflags = ["-Wall"]
-    cflags_cc = cflags
+import("//build/lite/config/subsystem/aafwk/path.gni")
 
-    include_dirs = [
-        "include",
-        "../common/include",
-        "//third_party/bounds_checking_function/include",
-        "//foundation/ace/interfaces/innerkits/builtin",
-        "//foundation/ace/interfaces/innerkits/builtin/base",
-        "//foundation/ace/interfaces/innerkits/builtin/async",
-        "//foundation/aafwk/interfaces/kits/ability_lite",
-    ]
-    deps = ["//third_party/bounds_checking_function:libsec_shared"]
+shared_library("ace_kit_file") {
+  sources = [
+    "src/nativeapi_fs.cpp",
+    "src/nativeapi_fs_impl.c",
+  ]
+  cflags = [ "-Wall" ]
+  cflags_cc = cflags
+
+  include_dirs = [
+    "include",
+    "../common/include",
+    "//third_party/bounds_checking_function/include",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin/base",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin/async",
+    "${aafwk_lite_path}/interfaces/kits/ability_lite",
+  ]
+  deps = [ "//third_party/bounds_checking_function:libsec_shared" ]
 }
