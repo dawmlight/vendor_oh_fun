@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@
 using namespace std;
 using namespace testing::ext;
 
-class Demo: public testing::Test {
+class Demo : public testing::Test {
 protected:
     // SetUpTestCase：测试套预置动作，在第一个TestCase之前执行
     static void SetUpTestCase(void) {}
@@ -49,11 +49,8 @@ static int Sum(int n)
  * @tc.number    : TEST_CASE_100 
  * @tc.name      : Demo test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(Demo, Negative, TestSize.Level0) {
+HWTEST_F(Demo, Negative, Function | MediumTest | Level0) {
     EXPECT_EQ(NUM0, Sum(NG_NUM5));
     EXPECT_EQ(NUM0, Sum(NG_NUM1));
 }
@@ -62,11 +59,8 @@ HWTEST_F(Demo, Negative, TestSize.Level0) {
  * @tc.number    : TEST_CASE_200
  * @tc.name      : Demo test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(Demo, Zero, TestSize.Level0) {
+HWTEST_F(Demo, Zero, Function | MediumTest | Level0) {
     EXPECT_EQ(NUM0, Sum(NUM0));
 }
 
@@ -74,11 +68,8 @@ HWTEST_F(Demo, Zero, TestSize.Level0) {
  * @tc.number    : TEST_CASE_300
  * @tc.name      : Demo test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 0
  */
-HWTEST_F(Demo, Positive, TestSize.Level0) {
+HWTEST_F(Demo, Positive, Function | MediumTest | Level0) {
     EXPECT_EQ(NUM1, Sum(NUM1));
     EXPECT_EQ(NUM45, Sum(NUM10));
     EXPECT_EQ(NUM4950, Sum(NUM100));

@@ -26,13 +26,13 @@ int HalFileOpen(const char* path, int oflag, int mode);
 
 int HalFileClose(int fd);
 
-int HalFileRead(int fd, char *buf, unsigned int len);
+int HalFileRead(int fd, char* buf, unsigned int len);
 
-int HalFileWrite(int fd, const char *buf, unsigned int len);
+int HalFileWrite(int fd, const char* buf, unsigned int len);
 
-int HalFileDelete(const char *path);
+int HalFileDelete(const char* path);
 
-int HalFileStat(const char *path, unsigned int *fileSize);
+int HalFileStat(const char* path, unsigned int* fileSize);
 
 int HalFileSeek(int fd, int offset, unsigned int whence);
 

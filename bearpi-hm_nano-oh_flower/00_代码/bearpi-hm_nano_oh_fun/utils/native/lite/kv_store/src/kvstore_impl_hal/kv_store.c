@@ -40,11 +40,12 @@ static int GetValueByFile(const char* key, char* value, unsigned int len)
     if (fd < 0) {
         return EC_FAILURE;
     }
-    if (UtilsFileRead(fd, value, valueLen) < 0) {
-        UtilsFileClose(fd);
+    int ret = UtilsFileRead(fd, value, valueLen);
+    UtilsFileClose(fd);
+    fd = -1;
+    if (ret < 0) {
         return EC_FAILURE;
     }
-    UtilsFileClose(fd);
     value[valueLen] = '\0';
     return valueLen;
 }
@@ -55,12 +56,10 @@ static int SetValueToFile(const char* key, const char* value)
     if (fd < 0) {
         return EC_FAILURE;
     }
-    if (UtilsFileWrite(fd, value, strlen(value)) < 0) {
-        UtilsFileClose(fd);
-        return EC_FAILURE;
-    }
+    int ret = UtilsFileWrite(fd, value, strlen(value));
     UtilsFileClose(fd);
-    return EC_SUCCESS;
+    fd = -1;
+    return (ret < 0) ? EC_FAILURE : EC_SUCCESS;
 }
 
 static int GetCurrentItem(void)
@@ -70,13 +69,10 @@ static int GetCurrentItem(void)
         return 0;
     }
     char value[KV_SUM_INDEX] = {0};
-    if (UtilsFileRead(fd, value, KV_SUM_INDEX) < 0) {
-        UtilsFileClose(fd);
-        return 0;
-    }
+    int ret = UtilsFileRead(fd, value, KV_SUM_INDEX);
     UtilsFileClose(fd);
-    int sum = atoi(value);
-    return sum;
+    fd = -1;
+    return (ret < 0) ? 0 : atoi(value);
 }
 
 static int SetCurrentItem(const int num)
@@ -89,12 +85,10 @@ static int SetCurrentItem(const int num)
     if (fd < 0) {
         return EC_FAILURE;
     }
-    if (UtilsFileWrite(fd, value, KV_SUM_INDEX) < 0) {
-        UtilsFileClose(fd);
-        return EC_FAILURE;
-    }
+    int ret = UtilsFileWrite(fd, value, KV_SUM_INDEX);
     UtilsFileClose(fd);
-    return EC_SUCCESS;
+    fd = -1;
+    return (ret < 0) ? EC_FAILURE : EC_SUCCESS;
 }
 
 static boolean NewItem(const char* key)
@@ -146,8 +140,8 @@ int UtilsSetValue(const char* key, const char* value)
             currentNum++;
         }
     }
-    ret = SetCurrentItem(currentNum);
-    return ret;
+
+    return SetCurrentItem(currentNum);
 }
 
 int UtilsDeleteValue(const char* key)
@@ -159,10 +153,8 @@ int UtilsDeleteValue(const char* key)
     DeleteKVCache(key);
 #endif
     int ret = UtilsFileDelete(key);
-    int currentNum = GetCurrentItem();
     if (ret == EC_SUCCESS) {
-        currentNum--;
-        ret = SetCurrentItem(currentNum);
+        ret = SetCurrentItem(GetCurrentItem() - 1);
     }
     return ret;
 }

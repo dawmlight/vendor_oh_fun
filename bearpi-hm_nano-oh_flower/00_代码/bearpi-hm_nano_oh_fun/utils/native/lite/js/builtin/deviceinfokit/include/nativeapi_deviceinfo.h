@@ -22,10 +22,17 @@ namespace OHOS {
 namespace ACELite {
 class NativeapiDeviceInfo {
 public:
-    NativeapiDeviceInfo() {}
-    ~NativeapiDeviceInfo() {}
+    NativeapiDeviceInfo() = default;
+    ~NativeapiDeviceInfo() = default;
 
     static JSIValue GetDeviceInfo(const JSIValue thisVal, const JSIValue* args, uint8_t argsNum);
+    static bool GetProductInfo(JSIValue result);
+
+private:
+    static bool GetLanguage(JSIValue result);
+    static bool GetRegion(JSIValue result);
+    static bool GetAPILevel(JSIValue result);
+    static bool GetDeviceType(JSIValue result);
 };
 } // ACELite
 } // OHOS

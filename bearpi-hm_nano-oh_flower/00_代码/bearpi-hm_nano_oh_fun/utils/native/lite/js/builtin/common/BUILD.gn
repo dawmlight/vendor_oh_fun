@@ -14,14 +14,12 @@
 #
 
 shared_library("ace_kit_common") {
-    sources = [
-        "src/nativeapi_common.cpp",
-    ]
-    cflags = [ "-Wall" ]
-    cflags_cc = cflags
-    include_dirs = [
-        "include",
-        "//foundation/ace/interfaces/innerkits/builtin",
-        "//foundation/ace/interfaces/innerkits/builtin/base",
-    ]
+  sources = [ "src/nativeapi_common.cpp" ]
+  cflags = [ "-Wall" ]
+  cflags_cc = cflags
+  include_dirs = [
+    "include",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin/base",
+  ]
 }

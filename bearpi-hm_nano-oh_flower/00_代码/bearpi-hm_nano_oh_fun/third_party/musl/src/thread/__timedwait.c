@@ -32,6 +32,8 @@ static int __futex4_cp(volatile void *addr, int op, int val, const struct timesp
 		}
 	}
 
+	r = __syscall_cp(SYS_futex, addr, op, val, useconds);
+	if (r != -ENOSYS) return r;
 	return __syscall_cp(SYS_futex, addr, op & ~FUTEX_PRIVATE, val, useconds);
 }
 
@@ -43,6 +45,8 @@ int __timedwait_cp(volatile int *addr, int val,
 {
 	int r;
 	struct timespec to, *top=0;
+
+	if (priv) priv = FUTEX_PRIVATE;
 
 	if (at) {
 		if (at->tv_nsec >= 1000000000UL) return EINVAL;
@@ -56,7 +60,7 @@ int __timedwait_cp(volatile int *addr, int val,
 		top = &to;
 	}
 
-	r = -__futex4_cp(addr, FUTEX_WAIT, val, top);
+	r = -__futex4_cp(addr, FUTEX_WAIT|priv, val, top);
 	if (r != EINTR && r != ETIMEDOUT && r != ECANCELED) r = 0;
 	/* Mitigate bug in old kernels wrongly reporting EINTR for non-
 	 * interrupting (SA_RESTART) signal handlers. This is only practical

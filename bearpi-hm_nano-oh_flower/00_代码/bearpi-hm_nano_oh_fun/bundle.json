@@ -1,15 +1,10 @@
 {
-    "ohos": {
-        "board": "hi3861",
-        "kernel": "risc-v",
-        "os": "1.0.0"
-    },
-    "name": "bearpi_hm_nano",
+    "name": "dist",
     "version": "1.0.0",
-    "scripts": {
-        "build": "scons",
-        "clean": "scons -c",
-        "upload": "node %UPLOAD_SCRIPT%",
-        "upload&debug": "node %UPLOAD_SCRIPT% debug"
+    "publishAs": "distribution",
+    "license": "change license",
+    "base": {
+        "name": "@bearpi/bearpi_hm_nano_flower",
+        "version": "^1.1.0"
     }
 }

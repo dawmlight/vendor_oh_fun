@@ -16,13 +16,8 @@
 import("//build/lite/config/component/lite_component.gni")
 import("//build/lite/ndk/ndk.gni")
 
-config("mbedtls_config") {
-  include_dirs = [
-    "./include",
-  ]
-}
-
-mbedtls_sources = [
+mbedtls_sources = []
+mbedtls_sources += [
   "library/aes.c",
   "library/aesni.c",
   "library/arc4.c",
@@ -55,11 +50,12 @@ mbedtls_sources = [
   "library/hkdf.c",
   "library/hmac_drbg.c",
   "library/md.c",
-  "library/md_wrap.c",
   "library/md2.c",
   "library/md4.c",
   "library/md5.c",
+  "library/md_wrap.c",
   "library/memory_buffer_alloc.c",
+  "library/net_sockets.c",
   "library/nist_kw.c",
   "library/oid.c",
   "library/padlock.c",
@@ -79,42 +75,77 @@ mbedtls_sources = [
   "library/sha1.c",
   "library/sha256.c",
   "library/sha512.c",
+  "library/ssl_ciphersuites.c",
+  "library/ssl_cli.c",
+  "library/ssl_tls.c",
   "library/threading.c",
   "library/timing.c",
   "library/version.c",
   "library/version_features.c",
   "library/x509.c",
-  "library/x509_crt.c",
   "library/x509_crl.c",
+  "library/x509_crt.c",
   "library/xtea.c",
 ]
+
+config("mbedtls_config") {
+  include_dirs = [ "./include" ]
+}
 
 shared_library("mbedtls_shared") {
   sources = mbedtls_sources
   output_name = "mbedtls"
-  public_configs = [
-    ":mbedtls_config",
-  ]
+  public_configs = [ ":mbedtls_config" ]
 }
 
 static_library("mbedtls_static") {
-    sources = mbedtls_sources
-    output_name = "mbedtls"
-    public_configs = [
-        ":mbedtls_config",
-    ]
+  sources = mbedtls_sources
+  output_name = "mbedtls"
+  public_configs = [ ":mbedtls_config" ]
 }
 
 group("mbedtls") {
-    deps = [ ":mbedtls_shared" ]
+  deps = [ ":mbedtls_shared" ]
 }
 
 ndk_lib("mbedtls_ndk") {
-    lib_extension = ".so"
-    deps = [
-        ":mbedtls"
+  lib_extension = ".so"
+  deps = [ ":mbedtls" ]
+  head_files = [ "include" ]
+}
+
+# for test: test profile
+if (ohos_build_type == "debug") {
+  config("mbedtls_profile_test") {
+    include_dirs = [
+      "./include",
+      "./configs",  # The directory where the custom configuration file is
+                    # located
     ]
-    head_files = [
-        "include"
+    defines = [ "MBEDTLS_CONFIG_FILE=<config_rsa_aes_cbc.h>" ]
+    ldflags = [
+      "-s",
+      "-w",
     ]
+  }
+
+  mbedtls_sources += [
+    "library/certs.c",
+    "library/debug.c",
+    "library/pkcs11.c",
+    "library/ssl_cache.c",
+    "library/ssl_cookie.c",
+    "library/ssl_srv.c",
+    "library/ssl_ticket.c",
+    "library/x509_create.c",
+    "library/x509_csr.c",
+    "library/x509write_crt.c",
+    "library/x509write_csr.c",
+  ]
+
+  static_library("mbedtls_gt") {
+    sources = mbedtls_sources
+    output_name = "mbedtls_gt"
+    public_configs = [ ":mbedtls_profile_test" ]
+  }
 }

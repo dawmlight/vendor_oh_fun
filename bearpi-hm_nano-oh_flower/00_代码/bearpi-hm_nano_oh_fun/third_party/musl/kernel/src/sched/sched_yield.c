@@ -3,6 +3,6 @@
 
 int sched_yield()
 {
-    (void)LOS_ProcessYield();
+    (void)LOS_TaskYield();
     return 0;
 }

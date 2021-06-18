@@ -19,200 +19,103 @@
  * IN THE SOFTWARE.
  */
 
-/* Minor changes by Rich Felker for integration in musl, 2011-04-27. */
-
-/* Smoothsort, an adaptive variant of Heapsort.  Memory usage: O(1).
-   Run time: Worst case O(n log n), close to O(n) in the mostly-sorted case. */
-
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "atomic.h"
-#define ntz(x) a_ctz_l((x))
-
 typedef int (*cmpfun)(const void *, const void *);
 
-static inline int pntz(size_t p[2]) {
-	int r = ntz(p[0] - 1);
-	if(r != 0 || (r = 8*sizeof(size_t) + ntz(p[1])) != 8*sizeof(size_t)) {
-		return r;
-	}
-	return 0;
-}
+#define MIDDLE_ONE(a, b, c)                                      \
+    (*cmp)(a, b) < 0 ?                                           \
+    ((*cmp)(b, c) < 0 ? (b) : ((*cmp)(a, c) < 0 ? (c) : (a))):   \
+    ((*cmp)(b, c) > 0 ? (b) : ((*cmp)(a, c) < 0 ? (a) : (c)))
 
-static void cycle(size_t width, unsigned char* ar[], int n)
-{
-	unsigned char tmp[256];
-	size_t l;
-	int i;
-
-	if(n < 2) {
-		return;
-	}
-
-	ar[n] = tmp;
-	while(width) {
-		l = sizeof(tmp) < width ? sizeof(tmp) : width;
-		memcpy(ar[n], ar[0], l);
-		for(i = 0; i < n; i++) {
-			memcpy(ar[i], ar[i + 1], l);
-			ar[i] += l;
-		}
-		width -= l;
-	}
-}
-
-/* shl() and shr() need n > 0 */
-static inline void shl(size_t p[2], int n)
-{
-	if(n >= 8 * sizeof(size_t)) {
-		n -= 8 * sizeof(size_t);
-		p[1] = p[0];
-		p[0] = 0;
-	}
-	p[1] <<= n;
-	p[1] |= p[0] >> (sizeof(size_t) * 8 - n);
-	p[0] <<= n;
-}
-
-static inline void shr(size_t p[2], int n)
-{
-	if(n >= 8 * sizeof(size_t)) {
-		n -= 8 * sizeof(size_t);
-		p[0] = p[1];
-		p[1] = 0;
-	}
-	p[0] >>= n;
-	p[0] |= p[1] << (sizeof(size_t) * 8 - n);
-	p[1] >>= n;
-}
-
-static void sift(unsigned char *head, size_t width, cmpfun cmp, int pshift, size_t lp[])
-{
-	unsigned char *rt, *lf;
-	unsigned char *ar[14 * sizeof(size_t) + 1];
-	int i = 1;
-
-	ar[0] = head;
-	while(pshift > 1) {
-		rt = head - width;
-		lf = head - width - lp[pshift - 2];
-
-		if((*cmp)(ar[0], lf) >= 0 && (*cmp)(ar[0], rt) >= 0) {
-			break;
-		}
-		if((*cmp)(lf, rt) >= 0) {
-			ar[i++] = lf;
-			head = lf;
-			pshift -= 1;
-		} else {
-			ar[i++] = rt;
-			head = rt;
-			pshift -= 2;
-		}
-	}
-	cycle(width, ar, i);
-}
-
-static void trinkle(unsigned char *head, size_t width, cmpfun cmp, size_t pp[2], int pshift, int trusty, size_t lp[])
-{
-	unsigned char *stepson,
-	              *rt, *lf;
-	size_t p[2];
-	unsigned char *ar[14 * sizeof(size_t) + 1];
-	int i = 1;
-	int trail;
-
-	p[0] = pp[0];
-	p[1] = pp[1];
-
-	ar[0] = head;
-	while(p[0] != 1 || p[1] != 0) {
-		stepson = head - lp[pshift];
-		if((*cmp)(stepson, ar[0]) <= 0) {
-			break;
-		}
-		if(!trusty && pshift > 1) {
-			rt = head - width;
-			lf = head - width - lp[pshift - 2];
-			if((*cmp)(rt, stepson) >= 0 || (*cmp)(lf, stepson) >= 0) {
-				break;
-			}
-		}
-
-		ar[i++] = stepson;
-		head = stepson;
-		trail = pntz(p);
-		shr(p, trail);
-		pshift += trail;
-		trusty = 0;
-	}
-	if(!trusty) {
-		cycle(width, ar, i);
-		sift(head, width, cmp, pshift, lp);
-	}
-}
+#define SWAPN(a, b, n)                                           \
+    do {                                                         \
+        register char *x = (char *)(a);                          \
+        register char *y = (char *)(b);                          \
+        register char tmp;                                       \
+        int i = (n) / sizeof(char);                              \
+        for (--i; i >= 0; i--) {                                 \
+            tmp = *x;                                            \
+            *x++ = *y;                                           \
+            *y++ = tmp;                                          \
+        }                                                        \
+    } while (0)
 
 void qsort(void *base, size_t nel, size_t width, cmpfun cmp)
 {
-	size_t lp[12*sizeof(size_t)];
-	size_t i, size = width * nel;
-	unsigned char *head, *high;
-	size_t p[2] = {1, 0};
-	int pshift = 1;
-	int trail;
+    char *start, *end, *m, *l, *r;
+    int i, j, swapflag = 0;
+    char temp[width];
 
-	if (!size) return;
+    if (width == 0 || base == NULL || nel == 0) {
+        return;
+    }
 
-	head = base;
-	high = head + size - width;
+    start = (char *)base;
+    end = start + (nel - 1) * width;
+loop:
+    if (nel < 7) { // insertion sort
+insertqort:
+        for (l = start + width; l <= end; l += width) {
+            memcpy(temp, l, width);
+            for (m = l - width; m >= start; m -= width) {
+                if ((*cmp)(m, temp) > 0) {
+                    memcpy((m + width), m, width);
+                } else {
+                    break;
+                }
+            }
+            memcpy((m + width), temp, width);
+        }
+        return;
+    }
 
-	/* Precompute Leonardo numbers, scaled by element width */
-	for(lp[0]=lp[1]=width, i=2; (lp[i]=lp[i-2]+lp[i-1]+width) < size; i++);
+    // quick sort
+    m = start + (nel >> 1) * width;
+    m = MIDDLE_ONE(start, m, end);
+    if (m != start) {
+        SWAPN(start, m, width);
+        m = start;
+    }
+    l = start + width;
+    r = end;
 
-	while(head < high) {
-		if((p[0] & 3) == 3) {
-			sift(head, width, cmp, pshift, lp);
-			shr(p, 2);
-			pshift += 2;
-		} else {
-			if(lp[pshift - 1] >= high - head) {
-				trinkle(head, width, cmp, p, pshift, 0, lp);
-			} else {
-				sift(head, width, cmp, pshift, lp);
-			}
-			
-			if(pshift == 1) {
-				shl(p, 1);
-				pshift = 0;
-			} else {
-				shl(p, pshift - 1);
-				pshift = 1;
-			}
-		}
-		
-		p[0] |= 1;
-		head += width;
-	}
+    while (l <= r) {
+        while (l <= r && (*cmp)(l, m) < 0) {
+            l += width;
+        }
+        while (l <= r && (*cmp)(r, m) >= 0) {
+            r -= width;
+        }
+        if (l < r) {
+            SWAPN(l, r, width);
+            l += width;
+            r -= width;
+            swapflag = 1;
+        }
+    }
+    SWAPN(m, l - width, width);
+    m = l - width;
+    if (swapflag == 0) {
+        goto insertqort;
+    }
 
-	trinkle(head, width, cmp, p, pshift, 0, lp);
-
-	while(pshift != 1 || p[0] != 1 || p[1] != 0) {
-		if(pshift <= 1) {
-			trail = pntz(p);
-			shr(p, trail);
-			pshift += trail;
-		} else {
-			shl(p, 2);
-			pshift -= 2;
-			p[0] ^= 7;
-			shr(p, 1);
-			trinkle(head - lp[pshift] - width, width, cmp, p, pshift + 1, 1, lp);
-			shl(p, 1);
-			p[0] |= 1;
-			trinkle(head - width, width, cmp, p, pshift, 1, lp);
-		}
-		head -= width;
-	}
+    if (m - start > end - m) {
+        qsort(start, (m - start) / width, width, (*cmp));
+        if (m == end) {
+            return;
+        }
+        start = m + width;
+        nel = (end - start) / width + 1;
+        goto loop;
+    } else {
+        qsort(m + width, (end - m) / width, width, (*cmp));
+        if (m == start) {
+            return;
+        }
+        end = m - width;
+        nel = (end - start) / width + 1;
+        goto loop;
+    }
 }

@@ -17,7 +17,7 @@ extern "C" {
 
 #include <bits/dirent.h>
 
-typedef struct DIR DIR;
+typedef struct __dirstream DIR;
 
 #define d_fileno d_ino
 

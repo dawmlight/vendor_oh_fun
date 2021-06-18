@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2013-2019, Huawei Technologies Co., Ltd. All rights reserved.
- * Copyright (c) 2020, Huawei Device Co., Ltd. All rights reserved.
+ * Copyright (c) 2013-2019 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -37,8 +37,8 @@
 #ifndef _LOS_CONFIG_H
 #define _LOS_CONFIG_H
 
-#include "los_typedef.h"
 #include "target_config.h"
+#include "los_compiler.h"
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -54,15 +54,7 @@ extern "C" {
  * System clock (unit: HZ)
  */
 #ifndef OS_SYS_CLOCK
-#define OS_SYS_CLOCK                                        100000000UL
-#endif
-
-/**
- * @ingroup los_config
- * timer1 clock (unit: HZ)
- */
-#ifndef OS_TIME_TIMER_CLOCK
-#define OS_TIME_TIMER_CLOCK                                 OS_SYS_CLOCK
+    #error "OS_SYS_CLOCK is system clock rate which should be defined in target_config.h"
 #endif
 
 /**
@@ -70,7 +62,7 @@ extern "C" {
  * Number of Ticks in one second
  */
 #ifndef LOSCFG_BASE_CORE_TICK_PER_SECOND
-#define LOSCFG_BASE_CORE_TICK_PER_SECOND                    1000UL
+#define LOSCFG_BASE_CORE_TICK_PER_SECOND                    (100UL)
 #endif
 
 #if defined(LOSCFG_BASE_CORE_TICK_PER_SECOND) && \
@@ -107,34 +99,9 @@ extern "C" {
 #endif
 #endif
 
-/**
- * @ingroup los_config
- * External configuration item for timer tailoring
- */
-#ifndef LOSCFG_BASE_CORE_TICK_HW_TIME1
-#define LOSCFG_BASE_CORE_TICK_HW_TIME1                      YES
-#endif
-
 #ifndef LOSCFG_BASE_CORE_TICK_HW_TIME
-#define LOSCFG_BASE_CORE_TICK_HW_TIME                       NO
+#define LOSCFG_BASE_CORE_TICK_HW_TIME                       0
 #endif
-
-/**
- * @ingroup los_config
- * Configuration liteos kernel tickless
- */
-#ifndef LOSCFG_KERNEL_TICKLESS
-#define LOSCFG_KERNEL_TICKLESS                              NO
-#endif
-
-/**
- * @ingroup los_config
- * External configuration item for timer interrupt number
- */
-#ifndef LOSCFG_BASE_TIMER_INT_NUM
-#define LOSCFG_BASE_TIMER_INT_NUM                           15
-#endif
-
 
 /* =============================================================================
                                         Hardware interrupt module configuration
@@ -144,7 +111,25 @@ extern "C" {
  * Configuration item for hardware interrupt tailoring
  */
 #ifndef LOSCFG_PLATFORM_HWI
-#define LOSCFG_PLATFORM_HWI                                 YES
+#define LOSCFG_PLATFORM_HWI                                 1
+#endif
+
+/**
+ * @ingroup los_config
+ * Configuration item for using system defined vector base address and interrupt handlers.
+ * If LOSCFG_USE_SYSTEM_DEFINED_INTERRUPT is set to 0, vector base address will not be
+ * modified by system. In arm, it should be noted that PendSV_Handler and SysTick_Handler should
+ * be redefined to HalPendSV and OsTickHandler respectly in this case, because system depends on
+ * these interrupt handlers to run normally. What's more, LOS_HwiCreate will not register handler.
+ */
+#ifndef LOSCFG_USE_SYSTEM_DEFINED_INTERRUPT
+#define LOSCFG_USE_SYSTEM_DEFINED_INTERRUPT                 1
+#endif
+
+#if (LOSCFG_USE_SYSTEM_DEFINED_INTERRUPT == 1)
+    #if (LOSCFG_PLATFORM_HWI == 0)
+        #error "if LOSCFG_USE_SYSTEM_DEFINED_INTERRUPT is set to 1, then LOSCFG_PLATFORM_HWI must also be set to 1"
+    #endif
 #endif
 
 /**
@@ -154,7 +139,6 @@ extern "C" {
 #ifndef LOSCFG_PLATFORM_HWI_LIMIT
 #define LOSCFG_PLATFORM_HWI_LIMIT                           32
 #endif
-
 
 /* =============================================================================
                                        Task module configuration
@@ -206,7 +190,7 @@ extern "C" {
  * Configuration item for task Robin tailoring
  */
 #ifndef LOSCFG_BASE_CORE_TIMESLICE
-#define LOSCFG_BASE_CORE_TIMESLICE                          YES
+#define LOSCFG_BASE_CORE_TIMESLICE                          1
 #endif
 
 /**
@@ -222,7 +206,7 @@ extern "C" {
  * Configuration item for task (stack) monitoring module tailoring
  */
 #ifndef LOSCFG_BASE_CORE_TSK_MONITOR
-#define LOSCFG_BASE_CORE_TSK_MONITOR                        NO
+#define LOSCFG_BASE_CORE_TSK_MONITOR                        0
 #endif
 
 /**
@@ -230,7 +214,7 @@ extern "C" {
  * Configuration item for task perf task filter hook
  */
 #ifndef LOSCFG_BASE_CORE_EXC_TSK_SWITCH
-#define LOSCFG_BASE_CORE_EXC_TSK_SWITCH                     NO
+#define LOSCFG_BASE_CORE_EXC_TSK_SWITCH                     0
 #endif
 
 /**
@@ -254,7 +238,7 @@ extern "C" {
  * Configuration item for task stack independent
  */
 #ifndef LOSCFG_BASE_CORE_TASKSTACK_INDEPENDENT
-#define LOSCFG_BASE_CORE_TASKSTACK_INDEPENDENT              NO
+#define LOSCFG_BASE_CORE_TASKSTACK_INDEPENDENT              0
 #endif
 
 /**
@@ -273,7 +257,7 @@ extern "C" {
  * Configuration item for semaphore module tailoring
  */
 #ifndef LOSCFG_BASE_IPC_SEM
-#define LOSCFG_BASE_IPC_SEM                                 YES
+#define LOSCFG_BASE_IPC_SEM                                 1
 #endif
 
 /**
@@ -292,7 +276,7 @@ extern "C" {
  * Configuration item for mutex module tailoring
  */
 #ifndef LOSCFG_BASE_IPC_MUX
-#define LOSCFG_BASE_IPC_MUX                                YES
+#define LOSCFG_BASE_IPC_MUX                                 1
 #endif
 
 /**
@@ -311,7 +295,7 @@ extern "C" {
  * Configuration item for queue module tailoring
  */
 #ifndef LOSCFG_BASE_IPC_QUEUE
-#define LOSCFG_BASE_IPC_QUEUE                               YES
+#define LOSCFG_BASE_IPC_QUEUE                               1
 #endif
 
 /**
@@ -331,7 +315,7 @@ extern "C" {
  * Configuration item for software timer module tailoring
  */
 #ifndef LOSCFG_BASE_CORE_SWTMR
-#define LOSCFG_BASE_CORE_SWTMR                              YES
+#define LOSCFG_BASE_CORE_SWTMR                              1
 #endif
 
 /**
@@ -352,30 +336,16 @@ extern "C" {
 
 /**
  * @ingroup los_config
- * Configurate item for handling software timer interrupt in task tailoring
- */
-#ifndef LOSCFG_BASE_CORE_SWTMR_TASK
-#define LOSCFG_BASE_CORE_SWTMR_TASK                         YES
-#endif
-
-/**
- * @ingroup los_config
  * Configurate item for software timer align tailoring
  */
 #ifndef LOSCFG_BASE_CORE_SWTMR_ALIGN
-#define LOSCFG_BASE_CORE_SWTMR_ALIGN                        NO
+#define LOSCFG_BASE_CORE_SWTMR_ALIGN                        0
 #endif
 
-#if((LOSCFG_BASE_CORE_SWTMR == NO) && (LOSCFG_BASE_CORE_SWTMR_ALIGN == YES))
-    #error "swtmr align first need support swmtr, should make LOSCFG_BASE_CORE_SWTMR = YES"
-#endif
-
-/**
- * @ingroup los_config
- * Max number of software timers ID
- */
-#ifndef OS_SWTMR_MAX_TIMERID
-#define OS_SWTMR_MAX_TIMERID              ((65535 / LOSCFG_BASE_CORE_SWTMR_LIMIT) * LOSCFG_BASE_CORE_SWTMR_LIMIT)
+#if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
+    #if (LOSCFG_BASE_CORE_SWTMR == 0)
+        #error "if LOSCFG_BASE_CORE_SWTMR_ALIGN is set to 1, then LOSCFG_BASE_CORE_SWTMR must also be set to 1"
+    #endif
 #endif
 
 /**
@@ -391,23 +361,33 @@ extern "C" {
  * Minimum divisor of software timer multiple alignment
  */
 #ifndef LOS_COMMON_DIVISOR
-#define LOS_COMMON_DIVISOR                                 10
+#define LOS_COMMON_DIVISOR                                  10
 #endif
 
-#if ((LOSCFG_BASE_IPC_QUEUE == NO) && (LOSCFG_BASE_CORE_SWTMR == YES))
-#error "queue moudle is closed, don't support swtmr"
+#if (LOSCFG_BASE_CORE_SWTMR == 1)
+    #if (LOSCFG_BASE_IPC_QUEUE == 0)
+        #error "if LOSCFG_BASE_CORE_SWTMR is set to 1, then LOSCFG_BASE_IPC_QUEUE must also be set to 1"
+    #endif
 #endif
 /* =============================================================================
-                                       Memory module configuration
+                                       Memory module configuration ---- to be refactored
 ============================================================================= */
 extern UINT8 *m_aucSysMem0;
 
 /**
  * @ingroup los_config
+ * Configure whether the kernel uses external heap memory
+ */
+#ifndef LOSCFG_SYS_EXTERNAL_HEAP
+#define LOSCFG_SYS_EXTERNAL_HEAP                            0
+#endif
+
+/**
+ * @ingroup los_config
  * Starting address of the memory
  */
-#ifndef OS_SYS_MEM_ADDR
-#define OS_SYS_MEM_ADDR                                     (&m_aucSysMem0[0])
+#ifndef LOSCFG_SYS_HEAP_ADDR
+#define LOSCFG_SYS_HEAP_ADDR                                (&m_aucSysMem0[0])
 #endif
 
 /**
@@ -415,26 +395,15 @@ extern UINT8 *m_aucSysMem0;
  * Starting address of the task stack
  */
 #ifndef OS_TASK_STACK_ADDR
-#define OS_TASK_STACK_ADDR                                  OS_SYS_MEM_ADDR
+#define OS_TASK_STACK_ADDR                                  LOSCFG_SYS_HEAP_ADDR
 #endif
-
-/**
- * @ingroup los_config
- * Ending address of the memory
- */
-extern UINT32 g_sysMemAddrEnd;
-
 
 /**
  * @ingroup los_config
  * Memory size
  */
-#ifndef OS_SYS_MEM_SIZE
-#define OS_SYS_MEM_SIZE                                     0x10000UL
-#endif
-
-#ifndef LOSCFG_MEMORY_BESTFIT
-#define LOSCFG_MEMORY_BESTFIT                               YES
+#ifndef LOSCFG_SYS_HEAP_SIZE
+#define LOSCFG_SYS_HEAP_SIZE                                0x10000UL
 #endif
 
 /**
@@ -442,15 +411,15 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration module tailoring of more mempry pool checking
  */
 #ifndef LOSCFG_MEM_MUL_POOL
-#define LOSCFG_MEM_MUL_POOL                                 NO
+#define LOSCFG_MEM_MUL_POOL                                 1
 #endif
 
 /**
  * @ingroup los_config
- * Configuration module tailoring of slab memory
+ * Configuration module tailoring of memory released by task id
  */
-#ifndef LOSCFG_KERNEL_MEM_SLAB
-#define LOSCFG_KERNEL_MEM_SLAB                              YES
+#ifndef LOSCFG_MEM_FREE_BY_TASKID
+#define LOSCFG_MEM_FREE_BY_TASKID                           0
 #endif
 
 /**
@@ -458,23 +427,55 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration module tailoring of mem node integrity checking
  */
 #ifndef LOSCFG_BASE_MEM_NODE_INTEGRITY_CHECK
-#define LOSCFG_BASE_MEM_NODE_INTEGRITY_CHECK                NO
+#define LOSCFG_BASE_MEM_NODE_INTEGRITY_CHECK                0
 #endif
 
 /**
  * @ingroup los_config
- * Configuration module tailoring of mem node size checking
+ * Configuration memory leak detection
+ * @attention
+ * Need to enable backtrace module synchronously by configuration LOSCFG_BACKTRACE_TYPE,
+ * and call LOS_BackTraceInit to complete initialization before the memory pool is initialized.
  */
-#ifndef LOSCFG_BASE_MEM_NODE_SIZE_CHECK
-#define LOSCFG_BASE_MEM_NODE_SIZE_CHECK                     YES
+#ifndef LOSCFG_MEM_LEAKCHECK
+#define LOSCFG_MEM_LEAKCHECK                                0
 #endif
 
 /**
  * @ingroup los_config
- * Configuration of memory statistics
+ * The default is 4, which means that the function call stack is recorded from the kernel interface,
+ * such as LOS_MemAlloc/LOS_MemAllocAlign/LOS_MemRealloc/LOS_MemFree. If you want to further ignore
+ * the number of function call layers, you can increase this value appropriately.
+ * @attention
+ * The default is in the IAR tool. Under different compilation environments, this value needs to be adjusted.
  */
-#ifndef LOSCFG_KERNEL_MEM_STATISTICS
-#define LOSCFG_KERNEL_MEM_STATISTICS                        NO
+#ifndef LOSCFG_MEM_OMIT_LR_CNT
+#define LOSCFG_MEM_OMIT_LR_CNT                              4
+#endif
+
+/**
+ * @ingroup los_config
+ * The record number of layers of the function call relationship starting from the number of
+ * ignored layers(LOSCFG_MEM_OMIT_LR_CNT).
+ */
+#ifndef LOSCFG_MEM_RECORD_LR_CNT
+#define LOSCFG_MEM_RECORD_LR_CNT                            3
+#endif
+
+/**
+ * @ingroup los_config
+ * Configuration memory leak recorded num
+ */
+#ifndef LOSCFG_MEM_LEAKCHECK_RECORD_MAX_NUM
+#define LOSCFG_MEM_LEAKCHECK_RECORD_MAX_NUM                 1024
+#endif
+
+/**
+ * @ingroup los_config
+ * Configuration of memory pool record memory consumption waterline
+ */
+#ifndef LOSCFG_MEM_WATERLINE
+#define LOSCFG_MEM_WATERLINE                                1
 #endif
 
 /**
@@ -483,14 +484,6 @@ extern UINT32 g_sysMemAddrEnd;
  */
 #ifndef OS_SYS_MEM_NUM
 #define OS_SYS_MEM_NUM                                      20
-#endif
-
-/**
- * @ingroup los_config
- * Configuration heap memory peak statistics
- */
-#ifndef LOSCFG_HEAP_MEMORY_PEAK_STATISTICS
-#define LOSCFG_HEAP_MEMORY_PEAK_STATISTICS                  YES
 #endif
 
 /**
@@ -509,7 +502,6 @@ extern UINT32 g_sysMemAddrEnd;
 #define OS_SYS_NOCACHEMEM_ADDR                              (&g_sysNoCacheMem0[0])
 #endif
 
-
 /* =============================================================================
                                         Exception module configuration
 ============================================================================= */
@@ -518,7 +510,7 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration item for exception tailoring
  */
 #ifndef LOSCFG_PLATFORM_EXC
-#define LOSCFG_PLATFORM_EXC                                 NO
+#define LOSCFG_PLATFORM_EXC                                 0
 #endif
 
 /**
@@ -526,70 +518,8 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration of hardware stack protection
  */
 #ifndef LOSCFG_EXC_HRADWARE_STACK_PROTECTION
-#define LOSCFG_EXC_HRADWARE_STACK_PROTECTION                NO
+#define LOSCFG_EXC_HRADWARE_STACK_PROTECTION                0
 #endif
-
-/**
- * @ingroup los_config
- * Configuration of userspace support
- */
-#ifndef LOSCFG_KERNEL_USERSPACE
-#define LOSCFG_KERNEL_USERSPACE                             NO
-#endif
-
-/* =============================================================================
-                                       MPU module configuration
-============================================================================= */
-/**
- * @ingroup los_config
- * Configuration item for MPU
- */
-#ifndef LOSCFG_BASE_CORE_MPU
-#define LOSCFG_BASE_CORE_MPU                                NO
-#endif
-
-/**
- * @ingroup los_config
-   * MPU support number : MPU maximum number of region support(According to the cotex-m4 authority Guide)
- */
-#ifndef LOSCFG_MPU_MAX_SUPPORT
-#define LOSCFG_MPU_MAX_SUPPORT                              8
-#endif
-
-/**
- * @ingroup los_config
-   * MPU support address range : from LOSCFG_MPU_MIN_ADDRESS to LOSCFG_MPU_MAX_ADDRESS
- */
-#ifndef LOSCFG_MPU_MIN_ADDRESS
-#define LOSCFG_MPU_MIN_ADDRESS                              0x0UL           // Minimum protected address
-#endif
-
-#ifndef LOSCFG_MPU_MAX_ADDRESS
-#define LOSCFG_MPU_MAX_ADDRESS                              0xFFFFFFFFUL    // Maximum protected address
-#endif
-
-/* =============================================================================
-                                       Runstop module configuration
-============================================================================= */
-/**
- * @ingroup los_config
- * Configuration item for runstop module tailoring
- */
-#ifndef LOSCFG_KERNEL_RUNSTOP
-#define LOSCFG_KERNEL_RUNSTOP                               NO
-#endif
-
-/* =============================================================================
-                                            Perf module configuration
-============================================================================= */
-/**
- * @ingroup los_config
- * Configuration item for performance moniter unit
- */
-#ifndef OS_INCLUDE_PERF
-#define OS_INCLUDE_PERF                                     NO
-#endif
-
 
 /* =============================================================================
                                         CPUP configuration
@@ -599,33 +529,8 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration item for CPU usage tailoring
  */
 #ifndef LOSCFG_BASE_CORE_CPUP
-#define LOSCFG_BASE_CORE_CPUP                               NO
+#define LOSCFG_BASE_CORE_CPUP                               0
 #endif
-
-
-/* =============================================================================
-                                       fw Interface configuration
-============================================================================= */
-/**
- * @ingroup los_config
- * Configuration item for the monitoring of task communication
- */
-#ifndef LOSCFG_COMPAT_CMSIS_FW
-#define LOSCFG_COMPAT_CMSIS_FW                              NO
-#endif
-
-
-/* =============================================================================
-                                       Shell module configuration
-============================================================================= */
-/**
- * @ingroup los_config
- * Configuration item for shell module tailoring
- */
-#ifndef OS_INCLUDE_SHELL
-#define OS_INCLUDE_SHELL                                    NO
-#endif
-
 
 /* =============================================================================
                                        Test module configuration
@@ -640,7 +545,7 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration CMSIS_OS_VER
  */
 #ifndef CMSIS_OS_VER
-#define CMSIS_OS_VER                                        1
+#define CMSIS_OS_VER                                        2
 #endif
 
 /* =============================================================================
@@ -651,372 +556,42 @@ extern UINT32 g_sysMemAddrEnd;
  * Configuration liteos trace
  */
 #ifndef LOSCFG_KERNEL_TRACE
-#define LOSCFG_KERNEL_TRACE                                 NO
+#define LOSCFG_KERNEL_TRACE                                 0
 #endif
 
-
 /* =============================================================================
-                                       Declaration of Huawei LiteOS module initialization functions
+                                       printf configuration
 ============================================================================= */
 /**
- * @ingroup  los_config
- * @brief: Task init function.
- *
- * @par Description:
- * This API is used to initialize task module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_TSK_NO_MEMORY            0x03000200:Insufficient memory for task creation.
- * @retval #LOS_OK                             0:Task initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
+ * @ingroup los_config
+ * Configuration liteos printf
  */
-extern UINT32 OsTaskInit(VOID);
+#ifndef LOSCFG_KERNEL_PRINTF
+#define LOSCFG_KERNEL_PRINTF                                1
+#endif
 
-
+/* =============================================================================
+                                       backtrace configuration
+============================================================================= */
 /**
- * @ingroup  los_config
- * @brief: hardware interrupt init function.
- *
- * @par Description:
- * This API is used to initialize hardware interrupt module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                      0:Hardware interrupt initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
+ * @ingroup los_config
+ * Configuration backtrace type
+ * 0: Close stack analysis module.
+ * 1: Call stack analysis for cortex-m series.
+ * 2: Call stack analysis for risc-v.
+ * others: Not currently supported.
  */
-extern VOID OsHwiInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Semaphore init function.
- *
- * @par Description:
- * This API is used to initialize Semaphore module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_SEM_NO_MEMORY     0x02000700:The memory is insufficient.
- * @retval #LOS_OK                      0:Semaphore initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 OsSemInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Mutex init function.
- *
- * @par Description:
- * This API is used to initialize mutex module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_MUX_NO_MEMORY     0x02001d00:The memory request fails.
- * @retval #LOS_OK                      0:Mutex initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 OsMuxInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Queue init function.
- *
- * @par Description:
- * This API is used to initialize Queue module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_QUEUE_MAXNUM_ZERO 0x02000600:The maximum number of queue resources is configured to 0.
- * @retval #LOS_ERRNO_QUEUE_NO_MEMORY   0x02000601:The queue block memory fails to be initialized.
- * @retval #LOS_OK                      0:Queue initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 OsQueueInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Software Timers init function.
- *
- * @par Description:
- * This API is used to initialize Software Timers module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_SWTMR_MAXSIZE_INVALID         0x02000308:Invalid configured number of software timers.
- * @retval #LOS_ERRNO_SWTMR_NO_MEMORY               0x02000307:Insufficient memory for software timer linked list creation.
- * @retval #LOS_ERRNO_SWTMR_HANDLER_POOL_NO_MEM     0x0200030a:Insufficient memory allocated by membox.
- * @retval #LOS_ERRNO_SWTMR_QUEUE_CREATE_FAILED     0x0200030b:The software timer queue fails to be created.
- * @retval #LOS_ERRNO_SWTMR_TASK_CREATE_FAILED      0x0200030c:The software timer task fails to be created.
- * @retval #LOS_OK                                  0:Software Timers initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 OsSwtmrInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Task start running function.
- *
- * @par Description:
- * This API is used to start a task.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval None.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern VOID LOS_StartToRun(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Test Task init function.
- *
- * @par Description:
- * This API is used to initialize Test Task.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                                  0:App_Task initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 los_TestInit(VOID);
-
-
-
-/**
- * @ingroup  los_config
- * @brief: Task start function.
- *
- * @par Description:
- * This API is used to start all tasks.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval None.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern VOID   OsStart(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Hardware init function.
- *
- * @par Description:
- * This API is used to initialize Hardware module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval None.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern VOID   OsHwInit(VOID);
-
+#ifndef LOSCFG_BACKTRACE_TYPE
+#define LOSCFG_BACKTRACE_TYPE                                0
+#endif
 
 /**
  * @ingroup los_config
- * @brief Configure Tick Interrupt Start.
- *
- * @par Description:
- * This API is used to configure Tick Interrupt Start while macro LOSCFG_BASE_CORE_TICK_HW_TIME is No.
- *
- * @attention
- * <ul>
- * <li>None.</li>
- * </ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                               0:configure Tick Interrupt success.
- * @retval #LOS_ERRNO_TICK_CFG_INVALID           0x02000400:configure Tick Interrupt failed.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see
+ * Configuration backtrace depth.
  */
-extern UINT32 OsTickStart(VOID);
-
-/**
- * @ingroup los_config
- * @brief Configure Tick Interrupt Start.
- *
- * @par Description:
- * This API is used to configure Tick Interrupt Start while macro LOSCFG_BASE_CORE_TICK_HW_TIME is Yes.
- *
- * @attention
- * <ul>
- * <li>None.</li>
- * </ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                               0:configure Tick Interrupt success.
- * @retval #LOS_ERRNO_TICK_CFG_INVALID           0x02000400:configure Tick Interrupt failed.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see
- */
-extern UINT32 os_timer_init(VOID);
-
-/**
- * @ingroup los_config
- * @brief Scheduling initialization.
- *
- * @par Description:
- * <ul>
- * <li>This API is used to initialize scheduling that is used for later task scheduling.</li>
- * </ul>
- * @attention
- * <ul>
- * <li>None.</li>
- * </ul>
- *
- * @param: None.
- *
- * @retval: None.
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see
- */
-extern VOID OsTimesliceInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: System memory init function.
- *
- * @par Description:
- * This API is used to initialize system memory module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                                  0:System memory initialization success.
- * @retval #OS_ERROR                                (UINT32)(-1):System memory initialization failed.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern LITE_OS_SEC_TEXT_INIT UINT32 OsMemSystemInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: Task Monitor init function.
- *
- * @par Description:
- * This API is used to initialize Task Monitor module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_OK                                  0:Task Monitor initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern VOID OsTaskMonInit(VOID);
-
-
-/**
- * @ingroup  los_config
- * @brief: CPUP init function.
- *
- * @par Description:
- * This API is used to initialize CPUP module.
- *
- * @attention:
- * <ul><li>None.</li></ul>
- *
- * @param: None.
- *
- * @retval #LOS_ERRNO_CPUP_NO_MEMORY                0x02001e00:The request for memory fails.
- * @retval #LOS_OK                                  0:CPUP initialization success.
- *
- * @par Dependency:
- * <ul><li>los_config.h: the header file that contains the API declaration.</li></ul>
- * @see None.
- */
-extern UINT32 OsCpupInit(VOID);
-
-
-extern LITE_OS_SEC_TEXT_INIT UINT32 LOS_Start(VOID);
-
-extern LITE_OS_SEC_TEXT_INIT INT32 main(VOID);
-
+#ifndef LOSCFG_BACKTRACE_DEPTH
+#define LOSCFG_BACKTRACE_DEPTH                               15
+#endif
 
 #ifdef __cplusplus
 #if __cplusplus

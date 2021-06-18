@@ -78,6 +78,7 @@ extern "C" {
 #undef  OK
 #define OK 0
 
+#define MAX_DIRENT_NUM 14 // 14 means 4096 length buffer can store 14 dirent, see struct DIR
 #define MS_RDONLY 1
 #define MS_NOSYNC 2
 #define PROCFS_MOUNT_POINT  "/proc"

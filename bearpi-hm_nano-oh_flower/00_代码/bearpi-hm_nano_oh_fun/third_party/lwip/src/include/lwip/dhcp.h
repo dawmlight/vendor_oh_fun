@@ -58,6 +58,41 @@ extern "C" {
 
 #define DHCP_BOOT_FILE_LEN      128U
 
+#if LWIP_DNS && LWIP_DHCP_MAX_DNS_SERVERS
+#if DNS_MAX_SERVERS > LWIP_DHCP_MAX_DNS_SERVERS
+#define LWIP_DHCP_PROVIDE_DNS_SERVERS LWIP_DHCP_MAX_DNS_SERVERS
+#else
+#define LWIP_DHCP_PROVIDE_DNS_SERVERS DNS_MAX_SERVERS
+#endif
+#else
+#define LWIP_DHCP_PROVIDE_DNS_SERVERS 0
+#endif
+
+/** Option handling: options are parsed in dhcp_parse_reply
+ * and saved in an array where other functions can load them from.
+ * This might be moved into the struct dhcp (not necessarily since
+ * lwIP is single-threaded and the array is only used while in recv
+ * callback). */
+enum dhcp_option_idx {
+  DHCP_OPTION_IDX_OVERLOAD = 0,
+  DHCP_OPTION_IDX_MSG_TYPE,
+  DHCP_OPTION_IDX_SERVER_ID,
+  DHCP_OPTION_IDX_LEASE_TIME,
+  DHCP_OPTION_IDX_T1,
+  DHCP_OPTION_IDX_T2,
+  DHCP_OPTION_IDX_SUBNET_MASK,
+  DHCP_OPTION_IDX_ROUTER,
+#if LWIP_DHCP_PROVIDE_DNS_SERVERS
+  DHCP_OPTION_IDX_DNS_SERVER,
+  DHCP_OPTION_IDX_DNS_SERVER_LAST = DHCP_OPTION_IDX_DNS_SERVER + LWIP_DHCP_PROVIDE_DNS_SERVERS - 1,
+#endif /* LWIP_DHCP_PROVIDE_DNS_SERVERS */
+#if LWIP_DHCP_GET_NTP_SRV
+  DHCP_OPTION_IDX_NTP_SERVER,
+  DHCP_OPTION_IDX_NTP_SERVER_LAST = DHCP_OPTION_IDX_NTP_SERVER + LWIP_DHCP_MAX_NTP_SERVERS - 1,
+#endif /* LWIP_DHCP_GET_NTP_SRV */
+  DHCP_OPTION_IDX_MAX
+};
+
 /* AutoIP cooperation flags (struct dhcp.autoip_coop_state) */
 typedef enum {
   DHCP_AUTOIP_COOP_STATE_OFF  = 0,
@@ -98,6 +133,10 @@ struct dhcp
   ip4_addr_t offered_si_addr;
   char boot_file_name[DHCP_BOOT_FILE_LEN];
 #endif /* LWIP_DHCP_BOOTPFILE */
+  /** Holds the decoded option values, only valid while in dhcp_recv. */
+  u32_t rx_options_val[DHCP_OPTION_IDX_MAX];
+  /** Holds a flag which option was received and is contained in dhcp_rx_options_val, only valid while in dhcp_recv. */
+  u8_t rx_options_given[DHCP_OPTION_IDX_MAX];
 };
 
 

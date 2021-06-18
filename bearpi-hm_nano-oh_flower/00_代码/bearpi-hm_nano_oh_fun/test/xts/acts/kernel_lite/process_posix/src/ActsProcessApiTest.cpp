@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@
 
 #include "gtest/gtest.h"
 #include "XtsActsUtil.h"
-#include "XtsActsProcessApiExpect.h"
 
 using namespace testing::ext;
 
@@ -67,20 +66,18 @@ void TestLongjmp02(void)
 static void *ThreadFunc(void* arg)
 {
     LogPrint("    This is ThreadFunc()\n");
-    return NULL;
+    return nullptr;
 }
 
 /**
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_LONGJMP_0100
 * @tc.name       test _longjmp api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testLongjmp0100, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testLongjmp0100, Function | MediumTest | Level1) {
     int flagVal = 1;
 
-    if(setjmp(g_buf)) {
+    if (setjmp(g_buf)) {
         LogPrint("    back TestLongjmp()\n");
         flagVal = 0;
     } else {
@@ -96,10 +93,8 @@ HWTEST_F(ActsProcessApiTest, testLongjmp0100, TestSize.Level1) {
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_LONGJMP_0200
 * @tc.name       test longjmp api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testLongjmp0200, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testLongjmp0200, Function | MediumTest | Level1) {
     int flagVal = 1;
 
     if (setjmp(g_buf)) {
@@ -118,10 +113,8 @@ HWTEST_F(ActsProcessApiTest, testLongjmp0200, TestSize.Level1) {
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_SETJMP_0100
 * @tc.name       test _setjmp api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testSetjmp0100, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testSetjmp0100, Function | MediumTest | Level1) {
     int returnVal;
 
     returnVal = _setjmp(g_buf);
@@ -141,16 +134,14 @@ HWTEST_F(ActsProcessApiTest, testSetjmp0100, TestSize.Level1) {
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_SETJMP_0200
 * @tc.name       test setjmp api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testSetjmp0200, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testSetjmp0200, Function | MediumTest | Level1) {
     int returnVal;
 
     returnVal = setjmp(g_buf);
     LogPrint("    setjmp env:='struct jmp_buf',   returnVal:='%d'\n", returnVal);
 
-    if(returnVal != 0) {
+    if (returnVal != 0) {
         LogPrint("    back testLongjmp()\n");
         ASSERT_NE(returnVal, 0) << "ErrInfo: second time setjmp EQ 0,   --> returnVal:='" << returnVal << "'";
     } else {
@@ -164,10 +155,8 @@ HWTEST_F(ActsProcessApiTest, testSetjmp0200, TestSize.Level1) {
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_PTHREAD_SETNAME_NP_0100
 * @tc.name       test pthread_setname_np api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp0100, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp0100, Function | MediumTest | Level1) {
     pthread_t thisThread;
     int returnVal;
 
@@ -189,10 +178,8 @@ HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp0100, TestSize.Level1) {
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_PTHREAD_SETNAME_NP_1000
 * @tc.name       test pthread_setname_np api para stringlong
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp1000, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp1000, Function | MediumTest | Level1) {
     pthread_t thisThread;
     int returnVal;
 
@@ -215,13 +202,35 @@ HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp1000, TestSize.Level1) {
 }
 
 /**
+* @tc.number     SUB_KERNEL_NDKAPI_PROCESS_PTHREAD_SETNAME_NP_1100
+* @tc.name       test pthread_setname_np api para notsupport
+* @tc.desc       [C- SOFTWARE -0200]
+*/
+HWTEST_F(ActsProcessApiTest, testPthreadSetnameNp1100, Function | MediumTest | Level1) {
+    pthread_t newThread;
+    int returnVal;
+
+    returnVal = pthread_create(&newThread, NULL, ThreadFunc, NULL);
+    LogPrint("    pthread_create *thread:='&newThread' *attr:='NULL' *start_routine:='ThreadFunc' arg:='NULL', \n");
+    LogPrint("    --> returnVal:='%d', newThread:='%u(0x%x)', size:=%d\n",
+        returnVal, newThread, newThread, sizeof(newThread));
+	
+    returnVal = pthread_setname_np(newThread, "fThreadName");
+    LogPrint("    pthread_setname_np thread:='%u(0x%x)' *name:='fThreadName',   "
+        "--> returnVal:='%d'\n", newThread, newThread, returnVal);
+
+    EXPECT_NE(returnVal, 0)
+        << "ErrInfo: pthread_setname_np thread:='" << newThread
+        << "(0x" << newThread << ")' *name:='fThreadName',"
+        << "   --> returnVal:='" << returnVal << "'";
+}
+
+/**
 * @tc.number     SUB_KERNEL_NDKAPI_PROCESS_PTHREAD_ATTR_GETGUARDSIZE_0100
 * @tc.name       test pthread_attr_getguardsize api
 * @tc.desc       [C- SOFTWARE -0200]
-* @tc.size       SMALL
-* @tc.type       FUNC
 */
-HWTEST_F(ActsProcessApiTest, testPthreadAttrGetguardsize0100, TestSize.Level1) {
+HWTEST_F(ActsProcessApiTest, testPthreadAttrGetguardsize0100, Function | MediumTest | Level1) {
     pthread_t newThread;
     pthread_attr_t threadAttr = {};
     int returnVal;

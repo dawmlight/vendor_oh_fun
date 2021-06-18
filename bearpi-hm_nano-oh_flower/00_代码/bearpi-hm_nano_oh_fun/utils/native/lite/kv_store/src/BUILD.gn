@@ -11,33 +11,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if (ohos_kernel_type == "liteos_riscv") {
-    static_library("utils_kv_store") {
-        sources = [
-            "kvstore_common/kvstore_common.c",
-            "kvstore_impl_hal/kv_store.c",
-        ]
-        include_dirs = [
-            "//utils/native/lite/include",
-            "kvstore_common",
-        ]
-    }
+if (ohos_kernel_type == "liteos_m") {
+  static_library("utils_kv_store") {
+    sources = [
+      "kvstore_common/kvstore_common.c",
+      "kvstore_impl_hal/kv_store.c",
+    ]
+    include_dirs = [
+      "//utils/native/lite/include",
+      "kvstore_common",
+    ]
+  }
 } else {
-    shared_library("utils_kv_store") {
-        cflags = ["-Wall"]
-        cflags_cc = cflags
-        sources = [
-            "kvstore_common/kvstore_common.c",
-            "kvstore_impl_posix/kv_store.c",
-        ]
-        include_dirs = [
-            "//utils/native/lite/include",
-            "kvstore_common",
-            "//third_party/bounds_checking_function/include",
-            "//utils/native/lite/kv_store/innerkits",
-        ]
-        public_deps = [
-            "//third_party/bounds_checking_function:libsec_shared",
-        ]
-    }
+  shared_library("utils_kv_store") {
+    cflags = [ "-Wall" ]
+    cflags_cc = cflags
+    sources = [
+      "kvstore_common/kvstore_common.c",
+      "kvstore_impl_posix/kv_store.c",
+    ]
+    include_dirs = [
+      "//utils/native/lite/include",
+      "kvstore_common",
+      "//third_party/bounds_checking_function/include",
+      "//utils/native/lite/kv_store/innerkits",
+    ]
+    public_deps = [ "//third_party/bounds_checking_function:libsec_shared" ]
+  }
 }

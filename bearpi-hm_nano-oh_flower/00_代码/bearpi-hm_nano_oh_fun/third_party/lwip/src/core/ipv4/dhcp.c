@@ -116,7 +116,7 @@
 #define DHCP_MIN_REPLY_LEN             44
 
 #define REBOOT_TRIES                2
-
+#if 0 /* The following codes are moved to dhcp.h for fixing it's todo, kept here just for notice */
 #if LWIP_DNS && LWIP_DHCP_MAX_DNS_SERVERS
 #if DNS_MAX_SERVERS > LWIP_DHCP_MAX_DNS_SERVERS
 #define LWIP_DHCP_PROVIDE_DNS_SERVERS LWIP_DHCP_MAX_DNS_SERVERS
@@ -159,7 +159,7 @@ u32_t dhcp_rx_options_val[DHCP_OPTION_IDX_MAX];
     only valid while in dhcp_recv.
     @todo: move this into struct dhcp? */
 u8_t  dhcp_rx_options_given[DHCP_OPTION_IDX_MAX];
-
+#endif
 static u8_t dhcp_discover_request_options[] = {
   DHCP_OPTION_SUBNET_MASK,
   DHCP_OPTION_ROUTER,
@@ -177,12 +177,12 @@ static u32_t xid;
 static u8_t xid_initialised;
 #endif /* DHCP_GLOBAL_XID */
 
-#define dhcp_option_given(dhcp, idx)          (dhcp_rx_options_given[idx] != 0)
-#define dhcp_got_option(dhcp, idx)            (dhcp_rx_options_given[idx] = 1)
-#define dhcp_clear_option(dhcp, idx)          (dhcp_rx_options_given[idx] = 0)
-#define dhcp_clear_all_options(dhcp)          (memset(dhcp_rx_options_given, 0, sizeof(dhcp_rx_options_given)))
-#define dhcp_get_option_value(dhcp, idx)      (dhcp_rx_options_val[idx])
-#define dhcp_set_option_value(dhcp, idx, val) (dhcp_rx_options_val[idx] = (val))
+#define dhcp_option_given(dhcp, idx)          ((dhcp)->rx_options_given[idx] != 0)
+#define dhcp_got_option(dhcp, idx)            ((dhcp)->rx_options_given[idx] = 1)
+#define dhcp_clear_option(dhcp, idx)          ((dhcp)->rx_options_given[idx] = 0)
+#define dhcp_clear_all_options(dhcp)          (memset((dhcp)->rx_options_given, 0, sizeof((dhcp)->rx_options_given)))
+#define dhcp_get_option_value(dhcp, idx)      ((dhcp)->rx_options_val[idx])
+#define dhcp_set_option_value(dhcp, idx, val) ((dhcp)->rx_options_val[idx] = (val))
 
 static struct udp_pcb *dhcp_pcb;
 static u8_t dhcp_pcb_refcount;

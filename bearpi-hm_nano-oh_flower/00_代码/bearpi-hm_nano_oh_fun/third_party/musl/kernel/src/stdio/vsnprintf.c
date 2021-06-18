@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdint.h>
+#include <pthread.h>
 
 struct cookie {
 	char *s;
@@ -37,10 +38,11 @@ int vsnprintf(char *restrict s, size_t n, const char *restrict fmt, va_list ap)
 	unsigned char buf[1];
 	char dummy[1];
 	struct cookie c = { .s = n ? s : dummy, .n = n ? n-1 : 0 };
+	pthread_mutex_t locallock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 	FILE f = {
 		.lbf = EOF,
 		.write = sn_write,
-		.lock = -1,
+		.lock = &locallock,
 		.buf = buf,
 		.cookie = &c,
 	};

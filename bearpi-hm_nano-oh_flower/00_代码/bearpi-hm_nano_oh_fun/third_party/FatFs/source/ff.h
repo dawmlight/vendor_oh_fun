@@ -26,14 +26,13 @@ extern "C" {
 
 #include "integer.h"	/* Basic integer types */
 #include "ffconf.h"		/* FatFs configuration options */
-#include "dirent.h"
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
 #include "fs/fs.h"
 #endif
 #if FF_DEFINED != FFCONF_DEF
 #error Wrong configuration file (ffconf.h).
 #endif
-
+#include "dirent.h"
 
 /* Definitions of volume management */
 
@@ -165,8 +164,10 @@ typedef struct {
 	CHAR	namelabel[_MAX_ENTRYLENGTH + 1]; /* The name label point to the each virtual Fatfs object ,only available in virtual Fatfs obj */
 	VOID**	child_fs;		/* Point to the child Fatfs object ,only available in reality Fatfs object */
 #endif
+#ifndef __LITEOS_M__
 	uid_t fs_uid;
 	gid_t fs_gid;
+#endif
 	unsigned short fs_dmask;
 	unsigned short fs_fmask;
 } FATFS;
@@ -214,7 +215,7 @@ typedef struct {
 
 /* Directory object structure (DIR) */
 
-struct DIR {
+struct __dirstream {
 	FFOBJID	obj;			/* Object identifier */
 	DWORD	dptr;			/* Current read/write offset */
 	DWORD	clust;			/* Current cluster */
@@ -231,8 +232,6 @@ struct DIR {
 	BYTE			atrootdir;
 #endif
 };
-
-
 
 /* File information structure (FILINFO) */
 
@@ -394,7 +393,9 @@ DWORD ff_wtoupper (DWORD uni);			/* Unicode upper-case conversion */
 
 void* ff_memalloc (UINT msize);			/* Allocate memory block */
 void ff_memfree (void* mblock);			/* Free memory block */
+#ifndef __LITEOS_M__
 int ff_strnlen(const void *str, size_t maxlen);
+#endif
 
 /* Sync functions */
 #if FF_FS_REENTRANT

@@ -14,12 +14,15 @@
                 {
                     "source": "testcases/multimedia",
                     "target": "/test_root/multimedia"
+                },{
+                    "source": "resource/multimedia",
+                    "target": "/test_root/multimedia"
                 }
             ]
         }
     ],
     "driver": {
         "type": "CppTestLite",
-        "execute": "/test_root/multimedia/ActsPlayerTest.bin"
+        "execute": "/test_root/multimedia/ActsMediaPlayerTest.bin"
     }
 }

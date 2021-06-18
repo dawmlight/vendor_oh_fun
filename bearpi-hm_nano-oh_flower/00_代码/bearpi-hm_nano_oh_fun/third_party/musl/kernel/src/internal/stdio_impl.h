@@ -5,9 +5,8 @@
 
 #define UNGET 8
 
-#define FFINALLOCK(f) ((f)->lock>=0 ? __lockfile((f)) : 0)
-#define FLOCK(f) int __need_unlock = ((f)->lock>=0 ? __lockfile((f)) : 0)
-#define FUNLOCK(f) do { if (__need_unlock) __unlockfile((f)); } while (0)
+#define FLOCK(f)    __lockfile(f)
+#define FUNLOCK(f)  __unlockfile(f)
 
 #define F_PERM 1
 #define F_NORD 4
@@ -23,7 +22,7 @@ extern hidden FILE *volatile __stdout_used;
 extern hidden FILE *volatile __stderr_used;
 
 hidden int __lockfile(FILE *);
-hidden void __unlockfile(FILE *);
+hidden int __unlockfile(FILE *);
 
 hidden size_t __stdio_read(FILE *, unsigned char *, size_t);
 hidden size_t __stdio_write(FILE *, const unsigned char *, size_t);

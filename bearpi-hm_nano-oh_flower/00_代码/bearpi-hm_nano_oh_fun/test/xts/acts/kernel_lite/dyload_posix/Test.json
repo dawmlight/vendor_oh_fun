@@ -13,13 +13,16 @@
             "mount": [
                 {
                     "source": "testcases/kernel",
-                    "target": "/test_root/kernel"
+                    "target": "/test_root/kernel_lite"
+                },{
+                    "source": "resource/kernel/dyload",
+                    "target": "/test_root/kernel/dyload"
                 }
             ]
         }
     ],
     "driver": {
         "type": "CppTestLite",
-        "execute": "/test_root/kernel/ActsDyloadTest.bin"
+        "execute": "/test_root/kernel_lite/ActsDyloadTest.bin"
     }
 }

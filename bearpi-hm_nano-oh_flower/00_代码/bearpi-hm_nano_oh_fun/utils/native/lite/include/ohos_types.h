@@ -62,9 +62,6 @@ typedef unsigned int BOOL;
 #endif
 #endif
 
-#define HOS_SUCCESS          0
-#define HOS_FAILURE          (-1)
-
 #define OHOS_SUCCESS          0
 #define OHOS_FAILURE          (-1)
 
@@ -79,4 +76,3 @@ typedef unsigned int BOOL;
 #endif /* __cplusplus */
 
 #endif /* OHOS_TYPES_H */
-

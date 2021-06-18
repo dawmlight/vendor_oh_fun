@@ -29,7 +29,7 @@ static_library("oc_mqtt") {
         "../inc",
         "../link_misc",
         "../queue",
-        "//vendor/hisi/hi3861/hi3861/third_party/mbedtls/include/",
+        "//third_party/mbedtls/include/",
         "../network/dtls/mbedtls/mbedtls_port",
         "//kernel/liteos_m/components/cmsis/2.0",
         "//third_party/cJSON",

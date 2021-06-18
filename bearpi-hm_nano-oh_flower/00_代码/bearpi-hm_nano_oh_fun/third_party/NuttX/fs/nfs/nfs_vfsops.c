@@ -253,6 +253,30 @@ const struct mountpt_operations nfs_operations =
 
 FSMAP_ENTRY(nfs_fsmap, "nfs", nfs_operations, FALSE, FALSE);
 
+static int nfs_2_vfs(int result)
+{
+    int status;
+
+    if ((result < NFS_OK) || (result > NFSERR_NOTEMPTY)) {
+        return result;
+    }
+
+    /* Nfs errno to Libc errno */
+    switch (result) {
+        case NFSERR_NAMETOL:
+            status = ENAMETOOLONG;
+            break;
+        case NFSERR_NOTEMPTY:
+            status = ENOTEMPTY;
+            break;
+        default:
+            status = result;
+            break;
+    }
+
+    return status;
+}
+
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
@@ -875,14 +899,6 @@ static int nfs_close(FAR struct file *filep)
 
   nfs_mux_release(nmp);
 
-  /* Drop the NFS file page cache if no one, except me, is working on it, to ensure
-   * the close-to-open cache consistency for NFS files.
-   * And because the outer "files_close" has locked the global file list already,
-   * we use the nolock version here.
-   */
-
-  (void)remove_mapping_nolock(filep->f_path, filep);
-
   return ret;
 }
 
@@ -1072,6 +1088,7 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
   uint32_t               tmp;
   int                    committed = NFSV3WRITE_UNSTABLE;
   int                    error;
+  char                  *temp_buffer;
 
   /* Sanity checks */
 
@@ -1121,6 +1138,16 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
 
   fvdbg("Write %d bytes to offset %d\n", buflen, np->n_fpos);
 
+  /* Allocate memory for data */
+
+  bufsize = (buflen < nmp->nm_wsize) ? buflen : nmp->nm_wsize;
+  temp_buffer = malloc(bufsize);
+  if (temp_buffer == NULL)
+    {
+      error = ENOMEM;
+      goto errout_with_mutex;
+    }
+
   /* Now loop until we send the entire user buffer */
 
   writesize = 0;
@@ -1144,6 +1171,14 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
       if (bufsize > nmp->nm_buflen)
         {
           writesize -= (bufsize - nmp->nm_buflen);
+        }
+
+      /* Copy a chunk of the user data into the temporary buffer */
+
+      if (LOS_CopyToKernel(temp_buffer, writesize, buffer, writesize) != 0)
+        {
+          error = EINVAL;
+          goto errout_with_memfree;
         }
 
       /* Initialize the request.  Here we need an offset pointer to the write
@@ -1176,16 +1211,16 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
       *ptr++  = txdr_unsigned((uint32_t)committed);
       reqlen += 2*sizeof(uint32_t);
 
-      /* Copy a chunk of the user data into the I/O buffer */
+      /* Copy a chunk of the user data into the I/O buffer from temporary buffer */
 
       *ptr++  = txdr_unsigned(writesize);
       reqlen += sizeof(uint32_t);
-      if (LOS_CopyToKernel(ptr, writesize, buffer, writesize) != 0)
+      error = memcpy_s(ptr, writesize, temp_buffer, writesize);
+      if (error != EOK)
         {
-          error = EINVAL;
-          goto errout_with_mutex;
+          error = ENOBUFS;
+          goto errout_with_memfree;
         }
-
       reqlen += uint32_alignup(writesize);
 
       /* Perform the write */
@@ -1198,7 +1233,7 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
       if (error)
         {
           ferr("ERROR: nfs_request failed: %d\n", error);
-          goto errout_with_mutex;
+          goto errout_with_memfree;
         }
 
       /* Get a pointer to the WRITE reply data */
@@ -1234,7 +1269,7 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
       if (tmp < 1 || tmp > writesize)
         {
           error = EIO;
-          goto errout_with_mutex;
+          goto errout_with_memfree;
         }
 
       writesize = tmp;
@@ -1252,9 +1287,11 @@ static ssize_t nfs_write(FAR struct file *filep, const char *buffer,
       buffer       += writesize;
     }
 
+  free(temp_buffer);
   nfs_mux_release(nmp);
   return byteswritten;
-
+errout_with_memfree:
+  free(temp_buffer);
 errout_with_mutex:
   nfs_mux_release(nmp);
   return -error;
@@ -1668,7 +1705,6 @@ static int nfs_readdir(struct inode *mountpt, struct fs_dirent_s *dir)
   size_t d_name_size;
   int reqlen;
   int error = 0;
-
   finfo("Entry\n");
 
   /* Sanity checks */
@@ -1824,7 +1860,7 @@ static int nfs_readdir(struct inode *mountpt, struct fs_dirent_s *dir)
 
               /* Get the length and point to the name */
 
-              tmp    = *ptr++; /*lint !e662 !e661*/
+              tmp = *ptr++; /*lint !e662 !e661*/
               entry->name_len = fxdr_unsigned(uint32_t, tmp);
               entry->contents = (uint8_t *)malloc(entry->name_len + 1);
               if (!entry->contents)
@@ -1919,8 +1955,8 @@ static int nfs_readdir(struct inode *mountpt, struct fs_dirent_s *dir)
       goto errout_with_mutex;
     }
 
-  d_name_size = sizeof(dir->fd_dir.d_name);
-  error = memcpy_s(dir->fd_dir.d_name, d_name_size, (const char *)entry_pos->contents, (size_t)entry_pos->name_len);
+  d_name_size = sizeof(dir->fd_dir[0].d_name);
+  error = memcpy_s(dir->fd_dir[0].d_name, d_name_size, (const char *)entry_pos->contents, (size_t)entry_pos->name_len);
   if (error != EOK)
     {
       error = ENOBUFS;
@@ -1928,21 +1964,21 @@ static int nfs_readdir(struct inode *mountpt, struct fs_dirent_s *dir)
     }
   if (entry_pos->name_len >= d_name_size)
     {
-      dir->fd_dir.d_name[d_name_size - 1] = '\0';
+      dir->fd_dir[0].d_name[d_name_size - 1] = '\0';
     }
   else
     {
-      dir->fd_dir.d_name[entry_pos->name_len] = '\0';
+      dir->fd_dir[0].d_name[entry_pos->name_len] = '\0';
     }
 
   nfs_dir->nfs_entries = entry_pos->next;
   NFS_DIR_ENTRY_FREE(entry_pos);
 
-  fvdbg("name: \"%s\"\n", dir->fd_dir.d_name);
+  fvdbg("name: \"%s\"\n", dir->fd_dir[0].d_name);
   fhandle.length = (uint32_t)nfs_dir->nfs_fhsize;
   (void)memcpy_s(&fhandle.handle, DIRENT_NFS_MAXHANDLE, nfs_dir->nfs_fhandle, DIRENT_NFS_MAXHANDLE);
 
-  error = nfs_lookup(nmp, dir->fd_dir.d_name, &fhandle, &obj_attributes, NULL);
+  error = nfs_lookup(nmp, dir->fd_dir[0].d_name, &fhandle, &obj_attributes, NULL);
   if (error != OK)
     {
       ferr("ERROR: nfs_lookup failed: %d\n", error);
@@ -1961,28 +1997,29 @@ static int nfs_readdir(struct inode *mountpt, struct fs_dirent_s *dir)
       break;
 
     case NFREG:        /* Regular file */
-      dir->fd_dir.d_type = DT_REG;
+      dir->fd_dir[0].d_type = DT_REG;
       break;
 
     case NFDIR:        /* Directory */
-      dir->fd_dir.d_type = DT_DIR;
+      dir->fd_dir[0].d_type = DT_DIR;
       break;
 
     case NFBLK:        /* Block special device file */
-      dir->fd_dir.d_type = DT_BLK;
+      dir->fd_dir[0].d_type = DT_BLK;
       break;
 
     case NFFIFO:       /* Named FIFO */
     case NFCHR:        /* Character special device file */
-      dir->fd_dir.d_type = DT_CHR;
+      dir->fd_dir[0].d_type = DT_CHR;
       break;
     }
-  dir->fd_dir.d_off = dir->fd_position;
-  dir->fd_dir.d_reclen = (uint16_t)sizeof(struct dirent);
-  finfo("type: %d->%d\n", (int)tmp, dir->fd_dir.d_type);
+  finfo("type: %d->%d\n", (int)tmp, dir->fd_dir[0].d_type);
 
+  dir->fd_position++;
+  dir->fd_dir[0].d_off = dir->fd_position;
+  dir->fd_dir[0].d_reclen = (uint16_t)sizeof(struct dirent);
   nfs_mux_release(nmp);
-  return OK;
+  return 1;
 
 errout_with_memory:
   for (entry_pos = nfs_dir->nfs_entries; entry_pos != NULL; entry_pos = nfs_dir->nfs_entries)
@@ -2970,7 +3007,7 @@ static int nfs_rmdir(struct inode *mountpt, const char *relpath)
 
 errout_with_mutex:
   nfs_mux_release(nmp);
-  return -error;
+  return -nfs_2_vfs(error);
 }
 
 static int nfs_getfilename(char *dstpath, unsigned int dstpathLen, const char *srcpath, unsigned int maxlen)
@@ -3119,7 +3156,7 @@ static int nfs_rename(struct inode *mountpt, const char *oldrelpath,
   for (nd = nmp->nm_dir; nd; nd = nd->nfs_next)
     {
       char filename[FILENAME_MAX_LEN] = {};
-      error = nfs_getfilename(filename, sizeof(filename), nd->nfs_dir->fd_dir.d_name, NAME_MAX);
+      error = nfs_getfilename(filename, sizeof(filename), nd->nfs_dir->fd_dir[0].d_name, NAME_MAX);
       if (error != OK)
         {
           goto errout_with_mutex;
@@ -3257,7 +3294,7 @@ static int nfs_rename(struct inode *mountpt, const char *oldrelpath,
     }
   else if (nd)
     {
-      error = memcpy_s(nd->nfs_dir->fd_dir.d_name, strlen(to_name) + 1, to_name, strlen(to_name) + 1);
+      error = memcpy_s(nd->nfs_dir->fd_dir[0].d_name, strlen(to_name) + 1, to_name, strlen(to_name) + 1);
       if (error != EOK)
         {
           error = ENOBUFS;
@@ -3427,7 +3464,7 @@ static int nfs_stat(struct inode *mountpt, const char *relpath,
 
 errout_with_mutex:
   nfs_mux_release(nmp);
-  return -error;
+  return -nfs_2_vfs(error);
 }
 
 int nfs_mount(const char *server_ip_and_path, const char *mount_path,

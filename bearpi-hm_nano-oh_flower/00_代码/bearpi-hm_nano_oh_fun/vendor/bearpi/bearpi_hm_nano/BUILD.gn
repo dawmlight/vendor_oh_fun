@@ -1,0 +1,4 @@
+# Copyright (c) 2020 Nanjing Xiaoxiongpai Intelligent Technology Co., Ltd. All rights reserved.
+
+group("bearpi_hm_nano") {
+}

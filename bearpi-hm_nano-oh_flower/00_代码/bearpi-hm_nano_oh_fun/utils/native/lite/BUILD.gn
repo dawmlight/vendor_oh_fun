@@ -15,34 +15,27 @@ import("//build/lite/config/subsystem/lite_subsystem.gni")
 import("//build/lite/ndk/ndk.gni")
 
 lite_subsystem("utils") {
-    subsystem_components = [
-        "kv_store:kv_store"
-    ]
+  subsystem_components = [
+    "kv_store:kv_store",
+    "os_dump:utils_os_dump",
+  ]
 
-    if (ohos_kernel_type == "liteos_riscv") {
-        subsystem_components += [
-            "file:file",
-        ]
-    }
+  if (ohos_kernel_type == "liteos_m") {
+    subsystem_components += [ "file:file" ]
+  }
 }
 
 ndk_lib("native_api") {
-    if (ohos_kernel_type != "liteos_riscv") {
-        lib_extension = ".so"
-    }
-    deps = [
-        "kv_store/src:utils_kv_store",
-    ]
-    head_files = [
-        "//utils/native/lite/include/kv_store.h",
-        "//utils/native/lite/include/utils_config.h",
-    ]
-    if (ohos_kernel_type == "liteos_riscv") {
-        deps += [
-            "file:native_file"
-        ]
-        head_files += [
-            "//utils/native/lite/include/utils_file.h",
-        ]
-    }
+  if (ohos_kernel_type != "liteos_m") {
+    lib_extension = ".so"
+  }
+  deps = [ "kv_store/src:utils_kv_store" ]
+  head_files = [
+    "//utils/native/lite/include/kv_store.h",
+    "//utils/native/lite/include/utils_config.h",
+  ]
+  if (ohos_kernel_type == "liteos_m") {
+    deps += [ "file:native_file" ]
+    head_files += [ "//utils/native/lite/include/utils_file.h" ]
+  }
 }

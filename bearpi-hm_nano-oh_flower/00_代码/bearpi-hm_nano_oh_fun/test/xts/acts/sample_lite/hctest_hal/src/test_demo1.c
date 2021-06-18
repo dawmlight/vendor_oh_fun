@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,11 +47,8 @@ static BOOL IntTestSuiteTearDown()
  * @tc.number    : Test_Case_100
  * @tc.name      : Verify int check function
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(IntTestSuite, TestCase001, LEVEL1)
+LITE_TEST_CASE(IntTestSuite, TestCase001, Function | MediumTest | Level1)
 {
     TEST_ASSERT_EQUAL_INT(LEVEL2, LEVEL3);
 };
@@ -60,11 +57,8 @@ LITE_TEST_CASE(IntTestSuite, TestCase001, LEVEL1)
  * @tc.number    : Test_Case_200
  * @tc.name      : Verify int check function
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(IntTestSuite, TestCase002, LEVEL2)
+LITE_TEST_CASE(IntTestSuite, TestCase002, Function | MediumTest | Level2)
 {
     TEST_ASSERT_EQUAL_INT(LEVEL2, LEVEL2);
 };

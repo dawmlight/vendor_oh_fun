@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/iot_link",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "Compilation framework for third-party SDK integration | 三方SDK集成编译框架",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/domains/iot/link && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/iot_link",
+    "tags": [
+        "domains"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "domains",
+        "iotlink"
+    ]
+}

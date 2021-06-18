@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "hos_types.h"
+#include "ohos_types.h"
 #include <securec.h>
 #include "hctest.h"
 #include "parameter.h"
@@ -54,14 +54,11 @@ static BOOL ParameterFuncTestSuiteTearDown(void)
 }
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0100
+ * @tc.name      : Obtaining system parameter ProductType
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara001, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara001, Function | MediumTest | Level1)
 {
     char* value = GetProductType();
     printf("Product Type=%s\n", value);
@@ -70,14 +67,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0200
+ * @tc.name      : Obtaining system parameter Manufacture
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara002, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara002, Function | MediumTest | Level1)
 {
     char* value = GetManufacture();
     printf("Manufacture=%s\n", value);
@@ -86,14 +80,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0300
+ * @tc.name      : Obtaining system parameter Brand
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara003, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara003, Function | MediumTest | Level1)
 {
     char* value = GetBrand();
     printf("Brand=%s\n", value);
@@ -102,14 +93,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0400
+ * @tc.name      : Obtaining system parameter MarketName
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara004, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara004, Function | MediumTest | Level1)
 {
     char* value = GetMarketName();
     printf("Market Name=%s\n", value);
@@ -118,14 +106,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0500
+ * @tc.name      : Obtaining system parameter ProductSeries
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara005, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara005, Function | MediumTest | Level1)
 {
     char* value = GetProductSeries();
     printf("Product Series=%s\n", value);
@@ -134,14 +119,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara005, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0600
+ * @tc.name      : Obtaining system parameter ProductModel
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara006, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara006, Function | MediumTest | Level1)
 {
     char* value = GetProductModel();
     printf("Product Model=%s\n", value);
@@ -150,14 +132,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara006, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0700
+ * @tc.name      : Obtaining system parameter HardwareModel
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara007, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara007, Function | MediumTest | Level1)
 {
     char* value = GetHardwareModel();
     printf("Hardware Model=%s\n", value);
@@ -166,14 +145,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara007, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0800
+ * @tc.name      : Obtaining system parameter HardwareProfile
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara008, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara008, Function | MediumTest | Level1)
 {
     char* value = GetHardwareProfile();
     printf("Hardware Profile=%s\n", value);
@@ -182,14 +158,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_0900
+ * @tc.name      : Obtaining system parameter Serial
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara009, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara009, Function | MediumTest | Level1)
 {
     char* value = GetSerial();
     printf("Serial=%s\n", value);
@@ -203,14 +176,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara009, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1000
+ * @tc.name      : Obtaining system parameter OsName
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara010, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara010, Function | MediumTest | Level1)
 {
     char* value = GetOsName();
     printf("Os Name=%s\n", value);
@@ -219,14 +189,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara010, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1100
+ * @tc.name      : Obtaining system parameter DisplayVersion
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara011, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara011, Function | MediumTest | Level1)
 {
     char* value = GetDisplayVersion();
     printf("Display Version=%s\n", value);
@@ -235,14 +202,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara011, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1200
+ * @tc.name      : Obtaining system parameter BootloaderVersion
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara012, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara012, Function | MediumTest | Level1)
 {
     char* value = GetBootloaderVersion();
     printf("Bootloader Version=%s\n", value);
@@ -251,14 +215,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara012, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1300
+ * @tc.name      : Obtaining system parameter SecurityPatchTag
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara013, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara013, Function | MediumTest | Level1)
 {
     char* value = GetSecurityPatchTag();
     printf("Secure Patch Level=%s\n", value);
@@ -267,14 +228,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara013, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1400
+ * @tc.name      : Obtaining system parameter AbiList
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara014, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara014, Function | MediumTest | Level1)
 {
     char* value = GetAbiList();
     printf("Abi List=%s\n", value);
@@ -283,14 +241,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara014, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1500
+ * @tc.name      : Obtaining system parameter FirstApiLevel
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara015, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara015, Function | MediumTest | Level1)
 {
     char* value = GetFirstApiLevel();
     printf("First Api Level=%s\n", value);
@@ -299,14 +254,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara015, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1600
+ * @tc.name      : Obtaining system parameter IncrementalVersion
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara016, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara016, Function | MediumTest | Level1)
 {
     char* value = GetIncrementalVersion();
     printf("Incremental Version=%s\n", value);
@@ -315,14 +267,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara016, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1700
+ * @tc.name      : Obtaining system parameter VersionId
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara017, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara017, Function | MediumTest | Level1)
 {
     char* value = GetVersionId();
     printf("Version Id=%s\n", value);
@@ -331,14 +280,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara017, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1800
+ * @tc.name      : Obtaining system parameter BuildType
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara018, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara018, Function | MediumTest | Level1)
 {
     char* value = GetBuildType();
     printf("Build Type=%s\n", value);
@@ -347,14 +293,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara018, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_1900
+ * @tc.name      : Obtaining system parameter BuildUser
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara019, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara019, Function | MediumTest | Level1)
 {
     char* value = GetBuildUser();
     printf("Build User=%s\n", value);
@@ -363,14 +306,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara019, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_2000
+ * @tc.name      : Obtaining system parameter BuildHost
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara020, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara020, Function | MediumTest | Level1)
 {
     char* value = GetBuildHost();
     printf("Build Host=%s\n", value);
@@ -379,14 +319,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara020, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_2100
+ * @tc.name      : Obtaining system parameter BuildTime
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara021, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara021, Function | MediumTest | Level1)
 {
     char* value = GetBuildTime();
     printf("Build Time=%s\n", value);
@@ -395,14 +332,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara021, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_2200
+ * @tc.name      : Obtaining system parameter BuildRootHash
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara022, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara022, Function | MediumTest | Level1)
 {
     char* value = GetBuildRootHash();
     printf("Build Root Hash=%s\n", value);
@@ -411,14 +345,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara022, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_2300
+ * @tc.name      : Obtaining system parameter SoftwareModel
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara023, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara023, Function | MediumTest | Level1)
 {
     char* value = GetSoftwareModel();
     printf("Software Model=%s\n", value);
@@ -427,14 +358,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara023, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : Obtaining system parameter
+ * @tc.number    : SUB_UTILS_PARAMETER_2400
+ * @tc.name      : Obtaining system parameter SdkApiLevel
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara024, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara024, Function | MediumTest | Level1)
 {
     char* value = GetSdkApiLevel();
     printf("Sdk Api Level=%s\n", value);
@@ -443,32 +371,26 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testObtainSysPara024, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_2500
+ * @tc.name      : SetParameter parameter legal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter001, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter001, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char value[] = "OEM-hisi-10.1.0";
+    char value[] = "OEM-10.1.0";
     ret = SetParameter(key, value);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_2600
+ * @tc.name      : SetParameter parameter legal test with Special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter002, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter002, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -479,14 +401,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_2700
+ * @tc.name      : SetParameter parameter legal test using key with only lowercase
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter003, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter003, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -497,14 +416,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_2800
+ * @tc.name      : SetParameter parameter legal test using key with only number
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter004, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter004, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -515,14 +431,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(length:key 31 bytes, value 127 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_2900
+ * @tc.name      : SetParameter parameter legal test using key and value with maximum length
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter005, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter005, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -539,14 +452,11 @@ abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrs";
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key is nullptr, value is nullptr)
+ * @tc.number    : SUB_UTILS_PARAMETER_3000
+ * @tc.name      : SetParameter parameter illegal test when key is nullptr and value is nullptr
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter006, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter006, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -566,14 +476,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter006, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key is NULL, value is NULL)
+ * @tc.number    : SUB_UTILS_PARAMETER_3100
+ * @tc.name      : SetParameter parameter illegal test when key is NULL and value is NULL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter007, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter007, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -593,14 +500,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter007, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key len is 32 or more than 32 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_3200
+ * @tc.name      : SetParameter parameter illegal test when key len is 32 or more than 32 bytes
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter008, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter008, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -622,14 +526,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key with uppercase)
+ * @tc.number    : SUB_UTILS_PARAMETER_3300
+ * @tc.name      : SetParameter parameter illegal test using key with uppercase
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter009, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter009, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -643,14 +544,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter009, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key with blank)
+ * @tc.number    : SUB_UTILS_PARAMETER_3400
+ * @tc.name      : SetParameter parameter illegal test using key with blank
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter010, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter010, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -664,14 +562,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter010, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(key with special characters)
+ * @tc.number    : SUB_UTILS_PARAMETER_3500
+ * @tc.name      : SetParameter parameter illegal test using key with invalid special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter011, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter011, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -685,14 +580,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter011, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter illegal test(value length is 128 or more than 128 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_3600
+ * @tc.name      : SetParameter parameter illegal test when value length is 128 or more than 128 bytes
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter012, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter012, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -716,14 +608,11 @@ abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890";
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : SetParameter parameter legal test(value contains only blanks)
+ * @tc.number    : SUB_UTILS_PARAMETER_3700
+ * @tc.name      : SetParameter parameter legal test when value contains only blanks
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter013, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter013, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -734,35 +623,29 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testSetParameter013, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_3800
+ * @tc.name      : GetParameter parameter legal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter001, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter001, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char rightVal[] = "OEM-hisi-10.1.0";
+    char rightVal[] = "OEM-10.1.0";
     char value[MAX_LEN] = {0};
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_3900
+ * @tc.name      : GetParameter parameter legal test with Special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter002, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter002, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -772,18 +655,15 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter002, LEVEL1)
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_4000
+ * @tc.name      : GetParameter parameter legal test using key with only lowercase
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter003, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter003, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -793,18 +673,15 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter003, LEVEL1)
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_PARAMETER_4100
+ * @tc.name      : GetParameter parameter legal test using key with only number
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter004, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter004, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -814,39 +691,33 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter004, LEVEL1)
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(defaut value point is nullptr)
+ * @tc.number    : SUB_UTILS_PARAMETER_4200
+ * @tc.name      : GetParameter parameter legal test when defaut value point is nullptr
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter005, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter005, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char rightVal[] = "OEM-hisi-10.1.0";
+    char rightVal[] = "OEM-10.1.0";
     char value[MAX_LEN] = {0};
     SetParameter(key, rightVal);
     ret = GetParameter(key, NULL, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(none exist key)
+ * @tc.number    : SUB_UTILS_PARAMETER_4300
+ * @tc.name      : GetParameter parameter legal test when the key is not exist
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter006, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter006, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -854,18 +725,15 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter006, LEVEL1)
     char value[MAX_LEN] = {0};
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(g_defSysParam), ret);
-    TEST_ASSERT_EQUAL_STRING(g_defSysParam, value); 
+    TEST_ASSERT_EQUAL_STRING(g_defSysParam, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(length:key is 31 bytes, value is 127 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_4400
+ * @tc.name      : GetParameter parameter legal test using key and value with maximum length
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter007, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter007, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -875,7 +743,7 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter007, LEVEL1)
     SetParameter(key1, rightVal1);
     ret = GetParameter(key1, g_defSysParam, value1, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal1), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal1, value1); 
+    TEST_ASSERT_EQUAL_STRING(rightVal1, value1);
 
     char key2[] = "rw.sys.version.version";
     char rightVal2[] = "abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890\
@@ -884,23 +752,20 @@ abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrs";
     SetParameter(key2, rightVal2);
     ret = GetParameter(key2, g_defSysParam, value2, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal2), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal2, value2); 
+    TEST_ASSERT_EQUAL_STRING(rightVal2, value2);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(value length is too short)
+ * @tc.number    : SUB_UTILS_PARAMETER_4500
+ * @tc.name      : GetParameter parameter illegal test with invalid value length
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter008, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter008, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char rightVal[] = "OEM-hisi-10.1.0";
+    char rightVal[] = "OEM-10.1.0";
     char value[INVALID_LEN] = {0};
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, INVALID_LEN);
@@ -911,19 +776,16 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(value point is nullptr)
+ * @tc.number    : SUB_UTILS_PARAMETER_4600
+ * @tc.name      : GetParameter parameter illegal test when value point is nullptr
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter009, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter009, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char rightVal[] = "OEM-hisi-10.1.0";
+    char rightVal[] = "OEM-10.1.0";
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, NULL, MAX_LEN);
     if ((ret == COMMON_ERROR) || (ret == INVALID_PARAMETER))
@@ -933,14 +795,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter009, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key is not exist and value len is too short)
+ * @tc.number    : SUB_UTILS_PARAMETER_4700
+ * @tc.name      : GetParameter parameter illegal test when key is not exist and value len is invalid
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter010, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter010, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -951,14 +810,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter010, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key is not exist and defaut value point is nullptr)
+ * @tc.number    : SUB_UTILS_PARAMETER_4800
+ * @tc.name      : GetParameter parameter illegal test when key is not exist and defaut value point is nullptr
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter011, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter011, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -969,14 +825,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter011, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key len is 32 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_4900
+ * @tc.name      : GetParameter parameter illegal test when key len is 32 bytes
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter012, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter012, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -990,14 +843,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter012, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key len is more than 32 bytes)
+ * @tc.number    : SUB_UTILS_PARAMETER_5000
+ * @tc.name      : GetParameter parameter illegal test when key len is more than 32 bytes
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter013, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter013, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1011,14 +861,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter013, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key is nullptr)
+ * @tc.number    : SUB_UTILS_PARAMETER_5100
+ * @tc.name      : GetParameter parameter illegal test when key is nullptr
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter014, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter014, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1031,14 +878,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter014, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key with uppercase)
+ * @tc.number    : SUB_UTILS_PARAMETER_5200
+ * @tc.name      : GetParameter parameter illegal test using key with uppercase
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter015, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter015, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1052,14 +896,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter015, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key with blank)
+ * @tc.number    : SUB_UTILS_PARAMETER_5300
+ * @tc.name      : GetParameter parameter illegal test using key with blank
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter016, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter016, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1073,14 +914,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter016, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key with special characters)
+ * @tc.number    : SUB_UTILS_PARAMETER_5400
+ * @tc.name      : GetParameter parameter illegal test using key with invalid special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter017, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter017, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1094,14 +932,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter017, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter illegal test(key is NULL)
+ * @tc.number    : SUB_UTILS_PARAMETER_5500
+ * @tc.name      : GetParameter parameter illegal test when key is NULL
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter018, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter018, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1114,14 +949,11 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter018, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
- * @tc.name      : GetParameter parameter legal test(value contains only blanks)
+ * @tc.number    : SUB_UTILS_PARAMETER_5600
+ * @tc.name      : GetParameter parameter legal test when value contains only blanks
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter019, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter019, Function | MediumTest | Level1)
 {
     int ret;
 
@@ -1131,37 +963,34 @@ LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter019, LEVEL1)
     SetParameter(key, rightVal);
     ret = GetParameter(key, g_defSysParam, value, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal, value); 
+    TEST_ASSERT_EQUAL_STRING(rightVal, value);
 };
 
 /**
- * @tc.number    : SUB_UTILS_PARAMETER_100
+ * @tc.number    : SUB_UTILS_PARAMETER_5700
  * @tc.name      : Update value of parameter legal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter020, LEVEL1)
+LITE_TEST_CASE(ParameterFuncTestSuite, testGetParameter020, Function | MediumTest | Level1)
 {
     int ret;
 
     char key[] = "rw.sys.version_606";
-    char rightVal1[] = "OEM-hisi-10.1.0";
+    char rightVal1[] = "OEM-10.1.0";
     char value1[MAX_LEN] = {0};
     ret = SetParameter(key, rightVal1);
     TEST_ASSERT_EQUAL_INT(0, ret);
     ret = GetParameter(key, g_defSysParam, value1, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal1), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal1, value1); 
+    TEST_ASSERT_EQUAL_STRING(rightVal1, value1);
 
-    char rightVal2[] = "update the value of OEM-hisi-10.1.0";
+    char rightVal2[] = "update the value of OEM-10.1.0";
     char value2[MAX_LEN] = {0};
     ret = SetParameter(key, rightVal2);
     TEST_ASSERT_EQUAL_INT(0, ret);
     ret = GetParameter(key, g_defSysParam, value2, MAX_LEN);
     TEST_ASSERT_EQUAL_INT(strlen(rightVal2), ret);
-    TEST_ASSERT_EQUAL_STRING(rightVal2, value2); 
+    TEST_ASSERT_EQUAL_STRING(rightVal2, value2);
 };
 
 RUN_TEST_SUITE(ParameterFuncTestSuite);

@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/hota",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "Over the Air (OTA) provides the remote device update capability. Your devices will be able to support OTA update after secondary development based on the provided APIs. By providing unified update APIs externally, the update subsystem shields the differences of underlying chips. | OTA（Over the Air）提供对设备远程升级能力，基于提供的接口进行二次开发后，可以让您的设备轻松支持OTA升级能力。升级子系统对用户屏蔽了底层芯片的差异，对外提供了统一的升级接口。",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/base/update/ota_lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/update_ota_lite",
+    "tags": [
+        "base"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "base",
+        "hota"
+    ]
+}

@@ -1,5 +1,11 @@
 {
     "description": "Config for $module test cases",
+    "environment": [
+        {
+            "type": "device",
+            "label": "wifiiot"
+        }
+    ],
     "kits": [
         {
             "type": "DeployKit",

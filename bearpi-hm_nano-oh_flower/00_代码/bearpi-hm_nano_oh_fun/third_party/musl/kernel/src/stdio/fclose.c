@@ -32,8 +32,6 @@ int fclose(FILE *f)
 
 	if (f->flags & F_PERM) return r;
 
-	__unlist_locked_file(f);
-
 	FILE **head = __ofl_lock();
 	if (f->prev) f->prev->next = f->next;
 	if (f->next) f->next->prev = f->prev;

@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/system_ability_manager",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "由于平台资源有限，且硬件平台多样，因此需要屏蔽不同硬件架构和资源的不同、以及运行形态的不同，提供统一化的系统服务开发框架。根据RISC-V、Cortex-M、Cortex-A不同硬件平台，分为两种硬件平台，以下简称M核、A核。",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/foundation/distributedschedule/samgr_lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/distributedschedule_samgr_lite",
+    "tags": [
+        "foundation"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "foundation",
+        "systemabilitymanager"
+    ]
+}

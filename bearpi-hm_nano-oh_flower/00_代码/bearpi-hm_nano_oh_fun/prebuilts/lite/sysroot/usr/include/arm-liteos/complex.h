@@ -1,6 +1,10 @@
 #ifndef _COMPLEX_H
 #define _COMPLEX_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <complex.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -130,4 +134,6 @@ long double creall(long double complex);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* __ICCARM__ */
 #endif

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,17 +38,12 @@ static const int DEF_PUB_ID = 33113322;
 static const int DEF_PUB_CAPABILITY_DATA_LEN = 2;
 
 static int g_pubFlag = 0;
-static int g_caseExeCount = 0;
-static const char* g_sessionName = "ohos";
-static const char* g_moduleName = "default_test_module_name";
-static const char* g_devType = "L0";
 static const char* g_devId = "sb_test_default_devid";
-static const char* g_devName = "sb_test_default_devname";
 static const char* g_pubModuleName = "sb_pub_module_name";
 static const char* g_pubCapability = "ddmpCapability";
 static unsigned char* g_pubCapabilityData = (unsigned char*)"Hi";
 static IPublishCallback g_pubCallback = {0};
-static struct ISessionListener *g_sessionListenerCallback = nullptr;
+static struct ISessionListener* g_sessionListenerCallback = nullptr;
 
 static void ResetPubFlag(void)
 {
@@ -94,7 +89,8 @@ void SbPublishFail(int pubId, PublishFailReason reason)
  */
 int SbSessionOpened(int sessionId)
 {
-    printf("[Session opened]sid[%d].\n", sessionId);
+    (void)sessionId;
+    printf("[Session] opened.\n");
     return SOFTBUS_TEST_SUCCESS;
 }
 
@@ -103,7 +99,8 @@ int SbSessionOpened(int sessionId)
  */
 void SbSessionClosed(int sessionId)
 {
-    printf("[Session closed]sid[%d].\n", sessionId);
+    (void)sessionId;
+    printf("[Session] closed.\n");
 }
 
 /**
@@ -111,7 +108,8 @@ void SbSessionClosed(int sessionId)
  */
 void SbOnBytesReceived(int sessionId, const void *data, unsigned int len)
 {
-    printf("[Session recevie bytes]sid[%d], data len[%d].\n", sessionId, len);
+    (void)sessionId;
+    printf("[Session] receive bytes, data len[%u].\n", len);
 }
 
 /**
@@ -119,7 +117,7 @@ void SbOnBytesReceived(int sessionId, const void *data, unsigned int len)
  */
 static void DefaultPublishToInitService(void)
 {
-    PublishInfo *pubInfo = NULL;
+    PublishInfo* pubInfo = NULL;
     pubInfo = (PublishInfo *)malloc(sizeof(PublishInfo));
     if (pubInfo == NULL) {
         printf("[DefaultPublishToInitService]malloc fail!\n");
@@ -167,6 +165,8 @@ protected:
         g_pubCallback.onPublishSuccess = SbPublishSuccess;
         g_pubCallback.onPublishFail = SbPublishFail;
         g_sessionListenerCallback = (struct ISessionListener*)malloc(sizeof(struct ISessionListener));
+        ASSERT_EQ(true, g_sessionListenerCallback != nullptr);
+
         g_sessionListenerCallback->onSessionOpened = SbSessionOpened;
         g_sessionListenerCallback->onSessionClosed = SbSessionClosed;
         g_sessionListenerCallback->onBytesReceived = SbOnBytesReceived;
@@ -190,27 +190,22 @@ protected:
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_0100
  * @tc.name      : abnormal parameter test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(ActsSoftBusTest, testSetNumGreaterThanMax, TestSize.Level3)
+HWTEST_F(ActsSoftBusTest, testSetNumGreaterThanMax, Function | MediumTest | Level3)
 {
-    CommonDeviceInfo *devInfo = NULL;
+    CommonDeviceInfo* devInfo = NULL;
     devInfo = (CommonDeviceInfo *)malloc(sizeof(CommonDeviceInfo));
-    ASSERT_EQ(devInfo != NULL, true);
+    ASSERT_EQ(true, devInfo != NULL);
     (void)memset_s(devInfo, sizeof(CommonDeviceInfo), 0, sizeof(CommonDeviceInfo));
     devInfo->key = COMM_DEVICE_KEY_DEVID;
     devInfo->value = g_devId;
     
     int ret = SetCommonDeviceInfo(devInfo, COMM_DEVICE_KEY_MAX + 1);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
-    int num = 0;
-    ret  = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
-    num = 1;
-    ret  = SetCommonDeviceInfo(NULL, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
+    ret  = SetCommonDeviceInfo(devInfo, 0);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
+    ret  = SetCommonDeviceInfo(NULL, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(devInfo);
 }
 
@@ -218,26 +213,25 @@ HWTEST_F(ActsSoftBusTest, testSetNumGreaterThanMax, TestSize.Level3)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_0300
  * @tc.name      : set ID value equal and greater maximum value
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(ActsSoftBusTest, testSetDevIdEqualMax, TestSize.Level3)
+HWTEST_F(ActsSoftBusTest, testSetDevIdEqualMax, Function | MediumTest | Level3)
 {
-    CommonDeviceInfo *devInfo = NULL;
+    const char* info1 =
+        "abcdef123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    const char* info2 =
+        "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890abcdefg";
+    CommonDeviceInfo* devInfo = NULL;
     devInfo = (CommonDeviceInfo *)malloc(sizeof(CommonDeviceInfo));
-    ASSERT_EQ(devInfo != NULL, true);
+    ASSERT_EQ(true, devInfo != NULL);
     (void)memset_s(devInfo, sizeof(CommonDeviceInfo), 0, sizeof(CommonDeviceInfo));
     devInfo->key = COMM_DEVICE_KEY_DEVID;
-    devInfo->value = (char *)
-        "abcdef123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
-    int num = 1;
-    int ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
-    devInfo->value = (char *)
-        "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890abcdefg";
-    ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    devInfo->value = info1;
+
+    int ret = SetCommonDeviceInfo(devInfo, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
+    devInfo->value = info2;
+    ret = SetCommonDeviceInfo(devInfo, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(devInfo);
 }
 
@@ -245,25 +239,23 @@ HWTEST_F(ActsSoftBusTest, testSetDevIdEqualMax, TestSize.Level3)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_0600
  * @tc.name      : set name value equal and greater maximum value
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(ActsSoftBusTest, testSetDevNameEqualMax, TestSize.Level3)
+HWTEST_F(ActsSoftBusTest, testSetDevNameEqualMax, Function | MediumTest | Level3)
 {
-    CommonDeviceInfo *devInfo = NULL;
+    const char* info1 = "abcd123456789012345678901234567890123456789012345678901234567890";
+    const char* info2 = "123456789012345678901234567890123456789012345678901234567890abcde";
+    CommonDeviceInfo* devInfo = NULL;
     devInfo = (CommonDeviceInfo *)malloc(sizeof(CommonDeviceInfo));
-    ASSERT_EQ(devInfo != NULL, true);
+    ASSERT_EQ(true, devInfo != NULL);
     (void)memset_s(devInfo, sizeof(CommonDeviceInfo), 0, sizeof(CommonDeviceInfo));
     devInfo->key = COMM_DEVICE_KEY_DEVNAME;
-    devInfo->value = (char *)"abcd123456789012345678901234567890123456789012345678901234567890";
-    int num = 1;
-    int ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    devInfo->value = info1;
+    int ret = SetCommonDeviceInfo(devInfo, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
 
-    devInfo->value = (char *)"123456789012345678901234567890123456789012345678901234567890abcde";
-    ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    devInfo->value = info2;
+    ret = SetCommonDeviceInfo(devInfo, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(devInfo);
 }
 
@@ -271,21 +263,18 @@ HWTEST_F(ActsSoftBusTest, testSetDevNameEqualMax, TestSize.Level3)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_0800
  * @tc.name      : set type value not in enum
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(ActsSoftBusTest, testSetDevTypeError, TestSize.Level3)
+HWTEST_F(ActsSoftBusTest, testSetDevTypeError, Function | MediumTest | Level3)
 {
-    CommonDeviceInfo *devInfo = NULL;
+    const char* info = "error";
+    CommonDeviceInfo* devInfo = NULL;
     devInfo = (CommonDeviceInfo *)malloc(sizeof(CommonDeviceInfo));
-    ASSERT_EQ(devInfo != NULL, true);
+    ASSERT_EQ(true, devInfo != NULL);
     (void)memset_s(devInfo, sizeof(CommonDeviceInfo), 0, sizeof(CommonDeviceInfo));
     devInfo->key = COMM_DEVICE_KEY_DEVTYPE;
-    devInfo->value = (char *)"error";
-    int num = 1;
-    int ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    devInfo->value = info;
+    int ret = SetCommonDeviceInfo(devInfo, 1);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(devInfo);
 }
 
@@ -293,21 +282,18 @@ HWTEST_F(ActsSoftBusTest, testSetDevTypeError, TestSize.Level3)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_1000
  * @tc.name      : set key is error
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(ActsSoftBusTest, testSetDevKeyIsError, TestSize.Level2)
+HWTEST_F(ActsSoftBusTest, testSetDevKeyIsError, Function | MediumTest | Level2)
 {
-    CommonDeviceInfo *devInfo = NULL;
+    CommonDeviceInfo* devInfo = NULL;
     devInfo = (CommonDeviceInfo *)malloc(sizeof(CommonDeviceInfo));
-    ASSERT_EQ(devInfo != NULL, true);
+    ASSERT_EQ(true, devInfo != NULL);
     (void)memset_s(devInfo, sizeof(CommonDeviceInfo), 0, sizeof(CommonDeviceInfo));
     devInfo->key = COMM_DEVICE_KEY_MAX;
     devInfo->value = g_devId;
     unsigned int num = 1;
     int ret = SetCommonDeviceInfo(devInfo, num);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(devInfo);
 }
 
@@ -315,15 +301,12 @@ HWTEST_F(ActsSoftBusTest, testSetDevKeyIsError, TestSize.Level2)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_1300
  * @tc.name      : Test publish with invalid parameter
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(ActsSoftBusTest, testPublishParameterIsNull, TestSize.Level2)
+HWTEST_F(ActsSoftBusTest, testPublishParameterIsNull, Function | MediumTest | Level2)
 {
-    PublishInfo *pubInfo = NULL;
+    PublishInfo* pubInfo = NULL;
     pubInfo = (PublishInfo *)malloc(sizeof(PublishInfo));
-    ASSERT_EQ(pubInfo!= NULL, true);
+    ASSERT_EQ(true, pubInfo!= NULL);
     (void)memset_s(pubInfo, sizeof(PublishInfo), 0, sizeof(PublishInfo));
     pubInfo->publishId = DEF_PUB_ID;
     pubInfo->mode = DISCOVER_MODE_PASSIVE;
@@ -335,31 +318,28 @@ HWTEST_F(ActsSoftBusTest, testPublishParameterIsNull, TestSize.Level2)
 
     ResetPubFlag();
     int ret = PublishService(NULL, pubInfo, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     WaitPublishResult();
-    EXPECT_EQ(g_pubFlag, PUB_FAIL);
+    EXPECT_EQ(PUB_FAIL, g_pubFlag);
     ret = PublishService(g_pubModuleName, NULL, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     ret = PublishService(g_pubModuleName, pubInfo, NULL);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     ret = PublishService(NULL, NULL, NULL);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(pubInfo);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_1500
- * @tc.name      : set package name value equal and greater than maximum value(64,65)
+ * @tc.name      : set package name value equal and greater than maximum value
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-HWTEST_F(ActsSoftBusTest, testPublishPkgNameAbnormal, TestSize.Level2)
+HWTEST_F(ActsSoftBusTest, testPublishPkgNameAbnormal, Function | MediumTest | Level2)
 {
-    PublishInfo *pubInfo = NULL;
+    PublishInfo* pubInfo = NULL;
     pubInfo = (PublishInfo *)malloc(sizeof(PublishInfo));
-    ASSERT_EQ(pubInfo!= NULL, true);
+    ASSERT_EQ(true, pubInfo!= NULL);
     (void)memset_s(pubInfo, sizeof(PublishInfo), 0, sizeof(PublishInfo));
     pubInfo->publishId = DEF_PUB_ID;
     pubInfo->mode = DISCOVER_MODE_PASSIVE;
@@ -371,28 +351,28 @@ HWTEST_F(ActsSoftBusTest, testPublishPkgNameAbnormal, TestSize.Level2)
 
     ResetPubFlag();
     int ret = PublishService(NULL, pubInfo, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     WaitPublishResult();
-    EXPECT_EQ(g_pubFlag, PUB_FAIL);
+    EXPECT_EQ(PUB_FAIL, g_pubFlag);
 
     ResetPubFlag();
-    const char *pkgNameMax = "123456789012345678901234567890123456789012345678901234567890abcd";
+    const char* pkgNameMax = "123456789012345678901234567890123456789012345678901234567890abcd";
     ret = PublishService(pkgNameMax, pubInfo, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     WaitPublishResult();
-    EXPECT_EQ(g_pubFlag, PUB_FAIL);
+    EXPECT_EQ(PUB_FAIL, g_pubFlag);
 
     ResetPubFlag();
-    const char *pkgNameMoreMax = "abcde123456789012345678901234567890123456789012345678901234567890";
+    const char* pkgNameMoreMax = "abcde123456789012345678901234567890123456789012345678901234567890";
     ret = PublishService(pkgNameMoreMax, pubInfo, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     WaitPublishResult();
-    EXPECT_EQ(g_pubFlag, PUB_FAIL);
+    EXPECT_EQ(PUB_FAIL, g_pubFlag);
 
     ret = UnPublishService(pkgNameMax, DEF_PUB_ID);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     ret = UnPublishService(pkgNameMoreMax, DEF_PUB_ID);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     free(pubInfo);
 }
 
@@ -400,15 +380,12 @@ HWTEST_F(ActsSoftBusTest, testPublishPkgNameAbnormal, TestSize.Level2)
  * @tc.number    : SUB_COMMUNICATION_SOFTBUS_SDK_1700
  * @tc.name      : set capability value not in list
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 3
  */
-HWTEST_F(ActsSoftBusTest, testPublishCapabilityError, TestSize.Level3)
+HWTEST_F(ActsSoftBusTest, testPublishCapabilityError, Function | MediumTest | Level3)
 {
-    PublishInfo *pubInfo = NULL;
+    PublishInfo* pubInfo = NULL;
     pubInfo = (PublishInfo *)malloc(sizeof(PublishInfo));
-    EXPECT_EQ(pubInfo!= NULL, true);
+    EXPECT_EQ(true, pubInfo!= NULL);
     (void)memset_s(pubInfo, sizeof(PublishInfo), 0, sizeof(PublishInfo));
     pubInfo->publishId = DEF_PUB_ID;
     pubInfo->mode = DISCOVER_MODE_PASSIVE;
@@ -420,8 +397,8 @@ HWTEST_F(ActsSoftBusTest, testPublishCapabilityError, TestSize.Level3)
 
     ResetPubFlag();
     int ret = PublishService(g_pubModuleName, pubInfo, &g_pubCallback);
-    EXPECT_NE(ret, SOFTBUS_TEST_SUCCESS);
+    EXPECT_NE(SOFTBUS_TEST_SUCCESS, ret);
     WaitPublishResult();
-    EXPECT_EQ(g_pubFlag, PUB_FAIL);
+    EXPECT_EQ(PUB_FAIL, g_pubFlag);
     free(pubInfo);
 }

@@ -2,7 +2,7 @@
 # coding=utf-8
 
 #
-# Copyright (c) 2020 Huawei Device Co., Ltd.
+# Copyright (c) 2020-2021 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -39,6 +39,7 @@ class ReportVariables:
     log_level = ""
     log_handler = ""
     pub_key_file = None
+    pub_key_string = ""
 
 
 @dataclass
@@ -65,8 +66,8 @@ def _init_global_config():
     # set report variables
     Variables.report_vars.log_dir = "log"
     Variables.report_vars.report_dir = "reports"
-    Variables.report_vars.log_format = "%(asctime)s %(name)-15s " \
-                                       "%(levelname)-8s %(message)s"
+    Variables.report_vars.log_format = "[%(asctime)s] [%(name)s] " \
+                                       "[%(levelname)s] %(message)s"
     Variables.report_vars.log_level = logging.INFO
     Variables.report_vars.log_handler = "console, file"
 
@@ -111,7 +112,8 @@ def _init_logger():
 
     tool_log_file = None
     if Variables.exec_dir and os.path.normcase(
-            Variables.exec_dir) == os.path.normcase(Variables.top_dir):
+            Variables.exec_dir) == os.path.normcase(Variables.top_dir) and \
+            not hasattr(sys, "decc_mode"):
         host_log_path = os.path.join(Variables.exec_dir,
                                      Variables.report_vars.report_dir,
                                      Variables.report_vars.log_dir)

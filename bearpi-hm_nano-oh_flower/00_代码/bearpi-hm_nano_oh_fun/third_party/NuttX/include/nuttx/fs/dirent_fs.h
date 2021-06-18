@@ -308,11 +308,21 @@ struct fs_dirent_s
 #ifdef CONFIG_FS_HOSTFS
       struct fs_hostfsdir_s  hostfs;
 #endif
+
+#ifdef LOSCFG_FS_ZPFS
+      void                   *zpfs;
+#endif
     } u;
 
   /* In any event, this the actual struct dirent that is returned by readdir */
-
-  struct dirent fd_dir;              /* Populated when readdir is called */
+#ifdef LOSCFG_ENABLE_READ_BUFFER
+  struct dirent fd_dir[MAX_DIRENT_NUM];              /* Populated when readdir is called */
+#else
+  struct dirent fd_dir[1];              /* Populated when readdir is called */
+#endif
+  int16_t       cur_pos;
+  int16_t       end_pos;
+  int32_t       read_cnt;
   int           fd_status;           /* Express the dirent is been opened or no */
 };
 

@@ -1,6 +1,10 @@
 #ifndef _INTTYPES_H
 #define _INTTYPES_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <inttypes.h>
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -225,5 +229,6 @@ uintmax_t wcstoumax(const wchar_t *__restrict, wchar_t **__restrict, int);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif
 

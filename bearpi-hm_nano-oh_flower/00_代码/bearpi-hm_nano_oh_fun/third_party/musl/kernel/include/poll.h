@@ -1,5 +1,5 @@
-#ifndef	_POLL_H
-#define	_POLL_H
+#ifndef	_SYS_POLL_H
+#define	_SYS_POLL_H
 
 #ifdef __cplusplus
 extern "C" {

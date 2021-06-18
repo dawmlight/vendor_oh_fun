@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,13 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/syscall.h>
+#include <sys/resource.h>
+#include <pthread.h>
 
+
+// get thread id
+#define gettid() ((pid_t)syscall(SYS_gettid))
 
 // check if 'actual' is close to 'target', within 5% in default
 int CheckValueClose(double target, double actual, double accuracy = 0.05);
@@ -74,12 +80,19 @@ int CheckProcStatus(pid_t pid, int* code, int flag = WNOHANG);
         EXPECT_EQ(procStat, 1);                                        \
         EXPECT_EQ(exitCode, 0) << "target process should exited 0.\n"; \
     } while (0)
+// wait until child statu changed
+#define WaitProcExitedOK(pid)  do {                                    \
+        int exitCode;                                                  \
+        int procStat = CheckProcStatus(pid, &exitCode, 0);             \
+        EXPECT_EQ(procStat, 1);                                        \
+        EXPECT_EQ(exitCode, 0) << "target process should exited 0.\n"; \
+    } while (0)
 
 // make sure process killed by signal signum
 #define AssertProcKilled(pid, signum)  do {                                          \
         int exitCode;                                                                \
         int procStat = CheckProcStatus(pid, &exitCode);                              \
-        ASSERT_EQ(procStat, 2);                                                      \
+        ASSERT_EQ(procStat, 2) << "target process should killed by " << signum;      \
         ASSERT_EQ(exitCode, signum) << "target process should killed by " << signum; \
     } while (0)
 #define ExpectProcKilled(pid, signum)  do {                                          \
@@ -88,7 +101,16 @@ int CheckProcStatus(pid_t pid, int* code, int flag = WNOHANG);
         EXPECT_EQ(procStat, 2);                                                      \
         EXPECT_EQ(exitCode, signum) << "target process should killed by " << signum; \
     } while (0)
+// wait until child statu changed
+#define WaitProcKilled(pid, signum)  do {                                            \
+        int exitCode;                                                                \
+        int procStat = CheckProcStatus(pid, &exitCode, 0);                           \
+        ASSERT_EQ(procStat, 2) << "target process should killed by " << signum;      \
+        ASSERT_EQ(exitCode, signum) << "target process should killed by " << signum; \
+    } while (0)
 
+// for now, crash process act like killed by SIGUSR2
+#define ExpectProcCrashed(pid) WaitProcKilled(pid, SIGUSR2)
 
 // keep current process run for a specific time, no sleep.
 // msec is millisecond (1/1000 sec).
@@ -132,4 +154,26 @@ pid_t GetNonExistPid();
  */
 uint32_t GetRandom(uint32_t max);
 
+/**
+ * desc:    get current time, plus 'ms'
+ */
+void GetDelayedTime(struct timespec *ts, unsigned int ms);
+
+/**
+ * desc:    calculate time difference, in ms
+ * output:  return time difference, unit is ms
+ */
+int GetTimeDiff(struct timespec ts1, struct timespec ts2);
+
+/**
+ * desc:    fix calling process to one cpu
+ * output:  return 0 successful, -1 fail
+ */
+int FixCurProcessToOneCpu(int cpuIndex, cpu_set_t* pOldMask);
+
+/**
+ * desc:    get cpu count
+ * output:  return cpu count
+ */
+int GetCpuCount(void);
 #endif

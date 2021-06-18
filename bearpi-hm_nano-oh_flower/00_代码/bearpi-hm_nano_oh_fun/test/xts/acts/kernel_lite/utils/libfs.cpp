@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@
 #include "libfs.h"
 #include "KernelConstants.h"
 
+
 int MakeDir(const char *dirname)
 {
     if (access(dirname, F_OK) == 0) {
@@ -42,7 +43,7 @@ int MakeDir(const char *dirname)
 int RemoveDir(const char *dirname)
 {
     char subDir[MAX_PATH_SIZE];
-    struct stat dirStat;
+    struct stat dirStat = {0};
 
     if (stat(dirname, &dirStat) < 0) {
         LOG("get directory stat error, errno=%d:%s", errno, strerror(errno));
@@ -91,12 +92,12 @@ int CopyFile(const char *srcFile, const char *dstFile)
 {
     int rt = 0;
     FILE *srcFp = fopen(srcFile, "rb");
-    if (srcFp == NULL) {
+    if (srcFp == nullptr) {
         LOG("Cannot open source file %s: errno=%d,%s \n", srcFile, errno, strerror(errno));
         return -1;
     }
     FILE *dstFp = fopen(dstFile, "wb");
-    if (dstFp == NULL) {
+    if (dstFp == nullptr) {
         LOG("Cannot create dest file %s: errno=%d,%s \n", dstFile, errno, strerror(errno));
         fclose(srcFp);
         return -1;

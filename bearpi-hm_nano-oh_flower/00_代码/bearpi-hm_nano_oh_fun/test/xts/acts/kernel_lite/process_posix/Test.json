@@ -13,13 +13,16 @@
             "mount": [
                 {
                     "source": "testcases/kernel",
-                    "target": "/test_root/kernel"
+                    "target": "/test_root/kernel_lite"
+                },{
+                    "source": "resource/kernel/process",
+                    "target": "/test_root/kernel/process"
                 }
             ]
         }
     ],
     "driver": {
         "type": "CppTestLite",
-        "execute": "/test_root/kernel/ActsProcessApiTest.bin"
+        "execute": "/test_root/kernel_lite/ActsProcessApiTest.bin"
     }
 }

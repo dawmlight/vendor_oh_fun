@@ -14,11 +14,12 @@
  */
 
 #include "nativeapi_deviceinfo.h"
+#include "global.h"
 #include "js_async_work.h"
 #include "nativeapi_common.h"
 #include "nativeapi_config.h"
 #include "parameter.h"
-#include "screen.h"
+#include "common/screen.h"
 
 namespace OHOS {
 namespace ACELite {
@@ -49,42 +50,12 @@ void ExecuteGetInfo(void* data)
     }
     JSIValue args = params->args;
     JSIValue thisVal = params->thisVal;
-    char* brand =  GetBrand();
-    if (brand == nullptr) {
-        NativeapiCommon::FailCallBack(args, thisVal, ERROR_CODE_GENERAL);
-        JSI::ReleaseValueList(args, thisVal, ARGS_END);
-        delete params;
-        return;
-    }
-    char* manufacture = GetManufacture();
-    if (manufacture == nullptr) {
-        free(brand);
-        NativeapiCommon::FailCallBack(args, thisVal, ERROR_CODE_GENERAL);
-        JSI::ReleaseValueList(args, thisVal, ARGS_END);
-        delete params;
-        return;
-    }
-    char* model = GetProductModel();
-    if (model == nullptr) {
-        free(brand);
-        free(manufacture);
-        NativeapiCommon::FailCallBack(args, thisVal, ERROR_CODE_GENERAL);
-        JSI::ReleaseValueList(args, thisVal, ARGS_END);
-        delete params;
-        return;
-    }
     JSIValue result = JSI::CreateObject();
-    JSI::SetStringProperty(result, "brand", brand);
-    JSI::SetStringProperty(result, "manufacturer", manufacture);
-    JSI::SetStringProperty(result, "model", model);
-    JSI::SetStringProperty(result, "product", model);
-    Screen &screen = Screen::GetInstance();
-    JSI::SetNumberProperty(result, "windowWidth", (double)screen.GetWidth());
-    JSI::SetNumberProperty(result, "windowHeight", (double)screen.GetHeight());
-    free(brand);
-    free(manufacture);
-    free(model);
-    NativeapiCommon::SuccessCallBack(thisVal, args, result);
+    if (!NativeapiDeviceInfo::GetProductInfo(result)) {
+        NativeapiCommon::FailCallBack(thisVal, args, ERROR_CODE_GENERAL);
+    } else {
+        NativeapiCommon::SuccessCallBack(thisVal, args, result);
+    }
     JSI::ReleaseValueList(args, thisVal, result, ARGS_END);
     delete params;
     params = nullptr;
@@ -96,9 +67,103 @@ void InitDeviceModule(JSIValue exports)
     JSI::SetModuleAPI(exports, "getInfo", NativeapiDeviceInfo::GetDeviceInfo);
 }
 
+bool NativeapiDeviceInfo::GetAPILevel(JSIValue result)
+{
+    char* apiLevel = GetSdkApiLevel();
+    if (apiLevel == nullptr) {
+        return false;
+    }
+    JSI::SetStringProperty(result, "apiVersion", apiLevel);
+    free(apiLevel);
+    apiLevel = nullptr;
+    return true;
+}
+
 JSIValue NativeapiDeviceInfo::GetDeviceInfo(const JSIValue thisVal, const JSIValue* args, uint8_t argsNum)
 {
     return ExecuteAsyncWork(thisVal, args, argsNum, ExecuteGetInfo);
+}
+
+bool NativeapiDeviceInfo::GetDeviceType(JSIValue result)
+{
+    char* deviceType = GetProductType();
+    if (deviceType == nullptr) {
+        return false;
+    }
+    JSI::SetStringProperty(result, "deviceType", deviceType);
+    free(deviceType);
+    deviceType = nullptr;
+    return true;
+}
+
+bool NativeapiDeviceInfo::GetLanguage(JSIValue result)
+{
+    // because of MAX_LANGUAGE_LENGTH is little,we use array instead of pointer
+    char langStr[MAX_LANGUAGE_LENGTH + 1] = {0};
+    if (GLOBAL_GetLanguage(langStr, MAX_LANGUAGE_LENGTH) != 0) {
+        JSI::SetStringProperty(result, "language", "");
+    } else {
+        JSI::SetStringProperty(result, "language", langStr);
+    }
+    return true;
+}
+
+bool NativeapiDeviceInfo::GetProductInfo(JSIValue result)
+{
+    bool isSuccess = true;
+    char* brand =  GetBrand();
+    char* manufacture = GetManufacture();
+    char* model = GetProductModel();
+    if (brand == nullptr || manufacture == nullptr || model == nullptr) {
+        isSuccess = false;
+    } else {
+        JSI::SetStringProperty(result, "brand", brand);
+        JSI::SetStringProperty(result, "manufacturer", manufacture);
+        JSI::SetStringProperty(result, "model", model);
+        JSI::SetStringProperty(result, "product", model);
+    }
+    if (isSuccess) {
+        if (!NativeapiDeviceInfo::GetDeviceType(result) ||
+            !NativeapiDeviceInfo::GetLanguage(result) ||
+            !NativeapiDeviceInfo::GetAPILevel(result) ||
+            !NativeapiDeviceInfo::GetRegion(result)) {
+            isSuccess = false;
+        }
+    }
+
+    Screen &screen = Screen::GetInstance();
+    JSI::SetNumberProperty(result, "windowWidth", (double)screen.GetWidth());
+    JSI::SetNumberProperty(result, "windowHeight", (double)screen.GetHeight());
+    // set default value
+    const uint8_t defaultScreenDensity = 195;
+    const char * const defaultScreenShape = "rect";
+    JSI::SetNumberProperty(result, "screenDensity", (double)defaultScreenDensity);
+    JSI::SetStringProperty(result, "screenShape", defaultScreenShape);
+    if (brand != nullptr) {
+        free(brand);
+        brand = nullptr;
+    }
+    if (manufacture != nullptr) {
+        free(manufacture);
+        manufacture = nullptr;
+    }
+    if (model != nullptr) {
+        free(model);
+        model = nullptr;
+    }
+    return isSuccess;
+}
+
+bool NativeapiDeviceInfo::GetRegion(JSIValue result)
+{
+    // because of MAX_REGION_LENGTH is little,we use array instead of pointer
+    char region[MAX_REGION_LENGTH + 1] = {0};
+    if (GLOBAL_GetRegion(region, MAX_REGION_LENGTH) != 0) {
+        JSI::SetStringProperty(result, "region", "");
+    } else {
+        JSI::SetStringProperty(result, "region", region);
+    }
+    return true;
 }
 } // ACELite
 } // OHOS

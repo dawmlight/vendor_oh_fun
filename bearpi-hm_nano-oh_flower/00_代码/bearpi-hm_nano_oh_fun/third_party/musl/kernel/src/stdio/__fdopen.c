@@ -4,12 +4,14 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#include <pthread.h>
 #include "libc.h"
 
 FILE *__fdopen(int fd, const char *mode)
 {
 	FILE *f;
 	struct winsize wsz;
+	pthread_mutex_t filelockinit = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 	/* Check for valid initial mode character */
 	if (!strchr("rwa", *mode)) {
@@ -18,7 +20,7 @@ FILE *__fdopen(int fd, const char *mode)
 	}
 
 	/* Allocate FILE+buffer or fail */
-	if (!(f=malloc(sizeof *f + UNGET + BUFSIZ))) return 0;
+	if (!(f=malloc(sizeof *f + UNGET + BUFSIZ + sizeof(pthread_mutex_t)))) return 0;
 
 	/* Zero-fill only the struct, not the buffer */
 	memset(f, 0, sizeof *f);
@@ -40,6 +42,8 @@ FILE *__fdopen(int fd, const char *mode)
 	f->fd = fd;
 	f->buf = (unsigned char *)f + sizeof *f + UNGET;
 	f->buf_size = BUFSIZ;
+	f->lock = (pthread_mutex_t *)((unsigned char *)f + sizeof *f + UNGET + BUFSIZ);
+	memcpy(f->lock, &filelockinit, sizeof(pthread_mutex_t));
 
 	/* Activate line buffered mode for terminals */
 	f->lbf = EOF;

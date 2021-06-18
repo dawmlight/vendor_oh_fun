@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,29 +28,23 @@
 extern "C" {
 #endif
 
-
-const int SYS_NS_PER_US = 1000;
-// get current time, for logging only
-static char* GetCurTime(void)
-{
-    static char buff[20];
-    struct timespec time1 = {0, 0};
-    clock_gettime(CLOCK_MONOTONIC, &time1);
-    snprintf(buff, sizeof(buff), "%ld:%06ld", time1.tv_sec, time1.tv_nsec / SYS_NS_PER_US);
-    return buff;
-}
-
 #ifdef DEBUG
-#define LOGD(format, ...) fprintf(stdout, "[%s] " format "\n", GetCurTime(), ##__VA_ARGS__)
-#define LOG(format, ...)  fprintf(stdout, "[%s] " format "\n", GetCurTime(), ##__VA_ARGS__)
+    const float SYS_NS_PER_S = 1000 * 1000 * 1000;
+    // get current time, for logging only
+    static float GetCurTime(void)
+    {
+        struct timespec time1 = {0, 0};
+        clock_gettime(CLOCK_MONOTONIC, &time1);
+        return time1.tv_sec + ((float)time1.tv_nsec) / SYS_NS_PER_S;
+    }
+    #define LOGD(format, ...) fprintf(stdout, "[%.06f] " format "\n", GetCurTime(), ##__VA_ARGS__)
+    #define LOG(format, ...)  fprintf(stdout, "[%.06f] " format "\n", GetCurTime(), ##__VA_ARGS__)
 #else
-#define LOGD(...)
-#define LOG(format, ...)  fprintf(stdout, format "\n", ##__VA_ARGS__)
+    #define LOGD(...)
+    #define LOG(format, ...)  fprintf(stdout, format "\n", ##__VA_ARGS__)
 #endif
 
-#define T_LOC2(l) __FILE__ ":" #l
-#define T_LOC1(l) T_LOC2(l)
-#define LOGE(format, ...)  fprintf(stdout,  "\n" T_LOC1(__LINE__) ": " format "\n", ##__VA_ARGS__)
+#define LOGE(format, ...)  fprintf(stdout,  "\n%s:%d: " format "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define PANIC(format, ...)   do {     \
         LOGE(format, ##__VA_ARGS__);  \

@@ -14,12 +14,9 @@
 import("//build/lite/config/component/lite_component.gni")
 
 static_library("demolinkadapter") {
-    sources = [
-        "demosdk_adapter.c"
-    ]
-    include_dirs = [
-        "//kernel/liteos_m/components/kal/include",
-        "//kernel/liteos_m/components/cmsis/2.0",
-        "//domains/iot/link/demolink"
-    ]
+  sources = [ "demosdk_adapter.c" ]
+  include_dirs = [
+    "//kernel/liteos_m/kal/cmsis",
+    "//domains/iot/link/demolink",
+  ]
 }

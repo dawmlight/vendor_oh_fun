@@ -1,0 +1,47 @@
+{
+  "components": [
+    {
+      "component": "ace_engine_lite",
+      "description": "JS APP development frameworks.",
+      "optional": "true",
+      "dirs": [
+        "foundation/ace/ace_engine_lite"
+      ],
+      "targets": [
+        "//foundation/ace/ace_engine_lite/frameworks:jsfwk",
+        "//foundation/ace/ace_engine_lite/test:unittest"
+      ],
+      "rom": "600KB",
+      "ram": "~90KB",
+      "output": [ "libace_lite.so" ],
+      "adapted_kernel": [ "liteos_a", "linux"],
+      "features": [],
+      "deps": {
+        "third_party": [
+          "bounds_checking_function",
+          "cjson",
+          "freetype",
+          "jerryscript"
+        ],
+        "kernel_special": {},
+        "board_special": {},
+        "components": [
+          "appexecfwk_lite",
+          "huks",
+          "ui",
+          "syapara_lite",
+          "surface",
+          "i18n_lite",
+          "resmgr_lite",
+          "hilog",
+          "permission",
+          "ipc_lite",
+          "kal_timer",
+          "kv_store",
+          "js_builtin",
+          "timer_task"
+        ]
+      }
+    }
+  ]
+}

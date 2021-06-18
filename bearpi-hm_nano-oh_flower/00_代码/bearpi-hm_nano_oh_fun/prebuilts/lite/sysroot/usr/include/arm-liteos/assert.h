@@ -1,3 +1,6 @@
+#ifdef __ICCARM__ /* for iar */
+#include_next <assert.h>
+#else
 #include <features.h>
 
 #undef assert
@@ -20,4 +23,6 @@ _Noreturn void __assert_fail (const char *, const char *, int, const char *);
 
 #ifdef __cplusplus
 }
+
+#endif /* __ICCARM__ */
 #endif

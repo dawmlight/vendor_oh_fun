@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/wlan",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "This repository defines and implements the WLAN-related Hardware Driver Interfaces (HDIs) | 该仓下主要包含WLAN相关HDI接口与实现",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/foundation/communication/wifi_lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/communication_wifi_lite",
+    "tags": [
+        "foundation"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "foundation",
+        "wlan"
+    ]
+}

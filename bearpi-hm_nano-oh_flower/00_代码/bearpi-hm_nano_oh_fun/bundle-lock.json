@@ -1,0 +1,355 @@
+{
+    "name": "dist",
+    "version": "1.0.0",
+    "dependencies": {
+        "@ohos/bootstrap": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/36/v3/iHjUFyA4ROqnxP0PvH8n5A/sG08y_KkRPOrtDgywrZXSA.tgz",
+            "checksum": "3d0f188ffa434b677c216d2076201069bab33777ab89045b3f5c5eb0ccdd20c1"
+        },
+        "@ohos/bounds_checking_function": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/3e/v3/OUjmIj_WQ8uYNdSx65J6VA/o59RbNqwQBOHDTACVshqww.tgz",
+            "checksum": "4d359fc4d16f07a16c8fad0c2f84b5a6252f7528982d43177657e77417170946"
+        },
+        "@bearpi/bearpi_build_lite": {
+            "version": "1.1.0",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/4d/v3/FLZK__okTKW4-8lgliVLjw/SsKhiJj2Sbe7YxAAftPYQw.tgz",
+            "checksum": "88b48629c4984af44b72541dcfca0055de252a24e8754e40a276abe0ca3a1ab5"
+        },
+        "@ohos/cjson": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/32/v3/rMi1OTtUSaeCC-BIkOBlsQ/KkdPdcH2QtyLWsmEJCN8yA.tgz",
+            "checksum": "ab8e9356aa36e8a597ec90e9b0a9744d84d54a95c693bc8b23db1974afd3ff07"
+        },
+        "@ohos/fatfs": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/dc/v3/KNpIqY5kTq-4KZSgSqnK1Q/jcFbtTNhQFqyJS9KBsKTfg.tgz",
+            "checksum": "4774b7a6ace9105b199857c01fe6a0af6fb51206b7b4f4c641f3fab29e2ea168"
+        },
+        "@ohos/freebsd": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/0c/v3/KRLN-sqNRr6k6fkDPuyVAA/EU4c5lmhTFiQbCNP0V1mqA.tgz",
+            "checksum": "d9592ba06d09443bc314626b51e2b413fc9b2fe9893238dd8747207ce8e0ebbb"
+        },
+        "@bearpi/bearpi_hi3861_sdk": {
+            "version": "1.1.3",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/ee/v3/6KMigEZBRIusM0Vlntp0NQ/x733T3woQv-mgz8gIMpk6g.tgz",
+            "checksum": "d7f1a24e997d9a7ce456ac68466ec6f1514d007d8960a448de8f33f321b26ef9"
+        },
+        "@ohos/hichainsdk": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/1e/v3/GAXK2Q7dR1WG_VaHwaXg8w/hR2r01E5Q7id5ycpweOukw.tgz",
+            "checksum": "64ad27bcd061e43b91f7259ef9df8da91e017a6100785462e0d2497ecd9bc6e2"
+        },
+        "@ohos/hievent_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/2b/v3/eNdyYSMMQyCuIU4O84uIoQ/pbhTprJITB-zNojoxeAdhA.tgz",
+            "checksum": "f77d55d5b0961ac7cc9301cbf66d6d067a4021aad023c5b6a15437899047c705"
+        },
+        "@ohos/hiview_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/3a/v3/CKNWyc1hSWGb39BmAJvc5w/ZpZ92ctERj29PuBItSgi2Q.tgz",
+            "checksum": "c213e7c443fc0fc00e40d4c7ac3fa3131a9a18456a54e6e53b9e3e6ee14b720c"
+        },
+        "@ohos/hiviewdfx_hilog_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/79/v3/2r1rZ_oVSaGfPpp38N2ixg/cwLkSfAYTiiLWXmpfMFhJA.tgz",
+            "checksum": "2aab37b666d4537d37e1901ed5c87dd6cf0fec60449cb1f3e58c9d922d82ef69"
+        },
+        "@ohos/hota": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/ee/v3/Dk-LDaEwR5q1DjKzdkTtwQ/56OF0FoHSx-XpfsBMmHOoQ.tgz",
+            "checksum": "fa0dec8e8cbf0f7339c00d1595f2b42b5a18dd77f31b7b5a55960464d328c187"
+        },
+        "@bearpi/bearpi_iot_controller": {
+            "version": "1.1.2",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/d9/v3/MSQF2_MxS4mVzt_qEi9XJw/C8EYCfbbQAqE5incrYWHCw.tgz",
+            "checksum": "0293b77901e2294928e896102f236650a6d24f3b0fd56af9e33c7431ccf8f679"
+        },
+        "@ohos/iot_link": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/5d/v3/1kXN6ZSyT1Om6ZpbZJ_4jw/SlRTw16nQuOPSt1XprDAeQ.tgz",
+            "checksum": "9db6fca65b0f4a66f8f7fb55b5c5ffb53cf74c376cff30d3ca61b0b31b9d1ccb"
+        },
+        "@ohos/ipc": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/29/v3/m24OYiIdQOyyVkO95WEcVw/6JrYUgT1R566_7CEy2N-Ug.tgz",
+            "checksum": "a5ea620bb50676413e90cda95dba13ef67dde2182ad81ff154176d50796a7ac4"
+        },
+        "@ohos/liteos_m": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/de/v3/qcCRq4-mT_apN8KrsalICg/cbr-A5eWRdeK5aQoQdMOfw.tgz",
+            "checksum": "a3972d3adaaf2ffaf635b4ef44fb31d00e0a07bec6caadf49f15b4515c883b95"
+        },
+        "@ohos/lwip": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/de/v3/UqM5LtfOShqhjrmYW1dhLw/v4LfbRlOTuGmdINtQrnnoA.tgz",
+            "checksum": "47bf0d2dd23b43a5ad8ecdd51c7474cf28ded44460a41b6dd4bd97dded947daf"
+        },
+        "@ohos/mbedtls": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/7c/v3/wvZV4tNHT0SFjtAgF5OWfw/1JxkLCNiQEGfmcnBfD6zZA.tgz",
+            "checksum": "58433f41cc50e18842257670c031abe04e9b38fa67cb2c77f341267cb421669c"
+        },
+        "@ohos/mtd_utils": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/52/v3/STJ3uPeaRbGycdAhzcoRlg/_7y-boqcTm6LvPgEz6z47Q.tgz",
+            "checksum": "017cb01b4bc81c2335edf9bcc6a45cd3bbb11345be55f5df051d86f99360e0cd"
+        },
+        "@ohos/musl": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/4d/v3/hSU8zxEOQESL4_mIWkd-1w/_qGyjn5wQH2_uPK8P0VLCA.tgz",
+            "checksum": "c173e87480c88c9c31e5a001c5b77a6eabcf27b69dcdb8ca5fc83ff6a7d9365f"
+        },
+        "@ohos/nuttx": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/40/v3/P3IVCgsjSqq78pk69f-_RA/jDI9KTsVR8SHZ1TA-GVe7g.tgz",
+            "checksum": "c6f836b8cf4a27a436cef99f17abcf2ed90eee915f0c852ddf1018399c307943"
+        },
+        "@ohos/openssl": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/a1/v3/2IuMvaDFQza1Ye_UqEAbLA/80-QwXbHR9WEXMgaxgsBwQ.tgz",
+            "checksum": "968fbc139d0e42dbc1ef4e43f091041cc3cf8cde65d0af7611c006f8373572a5"
+        },
+        "@ohos/permission": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/9f/v3/jS4Rk-jxTWuw8qRBHJ5I3w/d5TJPNFYTUiw7wlcWmI-ew.tgz",
+            "checksum": "437129740e8958d36c545750b95eb6d1cb4ee26f84d1432274819bfc1c38e090"
+        },
+        "@ohos/prebuilts_lite_sysroot": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/5c/v3/gfzzydF_Q6GvgW1aSgxU3g/BAsb2UWZSBS3YPmC4_jZGA.tgz",
+            "checksum": "ae9d871ee97b18b6a907026743490f9841a86c49d95d4dd1de53bbe61c2fed2c"
+        },
+        "@ohos/security_huks": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/13/v3/4ZKtDnZwT4GGfG_-HkJzVQ/aRO4Gs-FT_yJB9Rlsqd_gg.tgz",
+            "checksum": "79262cde55e1257e1d16b7085894fbd6268f862692d852a7eb3829a5589ba945"
+        },
+        "@ohos/signcenter_tool": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/73/v3/85zNl4OyRCqHsZ64CepUeA/VzWS0-Y9QqqJBE0mrwylEg.tgz",
+            "checksum": "31769b25f56bd50159c31c78003759b0e02990246d221d869803db89f35f9e20"
+        },
+        "@ohos/soft_bus": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/5a/v3/TMOu2jHhQjeqeYfwvAMCYQ/okdwlz1SSb64dS6V66UFuw.tgz",
+            "checksum": "0a25405d8ba88c12a7097f8a218e48687928ad204b1a11fe59961670b5fe1a17"
+        },
+        "@ohos/startup_syspara_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/89/v3/QN_LhVYHQpyUV62iAr3hGQ/3XO4Y4WlSWOqOv6bafmC3Q.tgz",
+            "checksum": "76e6edcb210560bd8a5fd0b171569b78735419c88cb2f9b76ab7fd18d2d7ea85"
+        },
+        "@ohos/syspara": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/6/v3/zNtGltZoTeWOVuXa2uSi9Q/gbvhweJnR0Cffe2cNu4TQQ.tgz",
+            "checksum": "7c9d8132f650ef2c32e669c05157146a5147491968d63ce82bc5e89f324cd25e",
+            "dependencies": {
+                "@ohos/startup_syspara_lite": "~1.1.0"
+            }
+        },
+        "@ohos/system_ability_manager": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/f7/v3/XBvI2amqSj-PSirOPF-fFQ/JAurb_1wRPee0qSWztS6iw.tgz",
+            "checksum": "3addf22e700efe8f48c242f56f30f54123465f765d83ebef020dd42b7cdb0098"
+        },
+        "@ohos/unity": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/f0/v3/bpEpI_eSRziLN8nFRkebAQ/IcXHPPl_SKuHjEpJBjgUGA.tgz",
+            "checksum": "b93d8e902551f3914a469755aeb3c6f159a8f6c917d2e509cdd17f0462abdda6"
+        },
+        "@ohos/utils_native_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/0/v3/2W2k2nNiTRS0zWXgPr9_eA/SNNN9h8ZSBOzOgvP60Gahw.tgz",
+            "checksum": "614013ea8ac5fe318836d0b0b98e939376a5c53698961700bc5d428531b9869f"
+        },
+        "@bearpi/vendor_bearpi": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/1a/v3/u4FElBV4Scid4LSkv5VOBw/kqcoQYfZQx2wP2wJYJtmPg.tgz",
+            "checksum": "ecfb6b61d5bed5463c3737206717ef07eba6a5684034668a7d08be524ee9583a"
+        },
+        "@ohos/wifi_aware": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/11/v3/BWdfjnnoRKWOBr2Y1QCvwQ/lqXRpsUrSpG7POu48tVuLg.tgz",
+            "checksum": "40ef92e9502389be3f422172ab3d2c9c3c61e346e47140b0713e032d243a48ba"
+        },
+        "@bearpi/bearpi_hm_nano_flower_app": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/7e/v3/Trc1zrI4SYOg4hDefcSq6w/009wn2_0RtG1NpbDDg1XUg.tgz",
+            "checksum": "67b14e2264442fbad1f499e20062e32a06d02eaada83e6b052f335ca3e843bbb"
+        },
+        "@ohos/wlan": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/98/v3/rFiEaOooS_KZlmejuJVwdg/gODxCDdJRx6wgICHy1Kv7g.tgz",
+            "checksum": "1a2e23a1cddd9f073c759ad0b1962550798d4e7aaf1053e80ad92e8b491d6705"
+        },
+        "@ohos/xts_acts": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/64/v3/Tx-ZtRvTSVC5ua0uyzGScg/oo2cp_s2Qny6eJc9PpCXMQ.tgz",
+            "checksum": "0b9f9c9b38f24677773b2ed78767c19709dda4cd670155dcd6387128ab2a85b7"
+        },
+        "@ohos/xts_tools": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/2e/v3/Lvi0HNUkRXSi2y00jq6RFA/G1K2yUSBTC2ZMMYrz94v7Q.tgz",
+            "checksum": "085c5a256f0eba848af7ddef8cab77da108a568f2d9d5bf43f24ce35dc14c5bb"
+        },
+        "@ohos/xts_xdevice": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/43/v3/JY_Sqta-Sg2E-EKndhj6hg/P40oqzppS4mn7F5eRCDv1A.tgz",
+            "checksum": "9af810dcf074b8b298330669ca33bc77be6ee7b5cfc3d0297d70df6665f57e35"
+        },
+        "@ohos/zlib": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/4d/v3/dL9BsQh_ROaQh2lQbErJaQ/HD9embI6RfycNdrFxjFY7A.tgz",
+            "checksum": "ceca1f2a7e089a2b2d1758b161010334085eeb68bc841a5097424f02d89a70e0"
+        },
+        "@ohos/file": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/d0/v3/9KfCkOaDTc2G77WAqnxwGw/0KPxux-pQN-7NQ3vj4g6sw.tgz",
+            "checksum": "cfd5a6b17cfc2a13cf487127b42afa3766cea2761ced5f99599b07903d14d3ca",
+            "dependencies": {
+                "@ohos/utils_native_lite": "~1.1.0"
+            }
+        },
+        "@ohos/hilog": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/c7/v3/8JH1vKQyQg6IcMlOo4e2ZA/oDy96Q7_SHKHPcluKBoVlA.tgz",
+            "checksum": "ab8ac37ea79eff3fa4f585f3e622f6c52364bc98202409dcbfc7d51093e8af9d",
+            "dependencies": {
+                "@ohos/hiviewdfx_hilog_lite": "~1.1.0"
+            }
+        },
+        "@ohos/hilog_lite": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/e9/v3/2WcRpuLtQVyiZmTjhaugXw/wnR9wyo1RtmFrt7A4h4kDg.tgz",
+            "checksum": "0158d69bc2aba49f0afa43105b2898b1f7fb06071f6253965b1ed61d843adea2",
+            "dependencies": {
+                "@ohos/hiviewdfx_hilog_lite": "~1.1.0"
+            }
+        },
+        "@ohos/huks": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/d3/v3/fqrdBkXLQFWkswwXSNxzsA/i8o-1o50S9qBLTuM5xZRqg.tgz",
+            "checksum": "4b68ddf5c484eb3471122f5d39470d283bdc38dba609fd0f77e456229dd2bd95",
+            "dependencies": {
+                "@ohos/security_huks": "~1.1.0"
+            }
+        },
+        "@ohos/kv_store": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/c8/v3/1EImDhyNSwuwCOtBnvSbQQ/8_VZ_smMRH6xhYC5Ecmszw.tgz",
+            "checksum": "69713f2d252df136d2d6ceb3e55a97ab75c75bbff2534794492a07cda6b98f8a",
+            "dependencies": {
+                "@ohos/utils_native_lite": "~1.1.0"
+            }
+        },
+        "@ohos/os_dump": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/79/v3/FBehBZ80SHKzqkQWEBjtRQ/PF1RiatASGKc5yZdGon-EA.tgz",
+            "checksum": "b6a397fa337012a4be081d8e1b92f9781b9090ca24e17eecb5c6a2833ffc0338",
+            "dependencies": {
+                "@ohos/utils_native_lite": "~1.1.0"
+            }
+        },
+        "@ohos/utils_base": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/3a/v3/ulaT3dY0QgKzgyFWGUPApQ/UfFpwxDDSruS9xyoxpn2xA.tgz",
+            "checksum": "ee5f870790c79e9d63d50b4968d51e87fdd8e8e72abc2901eaba4eb6bd69bc1d",
+            "dependencies": {
+                "@ohos/utils_native_lite": "~1.1.0"
+            }
+        },
+        "@ohos/gn": {
+            "version": "1.1.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/e7/v3/v3XieA43TnmwuFrxqd89rA/zRV_szE9RNy256MXp8o-7Q.tgz",
+            "checksum": "5dd897b630c52a4163e0d1d4a722a3f0cc54235d57fd176d60aa8bd11c6b7053"
+        },
+        "@ohos/ninja": {
+            "version": "1.1.0",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/a8/v3/6C7DhxIATlChuQZYiNUtwA/yWoplBLSTx2wnYLsZUEPLA.tgz",
+            "checksum": "8d323728b3a909acb0b08ae0c773814e6fed558d5872236ef997015831430c30"
+        },
+        "@ohos/gcc_riscv32": {
+            "version": "1.1.0",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/fa/v3/lLkS15ICSBeGsWlO_3kQ5w/RkwXT7CyT_Ke48yQ2cJwuQ.tgz",
+            "checksum": "a98a9503178463c011353b95bf5f66bcdcb8d298e332ccceae84e354238c1aad"
+        },
+        "@ohos/llvm": {
+            "version": "1.1.0",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/45/v3/pagtNXnISfWZrNA78a4D6w/lP2hR31wRmyPapPCl8P9JQ.tgz",
+            "checksum": "433837f43cd4431828c2e3b004ba64791e6cc79b7591cebd7444a657e16aeb51"
+        },
+        "@bearpi/hm_nano_paho_mqtt": {
+            "version": "1.0.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/07/v3/rhcQ-SQnR1CFfDL6zFgfFQ/_LkmwlaDTduFALnPgSkY_g.tgz",
+            "checksum": "e47de7e35d17387f8e72631d89c7d1cf2bcbb90f44c548802d4f8d8350556e9e"
+        },
+        "@bearpi/hm_nano_iot_link": {
+            "version": "1.0.1",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/82/v3/6IsydOAuQdSnvrth7rr86A/M4GC17QpTc-jebuvzbJcxQ.tgz",
+            "checksum": "7e8f6c791693d6c03941b8d28694821c3a2057f2f8718a81cc600d7af22c4256"
+        },
+        "@bearpi/bearpi_hm_nano_flower": {
+            "version": "1.1.0",
+            "url": "https://contentcenter-drcn.dbankcdn.com/pub_1/DevEcoSpace_1_900_9/16/v3/v2kCPPygQxyWVdhkia70jw/X-C5WV9JSWuxWRkSzkv0xA.tgz",
+            "checksum": "9367b91f8ec03a6103a4984f46a590dc69d03f552d977d16fcbe387cbf4be610",
+            "dependencies": {
+                "@ohos/bootstrap": "~1.1.0",
+                "@ohos/bounds_checking_function": "~1.1.0",
+                "@bearpi/bearpi_build_lite": "~1.1.0",
+                "@ohos/cjson": "~1.1.0",
+                "@ohos/fatfs": "~1.1.0",
+                "@ohos/freebsd": "~1.1.0",
+                "@bearpi/bearpi_hi3861_sdk": "~1.1.0",
+                "@ohos/hichainsdk": "~1.1.0",
+                "@ohos/hievent_lite": "~1.1.0",
+                "@ohos/hiview_lite": "~1.1.0",
+                "@ohos/hiviewdfx_hilog_lite": "~1.1.0",
+                "@ohos/hota": "~1.1.0",
+                "@bearpi/bearpi_iot_controller": "~1.1.0",
+                "@ohos/iot_link": "~1.1.0",
+                "@ohos/ipc": "~1.1.0",
+                "@ohos/liteos_m": "~1.1.0",
+                "@ohos/lwip": "~1.1.0",
+                "@ohos/mbedtls": "~1.1.0",
+                "@ohos/mtd_utils": "~1.1.0",
+                "@ohos/musl": "~1.1.0",
+                "@ohos/nuttx": "~1.1.0",
+                "@ohos/openssl": "~1.1.0",
+                "@ohos/permission": "~1.1.0",
+                "@ohos/prebuilts_lite_sysroot": "~1.1.0",
+                "@ohos/security_huks": "~1.1.0",
+                "@ohos/signcenter_tool": "~1.1.0",
+                "@ohos/soft_bus": "~1.1.0",
+                "@ohos/startup_syspara_lite": "~1.1.0",
+                "@ohos/syspara": "~1.1.0",
+                "@ohos/system_ability_manager": "~1.1.0",
+                "@ohos/unity": "~1.1.0",
+                "@ohos/utils_native_lite": "~1.1.0",
+                "@bearpi/vendor_bearpi": "~1.1.0",
+                "@ohos/wifi_aware": "~1.1.0",
+                "@bearpi/bearpi_hm_nano_flower_app": "^1.1.0",
+                "@ohos/wlan": "~1.1.0",
+                "@ohos/xts_acts": "~1.1.0",
+                "@ohos/xts_tools": "~1.1.0",
+                "@ohos/xts_xdevice": "~1.1.0",
+                "@ohos/zlib": "~1.1.0",
+                "@ohos/file": "~1.1.0",
+                "@ohos/hilog": "~1.1.0",
+                "@ohos/hilog_lite": "~1.1.0",
+                "@ohos/huks": "~1.1.0",
+                "@ohos/kv_store": "~1.1.0",
+                "@ohos/os_dump": "~1.1.0",
+                "@ohos/utils_base": "~1.1.0",
+                "@ohos/gn": "~1.1.0",
+                "@ohos/ninja": "~1.1.0",
+                "@ohos/gcc_riscv32": "~1.1.0",
+                "@ohos/llvm": "~1.1.0",
+                "@bearpi/hm_nano_paho_mqtt": "^1.0.0",
+                "@bearpi/hm_nano_iot_link": "^1.0.0"
+            }
+        }
+    }
+}

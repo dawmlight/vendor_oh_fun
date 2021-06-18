@@ -1366,8 +1366,7 @@ static ssize_t tmpfs_write(FAR struct file *filep, FAR const char *buffer,
           ret = -ENOSPC;
           goto errout_with_lock;
         }
-      (void)memset_s(data, startpos + alloc, 0, startpos + alloc);
-      if (tfo->tfo_data)
+      if (tfo->tfo_size)
         {
           ret = memcpy_s(data, startpos + alloc, tfo->tfo_data, tfo->tfo_size);
           if (ret != EOK)
@@ -1377,6 +1376,10 @@ static ssize_t tmpfs_write(FAR struct file *filep, FAR const char *buffer,
               goto errout_with_lock;
             }
           free(tfo->tfo_data);
+        }
+      if (startpos > tfo->tfo_size)
+        {
+          (void)memset_s(data + tfo->tfo_size, startpos + alloc - tfo->tfo_size, 0, startpos - tfo->tfo_size);
         }
 
       tfo->tfo_data = data;
@@ -1675,25 +1678,24 @@ static int tmpfs_readdir(FAR struct inode *mountpt,
         {
           /* A directory */
 
-           dir->fd_dir.d_type = DT_DIR;
+           dir->fd_dir[0].d_type = DT_DIR;
         }
       else /* to->to_type == TMPFS_REGULAR) */
         {
           /* A regular file */
 
-           dir->fd_dir.d_type = DT_REG;
+           dir->fd_dir[0].d_type = DT_REG;
         }
 
       /* Copy the entry name */
 
-      (void)strncpy_s(dir->fd_dir.d_name, NAME_MAX + 1, tde->tde_name, NAME_MAX);
+      (void)strncpy_s(dir->fd_dir[0].d_name, NAME_MAX + 1, tde->tde_name, NAME_MAX);
 
-      /* Increment the index for next time */
+      dir->fd_position++;
+      dir->fd_dir[0].d_off = dir->fd_position;
+      dir->fd_dir[0].d_reclen = (uint16_t)sizeof(struct dirent);
 
-      dir->fd_dir.d_off = dir->fd_position;
-      dir->fd_dir.d_reclen = (uint16_t)sizeof(struct dirent);
-
-      ret = OK;
+      ret = 1; // 1 means current file num is 1
     }
 
   tmpfs_unlock_directory(tdo);

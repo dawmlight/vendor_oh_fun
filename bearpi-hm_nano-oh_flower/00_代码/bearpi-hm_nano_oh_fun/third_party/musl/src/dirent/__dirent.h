@@ -7,5 +7,6 @@ struct __dirstream
 	volatile int lock[1];
 	/* Any changes to this struct must preserve the property:
 	 * offsetof(struct __dirent, buf) % sizeof(off_t) == 0 */
-	char buf[2048];
+	// change buf len from 2048 to 4096 to support read 14 dirs at one readdir syscall
+	char buf[4096];
 };

@@ -1,4 +1,4 @@
-/* Copyright (c) 2020 Huawei Device Co., Ltd.
+/* Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,13 +58,11 @@ static BOOL SecurityDataHuksSignVerifyTestSuiteTearDown(void)
 // begin+++++++++++++++++++++++++++++++++++++++++++++++++++++++0200-0340
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0200
+ * @tc.name      : Asymmetric Sign, normal input parameters keyAlias, keyParam, hash, signature
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0200, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0200, Function | MediumTest | Level2)
 {
     int32_t statusAsymmetricSign;
     int32_t statusAsymmetricVerify;
@@ -110,17 +108,15 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0210
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyAlias is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0210, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0210, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
-    struct hks_blob *keyAlias = NULL; //  = NULL
+    struct hks_blob *keyAlias = NULL;
 
     uint8_t hash1[NUM32], sig[NUM64];
 
@@ -147,18 +143,16 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0220
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0220, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0220, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
     struct hks_blob keyAlias;
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
@@ -186,19 +180,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0230
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyAlias.size is 0
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0230, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0230, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = 0; // = 0
+    keyAlias.size = 0;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     uint8_t hash1[NUM32], sig[NUM64];
@@ -225,19 +217,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0240
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyAlias.size is more than 64
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0240, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0240, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = NUM65; // > 64
+    keyAlias.size = NUM65;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     uint8_t hash1[NUM32], sig[NUM64];
@@ -264,20 +254,18 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0250
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyAlias.type is not equal to HKS_BLOB_TYPE_ALIAS
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0250, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0250, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
-    keyAlias.type = 0; // != HKS_BLOB_TYPE_ALIAS
+    keyAlias.type = 0;
 
     uint8_t hash1[NUM32], sig[NUM64];
 
@@ -303,13 +291,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0260
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyParam is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0260, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0260, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -328,20 +314,19 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
     signature.data = sig;
     signature.size = sizeof(sig);
 
-    struct hks_key_param *keyParam = NULL; // = NULL
+    struct hks_key_param *keyParam = NULL;
 
     status = hks_asymmetric_sign(&keyAlias, keyParam, &hash, &signature);
     TEST_ASSERT_EQUAL_INT(NUM1000, status);
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0270
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyParam.key_usage
+                   is not equal to HKS_KEY_USAGE_SIGN | HKS_KEY_USAGE_VERIFY
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0270, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0270, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -362,7 +347,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 
     struct hks_key_param keyParam = { 0 };
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
-    keyParam.key_usage = 0; // = 0
+    keyParam.key_usage = 0;
     keyParam.key_mode = HKS_ALG_GCM;
     keyParam.key_len = NUM32;
     keyParam.key_auth_id.type = HKS_BLOB_TYPE_AUTH_ID;
@@ -375,13 +360,12 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0280
+ * @tc.name      : Asymmetric Sign, abnormal input parameters keyParam.type
+                   is not equal to HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0280, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0280, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -401,7 +385,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
     signature.size = sizeof(sig);
 
     struct hks_key_param keyParam = { 0 };
-    keyParam.key_type = 0; // != HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519
+    keyParam.key_type = 0;
     keyParam.key_usage = HKS_KEY_USAGE_SIGN | HKS_KEY_USAGE_VERIFY;
     keyParam.key_mode = HKS_ALG_GCM;
     keyParam.key_len = NUM32;
@@ -414,13 +398,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0290
+ * @tc.name      : Asymmetric Sign, abnormal input parameters hash is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0290, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0290, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -431,7 +413,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 
     uint8_t sig[NUM64];
 
-    struct hks_blob *hash = NULL; //  = NULL
+    struct hks_blob *hash = NULL;
 
     struct hks_blob signature;
     signature.data = sig;
@@ -451,13 +433,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign02
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0300
+ * @tc.name      : Asymmetric Sign, abnormal input parameters hash.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0300, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0300, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -469,7 +449,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
     uint8_t hash1[NUM32], sig[NUM64];
 
     struct hks_blob hash;
-    hash.data = NULL; // = NULL
+    hash.data = NULL;
     hash.size = sizeof(hash1);
 
     struct hks_blob signature;
@@ -490,13 +470,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0310
+ * @tc.name      : Asymmetric Sign, abnormal input parameters hash.size is 0
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0310, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0310, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -509,7 +487,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 
     struct hks_blob hash;
     hash.data = (uint8_t *)hash1;
-    hash.size = 0; // = 0
+    hash.size = 0;
 
     struct hks_blob signature;
     signature.data = sig;
@@ -529,13 +507,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0320
+ * @tc.name      : Asymmetric Sign, abnormal input parameters signature is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0320, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0320, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -550,7 +526,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
     hash.data = (uint8_t *)hash1;
     hash.size = sizeof(hash1);
 
-    struct hks_blob *signature = NULL; // = NULL
+    struct hks_blob *signature = NULL;
 
     struct hks_key_param keyParam = { 0 };
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
@@ -567,13 +543,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0330
+ * @tc.name      : Asymmetric Sign, abnormal input parameters signature.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0330, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0330, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -589,7 +563,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
     hash.size = sizeof(hash1);
 
     struct hks_blob signature;
-    signature.data = NULL; // = NULL
+    signature.data = NULL;
     signature.size = sizeof(sig);
 
     struct hks_key_param keyParam = { 0 };
@@ -606,13 +580,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_0900
- * @tc.name      : Asymmetric Sign
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0340
+ * @tc.name      : Asymmetric Sign, abnormal input parameters signature.size is less than 64
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0340, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign0340, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[] = "test_ed25519_6";
@@ -629,7 +601,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 
     struct hks_blob signature;
     signature.data = sig;
-    signature.size = NUM63; // < 64
+    signature.size = NUM63;
 
     struct hks_key_param keyParam = { 0 };
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
@@ -651,13 +623,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricSign03
 // begin+++++++++++++++++++++++++++++++++++++++++++++++++++++0350-0510
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0350
+ * @tc.name      : Asymmetric Verify, normal input parameters keyAlias, keyParam, hash, signature
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0350, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0350, Function | MediumTest | Level2)
 {
     int32_t statusAsymmetricSign;
     int32_t statusAsymmetricVerify;
@@ -718,17 +688,15 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 };
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0360
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0360, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0360, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
-    struct hks_blob *keyAlias = NULL; // = NULL
+    struct hks_blob *keyAlias = NULL;
 
     uint8_t hash1[NUM32], sig[NUM64];
 
@@ -754,18 +722,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0370
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.type
+                   is HKS_BLOB_TYPE_ALIAS and keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0370, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0370, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
@@ -793,19 +760,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0380
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.size is 0
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0380, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0380, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = 0; // = 0
+    keyAlias.size = 0;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     uint8_t hash1[NUM32], sig[NUM64];
@@ -832,19 +797,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0390
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.size is more than 64
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0390, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0390, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = NUM65; // > 64
+    keyAlias.size = NUM65;
     keyAlias.type = HKS_BLOB_TYPE_ALIAS;
 
     uint8_t hash1[NUM32], sig[NUM64];
@@ -871,18 +834,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0400
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.type
+                   is HKS_BLOB_TYPE_KEY and keyAlias.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0400, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0400, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
-    keyAlias.data = NULL; // = NULL
+    keyAlias.data = NULL;
     keyAlias.size = sizeof(testFileName);
     keyAlias.type = HKS_BLOB_TYPE_KEY;
 
@@ -910,19 +872,17 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0410
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.size is not equal to 32
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0410, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0410, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
-    keyAlias.size = NUM25; // != 32
+    keyAlias.size = NUM25;
     keyAlias.type = HKS_BLOB_TYPE_KEY;
 
     uint8_t hash1[NUM32], sig[NUM64];
@@ -949,20 +909,18 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0420
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyAlias.type is not equal to HKS_BLOB_TYPE_KEY
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0420, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0420, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
     struct hks_blob keyAlias;
     keyAlias.data = (uint8_t *)testFileName;
     keyAlias.size = sizeof(testFileName);
-    keyAlias.type = 0; // = else
+    keyAlias.type = 0;
 
     uint8_t hash1[NUM32], sig[NUM64];
 
@@ -988,13 +946,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0430
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyParam is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0430, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0430, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1013,20 +969,19 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
     signature.data = sig;
     signature.size = sizeof(sig);
 
-    struct hks_key_param *keyParam = NULL; // = NULL
+    struct hks_key_param *keyParam = NULL;
 
     status = hks_asymmetric_verify(&keyAlias, keyParam, &hash, &signature);
     TEST_ASSERT_EQUAL_INT(NUM1000, status);
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0440
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyParam.key_usage
+                   is not equal to HKS_KEY_USAGE_SIGN | HKS_KEY_USAGE_VERIFY
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0440, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0440, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1059,13 +1014,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0450
+ * @tc.name      : Asymmetric Verify, abnormal input parameters keyParam.key_type is not equal to HKS_ALG_GCM
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0450, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0450, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1098,13 +1051,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0460
+ * @tc.name      : Asymmetric Verify, abnormal input parameters hash is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0460, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0460, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1115,7 +1066,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 
     uint8_t sig[NUM64];
 
-    struct hks_blob *hash = NULL; // = NULL
+    struct hks_blob *hash = NULL;
 
     struct hks_blob signature;
     signature.data = sig;
@@ -1135,13 +1086,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0470
+ * @tc.name      : Asymmetric Verify, abnormal input parameters hash.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0470, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0470, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1153,7 +1102,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
     uint8_t hash1[NUM32], sig[NUM64];
 
     struct hks_blob hash;
-    hash.data = NULL; // = NULL
+    hash.data = NULL;
     hash.size = sizeof(hash1);
 
     struct hks_blob signature;
@@ -1174,13 +1123,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0480
+ * @tc.name      : Asymmetric Verify, abnormal input parameters hash.size is 0
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0480, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0480, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1193,7 +1140,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 
     struct hks_blob hash;
     hash.data = (uint8_t *)hash1;
-    hash.size = 0; // =  0
+    hash.size = 0;
 
     struct hks_blob signature;
     signature.data = sig;
@@ -1213,13 +1160,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0490
+ * @tc.name      : Asymmetric Verify, abnormal input parameters signature is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0490, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0490, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1234,7 +1179,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
     hash.data = (uint8_t *)hash1;
     hash.size = sizeof(hash1);
 
-    struct hks_blob *signature = NULL; // = NULL
+    struct hks_blob *signature = NULL;
 
     struct hks_key_param keyParam = { 0 };
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;
@@ -1250,13 +1195,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0500
+ * @tc.name      : Asymmetric Verify, abnormal input parameters signature.data is null
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0500, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0500, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1272,7 +1215,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
     hash.size = sizeof(hash1);
 
     struct hks_blob signature;
-    signature.data = NULL; // = NULL
+    signature.data = NULL;
     signature.size = sizeof(sig);
 
     struct hks_key_param keyParam = { 0 };
@@ -1289,13 +1232,11 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 }
 
 /*
- * @tc.number    : SUB_SEC_DataPro_HuksL0_1000
- * @tc.name      : Asymmetric Verify
+ * @tc.number    : SUB_SEC_DataPro_HuksL0_0510
+ * @tc.name      : Asymmetric Verify, abnormal input parameters signature.size is less than 64
  * @tc.desc      : [C- SECURITY -1900]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
  */
-LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0510, LEVEL2)
+LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify0510, Function | MediumTest | Level2)
 {
     int32_t status;
     unsigned char testFileName[NUM32];
@@ -1312,7 +1253,7 @@ LITE_TEST_CASE(SecurityDataHuksSignVerifyTestSuite, securityDataAsymmetricVerify
 
     struct hks_blob signature;
     signature.data = sig;
-    signature.size = NUM63; // < 64
+    signature.size = NUM63;
 
     struct hks_key_param keyParam = { 0 };
     keyParam.key_type = HKS_KEY_TYPE_EDDSA_KEYPAIR_ED25519;

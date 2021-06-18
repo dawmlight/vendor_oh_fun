@@ -1,0 +1,24 @@
+{
+    "name": "@bearpi/bearpi_build_lite",
+    "version": "1.1.0",
+    "publishAs": "code-segment",
+    "description": "小熊派鸿蒙轻量级编译构建系统",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/build/lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/build_lite",
+    "tags": [
+        "build"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_m",
+        "board": "bearpi_hm_nano,bearpi_iot_std"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "build",
+        "buildlite",
+        "bearpi"
+    ]
+}

@@ -15,6 +15,9 @@ extern "C" {
 #define __ucontext ucontext
 #endif
 
+#define __NEED_struct_cpu_set_t
+#define __NEED_struct_sched_param
+
 #define __NEED_size_t
 #define __NEED_pid_t
 #define __NEED_uid_t

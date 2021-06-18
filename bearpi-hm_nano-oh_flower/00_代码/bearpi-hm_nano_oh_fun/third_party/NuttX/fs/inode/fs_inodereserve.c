@@ -190,7 +190,7 @@ static void inode_insert(FAR struct inode *node,
  ****************************************************************************/
 
 /****************************************************************************
- * Name: inode_reserve
+ * Name: inode_reserve_rootdir
  *
  * Description:
  *   Reserve an (initialized) inode the pseudo file system.  The initial
@@ -199,6 +199,7 @@ static void inode_insert(FAR struct inode *node,
  * Input Parameters:
  *   path - The path to the inode to create
  *   inode - The location to return the inode pointer
+ *   force - force to reserve the inode if the value is true
  *
  * Returned Value:
  *   Zero on success (with the inode point in 'inode'); A negated errno
@@ -213,7 +214,10 @@ static void inode_insert(FAR struct inode *node,
  *
  ****************************************************************************/
 
-int inode_reserve(FAR const char *path, FAR struct inode **inode_ptr)
+#ifndef LOSCFG_FS_ZPFS
+static inline
+#endif
+int inode_reserve_rootdir(FAR const char *path, FAR struct inode **inode_ptr, bool force)
 {
   FAR const char   *name = path;
   FAR const char   *relpath;
@@ -247,7 +251,8 @@ int inode_reserve(FAR const char *path, FAR struct inode **inode_ptr)
 #ifndef CONFIG_DISABLE_MOUNTPOINT
       else if (INODE_IS_MOUNTPT(pathnode))
         {
-          if ((pathnode != g_root_inode) || IsInRootfs(relpath))
+          if ((pathnode != g_root_inode) ||
+            (force ? false : IsInRootfs(relpath)))
             {
               /* The node cannot be a child of a mounted point, except the root node. */
 
@@ -266,10 +271,9 @@ int inode_reserve(FAR const char *path, FAR struct inode **inode_ptr)
         }
     }
 
-  if (check_name(name) == false)
+  if ((force == false) && (check_name(name) == false))
     {
       /* check the path has no '/' symbol, prevent to create multilevel directory */
-
       return -EINVAL;
     }
 
@@ -318,3 +322,33 @@ int inode_reserve(FAR const char *path, FAR struct inode **inode_ptr)
       return -ENOMEM;
     }
 }
+
+/****************************************************************************
+ * Name: inode_reserve
+ *
+ * Description:
+ *   Reserve an (initialized) inode the pseudo file system.  The initial
+ *   reference count on the new inode is zero.
+ *
+ * Input Parameters:
+ *   path - The path to the inode to create
+ *   inode - The location to return the inode pointer
+ *
+ * Returned Value:
+ *   Zero on success (with the inode point in 'inode'); A negated errno
+ *   value is returned on failure:
+ *
+ *   EINVAL - 'path' is invalid for this operation
+ *   EEXIST - An inode already exists at 'path'
+ *   ENOMEM - Failed to allocate in-memory resources for the operation
+ *
+ * Assumptions:
+ *   Caller must hold the inode semaphore
+ *
+ ****************************************************************************/
+
+int inode_reserve(FAR const char *path, FAR struct inode **inode_ptr)
+{
+    return inode_reserve_rootdir(path, inode_ptr, false);
+}
+

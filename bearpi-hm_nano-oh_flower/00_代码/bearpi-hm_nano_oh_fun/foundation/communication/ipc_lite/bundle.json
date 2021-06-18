@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/ipc",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "Lite_IPC为轻量级进程间通讯组件，为面向服务的系统服务框架提供进程间通信能力，分为内核实现和用户态实现两部分，其中内核实现完成进程间消息收发、IPC内存管理、超时通知和死亡通知等功能；用户态提供序列化和反序列化能力，并完成IPC回调消息和死亡消息的分发",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/foundation/communication/ipc_lite && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/communication_ipc_lite",
+    "tags": [
+        "foundation"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "foundation",
+        "ipc"
+    ]
+}

@@ -96,18 +96,6 @@ struct sched_param {
 #endif
 
 #if defined(__NEED_pthread_attr_t) && !defined(__DEFINED_pthread_attr_t)
-#if !defined(__DEFINED_struct_sched_param)
-struct sched_param {
-  int sched_priority;
-};
-#define __DEFINED_struct_sched_param
-#endif
-#if !defined(__DEFINED_struct_cpu_set_t)
-#undef CPU_SETSIZE
-#define CPU_SETSIZE 32
-typedef struct cpu_set_t { unsigned long __bits[CPU_SETSIZE/(8 * sizeof(unsigned long int))]; } cpu_set_t;
-#define __DEFINED_struct_cpu_set_t
-#endif
 typedef struct __pthread_attr_s {
   unsigned int detachstate;
   unsigned int schedpolicy;
@@ -123,26 +111,6 @@ typedef struct __pthread_attr_s {
 #endif
 } pthread_attr_t;
 #define __DEFINED_pthread_attr_t
-#endif
-
-#if defined(__NEED_mtx_t) && !defined(__DEFINED_mtx_t)
-typedef struct { union { int __i[6]; volatile int __vi[6]; volatile void *volatile __p[6]; } __u; } mtx_t;
-#define __DEFINED_mtx_t
-#endif
-
-#if defined(__NEED_cnd_t) && !defined(__DEFINED_cnd_t)
-typedef struct { union { int __i[12]; volatile int __vi[12]; void *__p[12]; } __u; } cnd_t;
-#define __DEFINED_cnd_t
-#endif
-
-#if defined(__NEED_pthread_rwlock_t) && !defined(__DEFINED_pthread_rwlock_t)
-typedef struct { union { int __i[8]; volatile int __vi[8]; void *__p[8]; } __u; } pthread_rwlock_t;
-#define __DEFINED_pthread_rwlock_t
-#endif
-
-#if defined(__NEED_pthread_barrier_t) && !defined(__DEFINED_pthread_barrier_t)
-typedef struct { union { int __i[5]; volatile int __vi[5]; void *__p[5]; } __u; } pthread_barrier_t;
-#define __DEFINED_pthread_barrier_t
 #endif
 
 #if defined(__NEED_uintptr_t) && !defined(__DEFINED_uintptr_t)
@@ -369,24 +337,9 @@ typedef int pthread_key_t;
 #define __DEFINED_pthread_key_t
 #endif
 
-#if defined(__NEED_pthread_spinlock_t) && !defined(__DEFINED_pthread_spinlock_t)
-typedef int pthread_spinlock_t;
-#define __DEFINED_pthread_spinlock_t
-#endif
-
 #if defined(__NEED_pthread_condattr_t) && !defined(__DEFINED_pthread_condattr_t)
-typedef struct { signed __attr; } pthread_condattr_t;
+typedef int pthread_condattr_t;
 #define __DEFINED_pthread_condattr_t
-#endif
-
-#if defined(__NEED_pthread_barrierattr_t) && !defined(__DEFINED_pthread_barrierattr_t)
-typedef struct { unsigned __attr; } pthread_barrierattr_t;
-#define __DEFINED_pthread_barrierattr_t
-#endif
-
-#if defined(__NEED_pthread_rwlockattr_t) && !defined(__DEFINED_pthread_rwlockattr_t)
-typedef struct { unsigned __attr[2]; } pthread_rwlockattr_t;
-#define __DEFINED_pthread_rwlockattr_t
 #endif
 
 #if defined(__NEED_locale_t) && !defined(__DEFINED_locale_t)
@@ -410,9 +363,8 @@ struct _IO_FILE {
   struct _IO_FILE *prev, *next;
   int fd;
   int pipe_pid;
-  long lockcount;
   int mode;
-  volatile int lock;
+  void *lock;
   int lbf;
   void *cookie;
   off_t off;
@@ -420,7 +372,6 @@ struct _IO_FILE {
   void *mustbezero_2;
   unsigned char *shend;
   off_t shlim, shcnt;
-  struct _IO_FILE *prev_locked, *next_locked;
   struct __locale_struct *locale;
 };
 #define __DEFINED_struct__IO_FILE

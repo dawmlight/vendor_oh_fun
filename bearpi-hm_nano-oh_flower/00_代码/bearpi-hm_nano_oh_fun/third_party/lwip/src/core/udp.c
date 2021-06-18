@@ -388,7 +388,11 @@ udp_input(struct pbuf *p, struct netif *inp)
               /* pass a copy of the packet to all local matches */
               if (mpcb->recv != NULL) {
                 struct pbuf *q;
+#if USE_PBUF_RAM_UDP_INPUT
+                q = pbuf_clone(PBUF_RAW, PBUF_RAM, p);
+#else
                 q = pbuf_clone(PBUF_RAW, PBUF_POOL, p);
+#endif
                 if (q != NULL) {
                   mpcb->recv(mpcb->recv_arg, mpcb, q, ip_current_src_addr(), src);
                 }

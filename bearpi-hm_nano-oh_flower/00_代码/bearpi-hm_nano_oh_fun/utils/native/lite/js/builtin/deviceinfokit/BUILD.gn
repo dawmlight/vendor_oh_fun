@@ -14,25 +14,22 @@
 #
 
 shared_library("ace_kit_deviceinfo") {
-    sources = [
-        "src/nativeapi_deviceinfo.cpp",
-    ]
-    cflags = ["-Wall"]
-    cflags_cc = cflags
-    ldflags = [ "-shared" ]
+  sources = [ "src/nativeapi_deviceinfo.cpp" ]
+  cflags = [ "-Wall" ]
+  cflags_cc = cflags
+  ldflags = [ "-shared" ]
 
-    include_dirs = [
-        "include",
-        "../common/include",
-        "//base/startup/interfaces/kits/syspara_lite",
-        "//foundation/ace/interfaces/innerkits/builtin",
-        "//foundation/ace/interfaces/innerkits/builtin/base",
-        "//foundation/ace/interfaces/innerkits/builtin/async",
-        "//foundation/graphic/lite/interfaces/kits/config",
-        "//foundation/graphic/lite/interfaces/kits/ui/common",
-        "//foundation/graphic/lite/interfaces/kits/utils",
-    ]
-    deps = [
-        "//base/startup/frameworks/syspara_lite/parameter:parameter",
-    ]
+  include_dirs = [
+    "include",
+    "../common/include",
+    "//base/startup/syspara_lite/interfaces/kits",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin/base",
+    "//foundation/ace/ace_engine_lite/interfaces/innerkits/builtin/async",
+    "//foundation/graphic/ui/interfaces/kits",
+    "//foundation/graphic/utils/interfaces/innerkits",
+    "//foundation/graphic/utils/interfaces/kits",
+    "//base/global/resmgr_lite/interfaces/innerkits/include",
+  ]
+  deps = [ "//base/startup/syspara_lite/frameworks/parameter:parameter" ]
 }

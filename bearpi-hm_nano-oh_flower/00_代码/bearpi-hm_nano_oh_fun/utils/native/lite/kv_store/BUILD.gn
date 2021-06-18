@@ -14,7 +14,5 @@
 import("//build/lite/config/component/lite_component.gni")
 
 lite_component("kv_store") {
-    features = [
-        "src:utils_kv_store",
-    ]
+  features = [ "src:utils_kv_store" ]
 }

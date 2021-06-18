@@ -32,8 +32,8 @@ public:
     static void SuccessCallBack(const JSIValue thisVal, const JSIValue args, JSIValue jsiValue);
     static bool IsValidJSIValue(const JSIValue* args, uint8_t argsNum);
 private:
-    NativeapiCommon() {}
-    ~NativeapiCommon() {}
+    NativeapiCommon() = default;
+    ~NativeapiCommon() = default;
 };
 }
 }

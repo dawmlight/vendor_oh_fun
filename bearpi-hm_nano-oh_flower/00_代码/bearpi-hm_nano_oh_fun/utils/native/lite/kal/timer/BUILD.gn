@@ -22,7 +22,4 @@ shared_library("kal_timer") {
         "include",
         "//utils/native/lite/include",
     ]
-    if (ohos_kernel_type == "liteos_a") {
-        include_dirs += ["//third_party/musl/include"]
-    }
 }

@@ -1,6 +1,8 @@
 #include "stdio_impl.h"
 #include <unistd.h>
-#include "los_syscall.h"
+#include <sys/types.h>
+#include <dirent.h>
+#include <fs/fs.h>
 
 static off64_t __stdio_lseek64(int fd, int offsetHigh, int offsetLow, off64_t *result, int whence)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/shm.h>
 #include <gtest/gtest.h>
 #include "log.h"
 #include "utils.h"
@@ -33,10 +34,8 @@ protected:
  * @tc.number SUB_KERNEL_PM_PID_Getppid_0100
  * @tc.name   getpid and getppid test
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testGetPpid, TestSize.Level1)
+HWTEST_F(PidTest, testGetPpid, Function | MediumTest | Level1)
 {
     pid_t parentPid = getpid();
     pid_t pid = fork();
@@ -49,19 +48,70 @@ HWTEST_F(PidTest, testGetPpid, TestSize.Level1)
         }
         exit(0);
     } else { // parent
-        Msleep(100);
-        AssertProcExitedOK(pid);
+        Msleep(20);
+        WaitProcExitedOK(pid);
     }
+}
+
+/**
+ * @tc.number SUB_KERNEL_PM_PID_Getppid_0200
+ * @tc.name   test that a orphaned process will inherite by init.
+ * @tc.desc   [C- SOFTWARE -0200]
+ */
+HWTEST_F(PidTest, testOrphanProcess, Function | MediumTest | Level1)
+{
+    const int retPass = 1;
+    const int retFail = 2;
+    const int memSize = 32;
+    int shmID = shmget(IPC_PRIVATE, memSize, 0666 | IPC_CREAT);
+    ASSERT_NE(shmID, -1) << "get share mem fail, errno = " << errno;
+    int *shared = (int*)(shmat(shmID, nullptr, 0));
+    ASSERT_NE(shared, reinterpret_cast<int*>(-1)) << "shmat fail, errno = " << errno;
+    *shared = retPass;
+
+    LOG("parent process id:%d", getpid());
+    pid_t pid = fork();
+    EXPECT_TRUE(pid >= 0) << "======== Fork Error! =========";
+    if (pid == 0) { // child
+        LOG("sub parent process id:%d", getpid());
+        pid_t pid2 = fork();
+        if (pid2 < 0) {
+            LOG("======== Fork Error! =========");
+            *shared = 1;
+            exit(1);
+        }
+
+        if (pid2 == 0) { // child
+            LOG("orphane process id:%d", getpid());
+            Msleep(100);
+            pid_t pPid = getppid();
+            if (pPid != 1) {
+                LOG("getppid orphaned process fail, expect:1, but get:%d", pPid);
+                // transfer result to main process
+                int *shmAddr = (int*)(shmat(shmID, nullptr, 0));
+                *shmAddr = retFail;
+                shmdt(shmAddr);
+                exit(0);
+            }
+            exit(0);
+        } else { // sub parent
+            exit(0);
+        }
+    }
+    // parent
+    WaitProcExitedOK(pid);
+    Msleep(200);
+    EXPECT_EQ(*shared, retPass);
+    shmdt(shared);
+    shmctl(shmID, IPC_RMID, nullptr);
 }
 
 /**
  * @tc.number SUB_KERNEL_PM_PID_SetGetPgrp_0100
  * @tc.name   setpgrp and getpgrp test
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testSetGetPgrp, TestSize.Level1)
+HWTEST_F(PidTest, testSetGetPgrp, Function | MediumTest | Level1)
 {
     pid_t parentPid = getpid();
     int rt = setpgrp();
@@ -80,8 +130,8 @@ HWTEST_F(PidTest, testSetGetPgrp, TestSize.Level1)
         }
         exit(0);
     } else { // parent
-        Msleep(30);
-        AssertProcExitedOK(pid);
+        Msleep(20);
+        WaitProcExitedOK(pid);
     }
 }
 
@@ -89,10 +139,8 @@ HWTEST_F(PidTest, testSetGetPgrp, TestSize.Level1)
  * @tc.number SUB_KERNEL_PM_PID_SetGetPgid_0100
  * @tc.name   setpgid and getpgid basic test
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testSetGetPgid, TestSize.Level1)
+HWTEST_F(PidTest, testSetGetPgid, Function | MediumTest | Level1)
 {
     pid_t parentPid = getpid();
     int rt = setpgid(0, parentPid);
@@ -126,17 +174,15 @@ HWTEST_F(PidTest, testSetGetPgid, TestSize.Level1)
         pid_t pgid2 = getpgid(pid1);
         ASSERT_EQ(pgid2, pid1);
         Msleep(50);
-        AssertProcExitedOK(pid1);
+        WaitProcExitedOK(pid1);
     }
 }
 /**
  * @tc.number SUB_KERNEL_PM_PID_SetGetPgid_0200
  * @tc.name   setpgid and getpgid test for sibling process
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testSetGetSiblingPgid, TestSize.Level1)
+HWTEST_F(PidTest, testSetGetSiblingPgid, Function | MediumTest | Level1)
 {
     pid_t parentPid = getpid();
     int rt = setpgid(0, parentPid);
@@ -174,18 +220,16 @@ HWTEST_F(PidTest, testSetGetSiblingPgid, TestSize.Level1)
         }
         // parent
         Msleep(50);
-        AssertProcExitedOK(pid1);
-        AssertProcExitedOK(pid2);
+        WaitProcExitedOK(pid1);
+        WaitProcExitedOK(pid2);
     }
 }
 /**
  * @tc.number SUB_KERNEL_PM_PID_SetGetPgid_0300
- * @tc.name   setpgid fail test
+ * @tc.name   getpgid fail test
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testGetpgidFail, TestSize.Level3)
+HWTEST_F(PidTest, testGetpgidFail, Function | MediumTest | Level3)
 {
     pid_t pgid = getpgid(-1);
     EXPECT_EQ(pgid, -1);
@@ -218,10 +262,8 @@ HWTEST_F(PidTest, testGetpgidFail, TestSize.Level3)
  * @tc.number SUB_KERNEL_PM_PID_SetGetPgid_0400
  * @tc.name   setpgid fail test
  * @tc.desc   [C- SOFTWARE -0200]
- * @tc.size   SMALL
- * @tc.type   FUNC
  */
-HWTEST_F(PidTest, testSetpgidFail, TestSize.Level3)
+HWTEST_F(PidTest, testSetpgidFail, Function | MediumTest | Level3)
 {
     pid_t pid = getpid();
     int rt = setpgrp();
@@ -282,4 +324,32 @@ HWTEST_F(PidTest, testSetpgidFail, TestSize.Level3)
     rt = setpgid(0, 2); // kProcess
     EXPECT_EQ(rt, -1);
     EXPECT_EQ(errno, EPERM);
+}
+
+/**
+ * @tc.number SUB_KERNEL_PM_PID_SetGetPgid_0500
+ * @tc.name   setpgid fail test: EACCES
+ * @tc.desc   [C- SOFTWARE -0200]
+ */
+HWTEST_F(PidTest, testSetpgidFailEACCES, Function | MediumTest | Level3)
+{
+    pid_t pid = fork();
+    ASSERT_TRUE(pid >= 0) << "======== Fork Error! =========";
+    if (pid == 0) { // child
+        int rt = execve(mChildELF, NULL, NULL);
+        if (rt == -1) {
+            LOG("ERROR: execve return -1, errno=%d, err=%s\n", errno, strerror(errno));
+        }
+        exit(1);
+    } else { // parent
+        sleep(2);
+        AssertProcAlive(pid);
+        int rt = setpgid(pid, pid);
+        EXPECT_EQ(rt, -1) << "setpgid should fail after child execve.";
+        EXPECT_EQ(errno, EACCES) << "set errno fail.";
+
+        // recycle child
+        int status;
+        waitpid(pid, &status, 0);
+    }
 }

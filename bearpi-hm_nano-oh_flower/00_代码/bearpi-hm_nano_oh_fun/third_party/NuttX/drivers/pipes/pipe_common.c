@@ -395,6 +395,7 @@ ssize_t pipecommon_read(FAR struct file *filep, FAR char *buffer, size_t len)
   ssize_t                nread  = 0;
   int                    sval;
   int                    ret;
+  volatile int           num;
 
   if (dev == NULL)
     {
@@ -472,24 +473,48 @@ ssize_t pipecommon_read(FAR struct file *filep, FAR char *buffer, size_t len)
           nread++;
         }
 
-       /* If O_NONBLOCK was set, then break */
-
-      if (filep->f_oflags & O_NONBLOCK)
-        {
-          break;
-        }
-
-      /* Is the read complete?  */
-
+      /* Is the read complete? */
       if ((size_t)nread >= len)
         {
           break;
         }
 
-      /* wait for something to be written to the pipe */
+      /* Notify all waiting writers that bytes have been read from the buffer */
 
-      sem_post(&dev->d_wrsem);
+      num = 0;
+      while (sem_getvalue(&dev->d_wrsem, &sval) == 0 && sval == 0)
+        {
+          sem_post(&dev->d_wrsem);
+          num++;
+        }
+
+      /* If there are no writers be awakened, then return */
+
+      if (num == 0 || num == 1)
+        {
+          pipecommon_pollnotify(dev, POLLOUT);
+          sem_post(&dev->d_bfsem);
+          return nread;
+        }
+
+      /* If there are no writers on the pipe, then return the number of read bytes */
+
+      if (dev->d_nwriters <= 0)
+        {
+          sem_post(&dev->d_wrsem);
+          pipecommon_pollnotify(dev, POLLOUT);
+          sem_post(&dev->d_bfsem);
+          return nread;
+        }
+
+      /* wait for something to be written to the pipe */
       pipecommon_pollnotify(dev, POLLOUT);
+
+      while (sem_getvalue(&dev->d_rdsem, &sval) == 0 && sval != 0)
+        {
+          sem_wait(&dev->d_rdsem);
+        }
+
       sem_post(&dev->d_bfsem);
 
       ret = sem_wait(&dev->d_rdsem);
@@ -502,16 +527,6 @@ ssize_t pipecommon_read(FAR struct file *filep, FAR char *buffer, size_t len)
       if (ret < 0)
         {
           return ret;
-        }
-
-      /* If there are no writers on the pipe, then return end of file */
-
-      if (dev->d_nwriters <= 0)
-        {
-          sem_post(&dev->d_wrsem);
-          pipecommon_pollnotify(dev, POLLOUT);
-          sem_post(&dev->d_bfsem);
-          return nread;
         }
     }
 
@@ -679,7 +694,12 @@ ssize_t pipecommon_write(FAR struct file *filep, FAR const char *buffer,
 
           /* There is more to be written.. wait for data to be removed from the pipe */
 
+          while (sem_getvalue(&dev->d_wrsem, &sval) == 0 && sval != 0)
+            {
+              pipecommon_semtake(&dev->d_wrsem);
+            }
           sem_post(&dev->d_bfsem);
+
           pipecommon_semtake(&dev->d_wrsem);
           pipecommon_semtake(&dev->d_bfsem);
         }

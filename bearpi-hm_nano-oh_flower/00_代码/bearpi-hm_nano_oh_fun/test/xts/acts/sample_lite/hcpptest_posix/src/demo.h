@@ -32,4 +32,4 @@ enum TestNums {
     NUM4950 = 4950,
 };
 
-#endif  //HCPPTEST_DEMO_H
+#endif  // HCPPTEST_DEMO_H

@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/openssl",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "三方开源软件OpenSSL",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/third_party/openssl && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/openssl",
+    "tags": [
+        "third_party"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "",
+        "board": ""
+    },
+    "license": "OpenSSL License and Original SSLeay License",
+    "keywords": [
+        "thirdparty",
+        "openssl"
+    ]
+}

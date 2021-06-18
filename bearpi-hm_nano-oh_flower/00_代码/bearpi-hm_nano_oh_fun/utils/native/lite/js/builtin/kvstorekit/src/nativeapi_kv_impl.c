@@ -24,12 +24,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "nativeapi_config.h"
+#if (defined _WIN32 || defined _WIN64)
+#include "shlwapi.h"
+#endif
 
 static char g_kvFolder[FILE_NAME_MAX_LEN + 1] = {0};
 
-static bool IsValidValue(const char *value)
+static bool IsValidValue(const char* value)
 {
-    if ((value == NULL) || !strlen(value) || (strlen(value) > VALUE_MAX_LEN)) {
+    if (value == NULL) {
+        return false;
+    }
+    size_t valueLen = strnlen(value, VALUE_MAX_LEN + 1);
+    if ((valueLen == 0) || (valueLen > VALUE_MAX_LEN)) {
         return false;
     }
     return true;
@@ -51,9 +58,16 @@ static int GetKvFolder(const char* dataPath)
 
 static int GetRealPath(const char* originPath, char* trustPath, size_t tPathLen)
 {
+#if (defined _WIN32 || defined _WIN64)
+    if (PathCanonicalize(trustPath, originPath)) {
+        return NATIVE_SUCCESS;
+    }
+#else
     if (realpath(originPath, trustPath) != NULL) {
         return NATIVE_SUCCESS;
     }
+#endif
+
     if (errno == ENOENT) {
         if (strncpy_s(trustPath, tPathLen, originPath, strlen(originPath)) == EOK) {
             return NATIVE_SUCCESS;
@@ -71,9 +85,15 @@ int InitKv(const char* dataPath)
     if (access(g_kvFolder, F_OK) == F_OK) {
         return NATIVE_SUCCESS;
     }
+#if (defined _WIN32 || defined _WIN64)
+    if (mkdir(g_kvFolder) != 0) {
+        return ERROR_CODE_GENERAL;
+    }
+#else
     if (mkdir(g_kvFolder, S_IRUSR | S_IWUSR | S_IXUSR) != 0) {
         return ERROR_CODE_GENERAL;
     }
+#endif
     return NATIVE_SUCCESS;
 }
 
@@ -125,12 +145,9 @@ int SetValue(const char* key, const char* value)
     if (fd < 0) {
         return (-errno);
     }
-    if (write(fd, value, strlen(value)) < 0) {
-        close(fd);
-        return ERROR_CODE_IO;
-    }
+    int ret = write(fd, value, strlen(value));
     close(fd);
-    return NATIVE_SUCCESS;
+    return (ret < 0) ? ERROR_CODE_IO : NATIVE_SUCCESS;
 }
 
 int DeleteValue(const char* key)
@@ -138,8 +155,7 @@ int DeleteValue(const char* key)
     if (key == NULL) {
         return ERROR_CODE_PARAM;
     }
-    int ret = unlink(key);
-    if (ret != NATIVE_SUCCESS) {
+    if (unlink(key) != NATIVE_SUCCESS) {
         return (-errno);
     }
     return NATIVE_SUCCESS;
@@ -152,16 +168,20 @@ int ClearKVStore(const char* dataPath)
         return ret;
     }
     ret = ERROR_CODE_GENERAL;
-    DIR *fileDir = opendir(g_kvFolder);
+    DIR* fileDir = opendir(g_kvFolder);
     if (fileDir == NULL) {
         return ret;
     }
-    struct dirent *dir = readdir(fileDir);
+    struct dirent* dir = readdir(fileDir);
     char* fullPath = (char *)malloc(FILE_NAME_MAX_LEN + 1);
     if (fullPath == NULL) {
         goto EXIT;
     }
     while (dir != NULL) {
+        if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+            dir = readdir(fileDir);
+            continue;
+        }
         if (memset_s(fullPath, FILE_NAME_MAX_LEN + 1, 0x0, FILE_NAME_MAX_LEN + 1) != EOK) {
             goto EXIT;
         }

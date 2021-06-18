@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 #include "hctest.h"
-#include "hos_types.h"
+#include "ohos_types.h"
 #include "wifi_device.h"
 #include "wifi_hotspot.h"
 #include "lwip/netif.h"
@@ -32,12 +32,9 @@
 #define LEVEL_FOUR 4
 #define DEF_TASK_STACK 2000
 #define DEF_TASK_PRIORITY 20
-#define DEPE_AP_SSID "xts_execute"
-#define DEF_NET_IF "wlan0"
 
 static int g_apEnableSuccess = 0;
 static int g_staScanSuccess = 0;
-struct netif *g_wsNetInterface = NULL;
 WifiEvent g_wifiEventHandler = {0};
 
 /**
@@ -55,7 +52,7 @@ static void WifiScanStateTask(void)
     if (error != WIFI_SUCCESS) {
         printf("WifiScanStateTask:get info fail, error is %d.\n", error);
     } else {
-        printf("WifiScanStateTask:get scan size is %d.\n", checkSize);
+        printf("WifiScanStateTask:get scan size is %u.\n", checkSize);
         g_staScanSuccess = 1;
     }
     free(info);
@@ -92,7 +89,7 @@ static void HotspotStateTask(void)
         printf("HotspotStaJoin:get list fail, error is %d.\n", error);
         return;
     }
-    printf("HotspotStaJoin:list size is %d.\n", size);
+    printf("HotspotStaJoin:list size is %u.\n", size);
     g_apEnableSuccess++;
 }
 
@@ -102,7 +99,7 @@ static void HotspotStateTask(void)
 static void OnWifiScanStateChangedHandler(int state, int size)
 {
     if (state != WIFI_STATE_AVALIABLE) {
-        printf("ScanStateChanged:state is unavaliable.\n");
+        printf("ScanStateChanged:state is unavailable.\n");
     } else {
         printf("ScanStateChanged:state[%d], size[%d].\n", state, size);
         osThreadAttr_t attr;
@@ -186,19 +183,19 @@ static void OnHotspotStateChangedHandler(int state)
 /**
  * common wait scan result
  */
-static void WaitSacnResult(void)
+static void WaitScanResult(void)
 {
     int scanTimeout = DEF_TIMEOUT;
     while (scanTimeout > 0) {
         sleep(ONE_SECOND);
         scanTimeout--;
         if (g_staScanSuccess == 1) {
-            printf("WaitSacnResult:wait success[%d]s\n", (DEF_TIMEOUT - scanTimeout));
+            printf("WaitScanResult:wait success[%d]s\n", (DEF_TIMEOUT - scanTimeout));
             break;
         }
     }
     if (scanTimeout <= 0) {
-        printf("WaitSacnResult:timeout!\n");
+        printf("WaitScanResult:timeout!\n");
     }
 }
 
@@ -216,14 +213,61 @@ LITE_TEST_SUIT(communication, wifiservice, WifiServiceFuncTestSuite);
  */
 static BOOL WifiServiceFuncTestSuiteSetUp(void)
 {
+    WifiErrorCode error;
+    // check wifi stat
+    int ret = IsWifiActive();
+    if (ret == WIFI_STATE_AVALIABLE) {
+        printf("[Setup]wifi is active, disable now...\n");
+        error = DisableWifi();
+        if (error == WIFI_SUCCESS) {
+            printf("[Setup]disable wifi success\n");
+        } else {
+            TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+            printf("[Setup]disable wifi fail, please disable wifi, then run test cases!\n");
+            return FALSE;
+        }
+    }
+
+    // check AP stat
+    ret = IsHotspotActive();
+    if (ret == WIFI_HOTSPOT_ACTIVE) {
+        printf("[Setup]AP is active, disable now...\n");
+        error = DisableHotspot();
+        if (error == WIFI_SUCCESS) {
+            printf("[Setup]disable AP success\n");
+        } else {
+            TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+            printf("[Setup]disable AP fail, please disable ap, then run test cases!\n");
+            return FALSE;
+        }
+    }
+
+    // check device config
+    WifiDeviceConfig config[WIFI_MAX_CONFIG_SIZE] = {0};
+    unsigned int size = WIFI_MAX_CONFIG_SIZE;
+    error = GetDeviceConfigs(config, &size);
+    if (error != ERROR_WIFI_NOT_AVAILABLE) {
+        printf("[Setup]there is device config, clear now...\n");
+        int count = 0;
+        for (int i = 0; i < WIFI_MAX_CONFIG_SIZE; i++) {
+            if (&config[i] != NULL) {
+                RemoveDevice(config[i].netId);
+                count++;
+            }
+        }
+        printf("[Setup]clear count [%d]\n", count);
+    }
+
+    // register wifi event
     g_wifiEventHandler.OnWifiScanStateChanged = OnWifiScanStateChangedHandler;
     g_wifiEventHandler.OnWifiConnectionChanged = OnWifiConnectionChangedHandler;
     g_wifiEventHandler.OnHotspotStaJoin = OnHotspotStaJoinHandler;
     g_wifiEventHandler.OnHotspotStaLeave = OnHotspotStaLeaveHandler;
     g_wifiEventHandler.OnHotspotStateChanged = OnHotspotStateChangedHandler;
-    WifiErrorCode error = RegisterWifiEvent(&g_wifiEventHandler);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    error = RegisterWifiEvent(&g_wifiEventHandler);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     if (error != WIFI_SUCCESS) {
+        printf("[Setup]register wifi event fail!\n");
         return FALSE;
     }
     return TRUE;
@@ -236,7 +280,7 @@ static BOOL WifiServiceFuncTestSuiteSetUp(void)
 static BOOL WifiServiceFuncTestSuiteTearDown(void)
 {
     WifiErrorCode error = UnRegisterWifiEvent(&g_wifiEventHandler);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     printf("+-------------------------------------------+\n");
     if (error != WIFI_SUCCESS) {
         return FALSE;
@@ -248,252 +292,233 @@ static BOOL WifiServiceFuncTestSuiteTearDown(void)
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0100
  * @tc.name      : Test enable and disable wifi interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testEnableDisableWifi, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testEnableDisableWifi, Function | MediumTest | Level2)
 {
     int stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 
     WifiErrorCode error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_BUSY);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_BUSY, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_NOT_STARTED);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_NOT_STARTED, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0200
  * @tc.name      : Test scan and get scan info interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testScan, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testScan, Function | MediumTest | Level2)
 {
     unsigned int size = WIFI_SCAN_HOTSPOT_LIMIT;
     WifiErrorCode error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     int stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     WifiScanInfo* info = malloc(sizeof(WifiScanInfo) * WIFI_SCAN_HOTSPOT_LIMIT);
     TEST_ASSERT_NOT_NULL(info);
     error = GetScanInfoList(info, &size);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(size, 0);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(0, size);
 
     g_staScanSuccess = 0;
     error = Scan();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     size = WIFI_SCAN_HOTSPOT_LIMIT;
     error = GetScanInfoList(info, &size);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_NOT_EQUAL(size, WIFI_SCAN_HOTSPOT_LIMIT);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SCAN_HOTSPOT_LIMIT, size);
     free(info);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0300
  * @tc.name      : Test connect and disconnect interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testConnectDisConnect, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testConnectDisConnect, Function | MediumTest | Level2)
 {
     int netId = 0;
-    int ssidLen = 11;
-    WifiErrorCode error;
     WifiDeviceConfig config = {0};
-    int ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "xts_execute", ssidLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    const char* ssid = "xts_execute";
+    int ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid, strlen(ssid));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+
     config.securityType = WIFI_SEC_TYPE_OPEN;
-    error = AddDeviceConfig(&config, &netId);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    WifiErrorCode error = AddDeviceConfig(&config, &netId);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
 
     error = ConnectTo(netId);
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
     unsigned char mac[WIFI_MAC_LEN];
     error = GetDeviceMacAddress((unsigned char *)mac);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     error = Disconnect();
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
     error = RemoveDevice(netId);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0400
  * @tc.name      : Test handle device config interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testHandleDeviceConfig, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testHandleDeviceConfig, Function | MediumTest | Level2)
 {
     int netId = 0;
-    int ssidLen = 11;
-    int keyLen = 8;
-    int freq = 20;
+    const char* ssid1 = "XtsTestWifi1";
+    const char* ssid2 = "XtsTestWifi2";
+    const char* ssid3 = "XtsTestWifi3";
+    const char* info = "12345678";
     unsigned char bssid[WIFI_MAC_LEN] = {0xac, 0x75, 0x1d, 0xd8, 0x55, 0xc1};
     WifiDeviceConfig config = {0};
-    config.freq = freq;
+    config.freq = 20;
     config.securityType = WIFI_SEC_TYPE_SAE;
     config.wapiPskType = WIFI_PSK_TYPE_ASCII;
-    int ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "XtsTestWifi", ssidLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
-    ret = memcpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, "12345678", keyLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    int ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid1, strlen(ssid1));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+    ret = strncpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, info, strlen(info));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
     ret = memcpy_s(config.bssid, WIFI_MAC_LEN, bssid, WIFI_MAC_LEN);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
     WifiErrorCode error = AddDeviceConfig(&config, &netId);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
 
-    ssidLen += 1;
-    int addCount = 9;
-    for (int i = 0; i < addCount; i++) {
+    for (int i = 0; i < WIFI_MAX_CONFIG_SIZE - 1; i++) {
         config.securityType = WIFI_SEC_TYPE_PSK;
         config.wapiPskType = WIFI_PSK_TYPE_HEX;
-        ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "XtsTestWifi2", ssidLen);
-        TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
-        ret = memcpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, "01234567", keyLen);
-        TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+        ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid2, sizeof(ssid2));
+        TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+        ret = strncpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, info, strlen(info));
+        TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
         error = AddDeviceConfig(&config, &netId);
-        TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+        TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
         if (error != WIFI_SUCCESS) {
             printf("Add fail[%d].\n", i);
             break;
         }
     }
 
-    ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "XtsTestWifi3", ssidLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
-    ret = memcpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, "01234567", keyLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid3, strlen(ssid3));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+    ret = strncpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, info, strlen(info));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
     config.securityType = WIFI_SEC_TYPE_PSK;
     error = AddDeviceConfig(&config, &netId);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_BUSY);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_BUSY, error);
 
     WifiDeviceConfig allConfig[WIFI_MAX_CONFIG_SIZE] = {0};
     unsigned int size = WIFI_MAX_CONFIG_SIZE;
     error = GetDeviceConfigs(allConfig, &size);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(size, WIFI_MAX_CONFIG_SIZE);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(WIFI_MAX_CONFIG_SIZE, size);
 
     for (int i = 0; i < WIFI_MAX_CONFIG_SIZE; i++) {
         error = RemoveDevice(allConfig[i].netId);
-        TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+        TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     }
 
     error = GetDeviceConfigs(allConfig, &size);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_NOT_AVAILABLE);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_NOT_AVAILABLE, error);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0500
  * @tc.name      : Test handle AP config interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testHandleHotspotConfig, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testHandleHotspotConfig, Function | MediumTest | Level2)
 {
-    int keyLen = 9;
-    int ssidLen = 10;
+    const char* ssid = "XtsTestAp";
+    const char* info = "12345678";
     HotspotConfig config = {0};
-    int ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "XtsTestAp", ssidLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
-    ret = memcpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, "12345678", keyLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    int ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid, strlen(ssid));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+    ret = strncpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, info, strlen(info));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
     config.securityType = WIFI_SEC_TYPE_PSK;
     WifiErrorCode error = SetHotspotConfig(&config);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
 
     HotspotConfig getConfig = {0};
     error = GetHotspotConfig(&getConfig);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     TEST_ASSERT_EQUAL_INT(config.securityType, WIFI_SEC_TYPE_PSK);
 
     int band = 11;
     int bandOrig = 11;
     error = SetBand(band);
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
     error = GetBand(&band);
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(band, bandOrig);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(bandOrig, band);
 
     error = SetBand(HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     error = GetBand(&band);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(band, HOTSPOT_BAND_TYPE_2G);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(HOTSPOT_BAND_TYPE_2G, band);
 
     HotspotConfig getConfigAgain = {0};
     error = GetHotspotConfig(&getConfigAgain);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(getConfigAgain.band, HOTSPOT_BAND_TYPE_2G);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(HOTSPOT_BAND_TYPE_2G, getConfigAgain.band);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0600
  * @tc.name      : Test enable and disable AP interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testEnableDisableHotSpot, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testEnableDisableHotSpot, Function | MediumTest | Level2)
 {
-    int ssidLen = 10;
-    int keyLen = 9;
+    const char* ssid = "XtsTestAp";
+    const char* info = "12345678";
     HotspotConfig config = {0};
-    int ret = memcpy_s(config.ssid, WIFI_MAX_SSID_LEN, "XtsTestAp", ssidLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
-    ret = memcpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, "12345678", keyLen);
-    TEST_ASSERT_EQUAL_INT(ret, WIFI_SUCCESS);
+    int ret = strncpy_s(config.ssid, WIFI_MAX_SSID_LEN, ssid, strlen(ssid));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
+    ret = strncpy_s(config.preSharedKey, WIFI_MAX_KEY_LEN, info, strlen(info));
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, ret);
     config.securityType = WIFI_SEC_TYPE_PSK;
     WifiErrorCode error = SetHotspotConfig(&config);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
 
     int stat = IsHotspotActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_HOTSPOT_NOT_ACTIVE);
+    TEST_ASSERT_EQUAL_INT(WIFI_HOTSPOT_NOT_ACTIVE, stat);
     error = EnableHotspot();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsHotspotActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_HOTSPOT_ACTIVE);
+    TEST_ASSERT_EQUAL_INT(WIFI_HOTSPOT_ACTIVE, stat);
     error = EnableHotspot();
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
     stat = IsHotspotActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_HOTSPOT_ACTIVE);
+    TEST_ASSERT_EQUAL_INT(WIFI_HOTSPOT_ACTIVE, stat);
 
     int timeout = 3;
     g_apEnableSuccess = 0;
@@ -507,24 +532,21 @@ LITE_TEST_CASE(WifiServiceFuncTestSuite, testEnableDisableHotSpot, LEVEL2)
     }
 
     error = DisableHotspot();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsHotspotActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_HOTSPOT_NOT_ACTIVE);
+    TEST_ASSERT_EQUAL_INT(WIFI_HOTSPOT_NOT_ACTIVE, stat);
     error = DisableHotspot();
-    TEST_ASSERT_NOT_EQUAL(error, WIFI_SUCCESS);
+    TEST_ASSERT_NOT_EQUAL(WIFI_SUCCESS, error);
     stat = IsHotspotActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_HOTSPOT_NOT_ACTIVE);
+    TEST_ASSERT_EQUAL_INT(WIFI_HOTSPOT_NOT_ACTIVE, stat);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0700
  * @tc.name      : Test get signal Level interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testGetSignalLevel, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testGetSignalLevel, Function | MediumTest | Level2)
 {
     int level;
     int rssiNoLevel = -90;
@@ -537,42 +559,39 @@ LITE_TEST_CASE(WifiServiceFuncTestSuite, testGetSignalLevel, LEVEL2)
     int rssiBothLevel4 = -65;
 
     level = GetSignalLevel(rssiNoLevel, HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_ERROR);
+    TEST_ASSERT_EQUAL_INT(LEVEL_ERROR, level);
     level = GetSignalLevel(rssiOf2gLevel1, HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_ONE);
+    TEST_ASSERT_EQUAL_INT(LEVEL_ONE, level);
     level = GetSignalLevel(rssiOf2gLevel2, HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_TWO);
+    TEST_ASSERT_EQUAL_INT(LEVEL_TWO, level);
     level = GetSignalLevel(rssiOf2gLevel3, HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_THREE);
+    TEST_ASSERT_EQUAL_INT(LEVEL_THREE, level);
     level = GetSignalLevel(rssiBothLevel4, HOTSPOT_BAND_TYPE_2G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_FOUR);
+    TEST_ASSERT_EQUAL_INT(LEVEL_FOUR, level);
 
     level = GetSignalLevel(rssiNoLevel, HOTSPOT_BAND_TYPE_5G);
-    TEST_ASSERT_EQUAL_INT(level, -1);
+    TEST_ASSERT_EQUAL_INT(-1, level);
     level = GetSignalLevel(rssiOf5gLevel1, HOTSPOT_BAND_TYPE_5G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_ONE);
+    TEST_ASSERT_EQUAL_INT(LEVEL_ONE, level);
     level = GetSignalLevel(rssiOf5gLevel2, HOTSPOT_BAND_TYPE_5G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_TWO);
+    TEST_ASSERT_EQUAL_INT(LEVEL_TWO, level);
     level = GetSignalLevel(rssiOf5gLevel3, HOTSPOT_BAND_TYPE_5G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_THREE);
+    TEST_ASSERT_EQUAL_INT(LEVEL_THREE, level);
     level = GetSignalLevel(rssiBothLevel4, HOTSPOT_BAND_TYPE_5G);
-    TEST_ASSERT_EQUAL_INT(level, LEVEL_FOUR);
+    TEST_ASSERT_EQUAL_INT(LEVEL_FOUR, level);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0800
  * @tc.name      : test adavance scan interface
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanType, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanType, Function | MediumTest | Level2)
 {
     WifiErrorCode error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     int stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     int freq = 2460;
     WifiScanParams scanParams = {0};
@@ -585,82 +604,76 @@ LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanType, LEVEL2)
     scanParams.scanType = WIFI_SSID_SCAN;
     g_staScanSuccess = 0;
     error = AdvanceScan(&scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     scanParams.scanType = WIFI_FREQ_SCAN;
     g_staScanSuccess = 0;
     error = AdvanceScan(&scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     scanParams.scanType = WIFI_BSSID_SCAN;
     g_staScanSuccess = 0;
     error = AdvanceScan(&scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     scanParams.scanType = WIFI_BAND_SCAN;
     g_staScanSuccess = 0;
     error = AdvanceScan(&scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_0900
  * @tc.name      : test adavance scan interface with invalid parameter
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanInvalidParam01, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanInvalidParam01, Function | MediumTest | Level2)
 {
     WifiErrorCode error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     int stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     g_staScanSuccess = 0;
     error = AdvanceScan(NULL);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     WifiScanParams scanParams = {0};
     error = AdvanceScan(&scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 }
 
 /**
  * @tc.number    : SUB_COMMUNICATION_WIFISERVICE_SDK_1000
- * @tc.name      : test adavance scan interface with invalid parameter
+ * @tc.name      : test adavance scan interface with different invalid scantype
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 2
  */
-LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanInvalidParam02, LEVEL2)
+LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanInvalidParam02, Function | MediumTest | Level2)
 {
     WifiErrorCode error = EnableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     int stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_AVALIABLE, stat);
 
     WifiScanParams* scanParams = malloc(sizeof(WifiScanParams));
     TEST_ASSERT_NOT_NULL(scanParams);
@@ -668,55 +681,55 @@ LITE_TEST_CASE(WifiServiceFuncTestSuite, testAdvanceScanInvalidParam02, LEVEL2)
 
     g_staScanSuccess = 0;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     scanParams->scanType = WIFI_BSSID_SCAN;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     scanParams->scanType = WIFI_SSID_SCAN;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     scanParams->scanType = WIFI_FREQ_SCAN;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     scanParams->scanType = WIFI_BAND_SCAN;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     int errorType = -1;
     scanParams->scanType = errorType;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     char bssid[WIFI_MAC_LEN] = {0xac, 0x75, 0x1d, 0xd8, 0x55, 0xc1};
     memcpy_s(scanParams->bssid, sizeof(scanParams->bssid), bssid, sizeof(bssid));
     scanParams->scanType = WIFI_BSSID_SCAN;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
-    WaitSacnResult();
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 1);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
+    WaitScanResult();
+    TEST_ASSERT_EQUAL_INT(1, g_staScanSuccess);
 
     memset_s(scanParams, sizeof(WifiScanParams), 0, sizeof(WifiScanParams));
     strcpy_s(scanParams->ssid, sizeof(scanParams->ssid), "wifi_service_xts");
     scanParams->scanType = WIFI_SSID_SCAN;
     g_staScanSuccess = 0;
     error = AdvanceScan(scanParams);
-    TEST_ASSERT_EQUAL_INT(error, ERROR_WIFI_UNKNOWN);
-    TEST_ASSERT_EQUAL_INT(g_staScanSuccess, 0);
+    TEST_ASSERT_EQUAL_INT(ERROR_WIFI_UNKNOWN, error);
+    TEST_ASSERT_EQUAL_INT(0, g_staScanSuccess);
 
     error = DisableWifi();
-    TEST_ASSERT_EQUAL_INT(error, WIFI_SUCCESS);
+    TEST_ASSERT_EQUAL_INT(WIFI_SUCCESS, error);
     stat = IsWifiActive();
-    TEST_ASSERT_EQUAL_INT(stat, WIFI_STATE_NOT_AVALIABLE);
+    TEST_ASSERT_EQUAL_INT(WIFI_STATE_NOT_AVALIABLE, stat);
 
     free(scanParams);
 }

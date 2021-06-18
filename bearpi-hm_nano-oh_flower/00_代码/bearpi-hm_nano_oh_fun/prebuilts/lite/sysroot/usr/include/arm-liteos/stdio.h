@@ -1,6 +1,11 @@
 #ifndef _STDIO_H
 #define _STDIO_H
 
+#ifdef __ICCARM__ /* for iar */
+#include_next <stdio.h>
+int rename(const char *, const char *);
+#else
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -219,4 +224,5 @@ FILE *fopencookie(void *, const char *, cookie_io_functions_t);
 }
 #endif
 
+#endif /* __ICCARM__ */
 #endif

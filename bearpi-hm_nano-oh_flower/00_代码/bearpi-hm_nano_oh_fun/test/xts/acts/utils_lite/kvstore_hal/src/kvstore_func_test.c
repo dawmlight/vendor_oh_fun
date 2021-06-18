@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Huawei Device Co., Ltd.
+ * Copyright (c) 2020-2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-#include "hos_types.h"
+#include "ohos_types.h"
 #include <securec.h>
 #include "hctest.h"
-#include "hos_errno.h"
+#include "ohos_errno.h"
 #include "kv_store.h"
+#include "iot_watchdog.h"
 #include "utils_config.h"
-#include "wifiiot_watchdog.h"
 
 #define MAX_KEY_LEN_TEST    32
 #define MAX_VALUE_LEN_TEST    128
@@ -55,7 +55,7 @@ static BOOL KvStoreFuncTestSuiteTearDown(void)
 }
 
 /* Create files in batches. */
-bool SetKVFiles (int num, const char* key, const char* value) 
+bool SetKVFiles (int num, const char* key, const char* value)
 {
     int size;
     int ret;
@@ -73,7 +73,7 @@ bool SetKVFiles (int num, const char* key, const char* value)
         size = sprintf_s(valuetemp, MAX_VALUE_LEN_TEST, "%s_%d", value, i);
         if (size < 0) {
             return false;
-        }    
+        }
         ret = UtilsSetValue(keytemp, valuetemp);
         if (i <= MAX_KEY_NUM_TEST) {
             TEST_ASSERT_EQUAL_INT(0, ret);
@@ -87,21 +87,21 @@ bool SetKVFiles (int num, const char* key, const char* value)
 #else
             TEST_ASSERT_GREATER_THAN_INT(0, ret);
 #endif
-            TEST_ASSERT_EQUAL_STRING(valuetemp, temp); 
+            TEST_ASSERT_EQUAL_STRING(valuetemp, temp);
         } else {
             TEST_ASSERT_EQUAL_INT(-1, ret);
-        }   
+        }
         memset_s(keytemp, MAX_KEY_LEN_TEST, 0, MAX_KEY_LEN_TEST);
         memset_s(temp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
         memset_s(valuetemp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
-        WatchDogKick();
+        IoTWatchDogKick();
     }
-    WatchDogKick();
+    IoTWatchDogKick();
     return true;
 }
 
 /* Read files in batches. */
-bool ReadKVFiles (int num, const char* key, const char* value) 
+bool ReadKVFiles (int num, const char* key, const char* value)
 {
     int size;
     int ret;
@@ -120,7 +120,7 @@ bool ReadKVFiles (int num, const char* key, const char* value)
         size = sprintf_s(valuetemp, MAX_VALUE_LEN_TEST, "%s_%d", value, loop);
         if (size < 0) {
             return false;
-        }    
+        }
         ret = UtilsGetValue(keytemp, temp, MAX_VALUE_LEN_TEST);
         if (loop <= MAX_KEY_NUM_TEST) {
             if (i <= MAX_CACHE_NUM_TEST) {
@@ -132,22 +132,22 @@ bool ReadKVFiles (int num, const char* key, const char* value)
             } else {
                 TEST_ASSERT_GREATER_THAN_INT(0, ret);
             }
-            TEST_ASSERT_EQUAL_STRING(valuetemp, temp); 
+            TEST_ASSERT_EQUAL_STRING(valuetemp, temp);
             i++;
         } else {
             TEST_ASSERT_EQUAL_INT(-1, ret);
-        }   
+        }
         memset_s(keytemp, MAX_KEY_LEN_TEST, 0, MAX_KEY_LEN_TEST);
         memset_s(temp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
         memset_s(valuetemp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
-        WatchDogKick();
+        IoTWatchDogKick();
     }
-    WatchDogKick();
+    IoTWatchDogKick();
     return true;
 }
 
 /* Delete files in batches. */
-bool DeleteKVFiles (int num, const char* key) 
+bool DeleteKVFiles (int num, const char* key)
 {
     int size;
     int ret;
@@ -160,29 +160,26 @@ bool DeleteKVFiles (int num, const char* key)
         size = sprintf_s(keytemp, MAX_KEY_LEN_TEST, "%s_%d", key, i);
         if (size < 0) {
             return false;
-        }  
+        }
         ret = UtilsDeleteValue(keytemp);
         if (i <= MAX_KEY_NUM_TEST) {
             TEST_ASSERT_EQUAL_INT(0, ret);
         } else {
             TEST_ASSERT_EQUAL_INT(-1, ret);
-        }    
+        }
         memset_s(keytemp, MAX_KEY_LEN_TEST, 0, MAX_KEY_LEN_TEST);
-        WatchDogKick();       
+        IoTWatchDogKick();
     }
-    WatchDogKick();
+    IoTWatchDogKick();
     return true;
 }
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_100 
- * @tc.name      : UtilsSetValue parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_KV_STORE_0100
+ * @tc.name      : UtilsSetValue parameter legal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue001, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue001, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "Hello world !";
@@ -194,14 +191,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_500 
- * @tc.name      : UtilsSetValue parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_KV_STORE_0200
+ * @tc.name      : UtilsSetValue parameter legal test using key with underline
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue002, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue002, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version_100";
     char value[] = "Hello world !";
@@ -213,14 +207,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_800 
- * @tc.name      : UtilsSetValue parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_KV_STORE_0300
+ * @tc.name      : UtilsSetValue parameter legal test when key contains only number
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue003, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue003, Function | MediumTest | Level1)
 {
     char key[] = "100";
     char value[] = "Hello world !";
@@ -232,14 +223,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue003, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_600 
- * @tc.name      : UtilsSetValue parameter legal test(key = 31 Byte)
+ * @tc.number    : SUB_UTILS_KV_STORE_0400
+ * @tc.name      : UtilsSetValue parameter legal test when key is equal to 31 Byte
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue004, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue004, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version.utilskvparameter";
     char value[] = "Hello world !";
@@ -251,14 +239,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_700 
- * @tc.name      : UtilsSetValue parameter Illegal test(key = 32 Byte)
+ * @tc.number    : SUB_UTILS_KV_STORE_0500
+ * @tc.name      : UtilsSetValue parameter Illegal test when key is equal to 32 Byte
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue005, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue005, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version.utilskvparameter1";
     char value[] = "Hello world !";
@@ -267,14 +252,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue005, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_700 
- * @tc.name      : UtilsSetValue parameter Illegal test(key > 32 Byte)
+ * @tc.number    : SUB_UTILS_KV_STORE_0600
+ * @tc.name      : UtilsSetValue parameter Illegal test when key is gteater than 32 Byte
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue006, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue006, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version.utilskvparameterforillegal";
     char value[] = "Hello world !";
@@ -283,14 +265,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue006, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1100 
- * @tc.name      : UtilsSetValue parameter Illegal test(key is an invalid character)
+ * @tc.number    : SUB_UTILS_KV_STORE_0700
+ * @tc.name      : UtilsSetValue parameter Illegal test when key contains uppercase
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue007, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue007, Function | MediumTest | Level1)
 {
     char key[] = "Rw.sys.version";
     char value[] = "Hello world !";
@@ -299,14 +278,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue007, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1200 
- * @tc.name      : UtilsSetValue parameter Illegal test(key is an invalid character)
+ * @tc.number    : SUB_UTILS_KV_STORE_0800
+ * @tc.name      : UtilsSetValue parameter Illegal test when key contains horizontal line
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue008, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue008, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version-r3";
     char value[] = "Hello world !";
@@ -315,14 +291,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue008, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1200 
- * @tc.name      : UtilsSetValue parameter Illegal test(key is an invalid character)
+ * @tc.number    : SUB_UTILS_KV_STORE_0900
+ * @tc.name      : UtilsSetValue parameter Illegal test when key contains plus sign
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue009, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue009, Function | MediumTest | Level1)
 {
     char key[] = "re+r3";
     char value[] = "Hello world !";
@@ -331,14 +304,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue009, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1200 
- * @tc.name      : UtilsSetValue parameter Illegal test(key is an invalid character)
+ * @tc.number    : SUB_UTILS_KV_STORE_1000
+ * @tc.name      : UtilsSetValue parameter Illegal test when key contains asterisk
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue010, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue010, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version*r3";
     char value[] = "Hello world !";
@@ -347,14 +317,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue010, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_900 
- * @tc.name      : UtilsSetValue parameter legal test(Value is equal to 127 characters)
+ * @tc.number    : SUB_UTILS_KV_STORE_1100
+ * @tc.name      : UtilsSetValue parameter legal test when Value is equal to 127 characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue011, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue011, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "Two tigers Two tigers two tiger running so fast \
@@ -367,14 +334,11 @@ running so fast one has no ears one has no tail How strange How strangesleeping"
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1000 
- * @tc.name      : UtilsSetValue parameter Illegal test(Value is equal to 128 characters)
+ * @tc.number    : SUB_UTILS_KV_STORE_1200
+ * @tc.name      : UtilsSetValue parameter Illegal test when Value is equal to 128 characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue012, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue012, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "Two tigers Two tigers two tiger running so fast \
@@ -384,14 +348,11 @@ running so fast one has no ears one has no tail How strange How strange sleeping
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1000 
- * @tc.name      : UtilsSetValue parameter Illegal test(Value greater than 128 characters)
+ * @tc.number    : SUB_UTILS_KV_STORE_1300
+ * @tc.name      : UtilsSetValue parameter Illegal test when Value greater than 128 characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue013, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue013, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "Two tigers Two tigers two tiger running so fast \
@@ -401,14 +362,11 @@ running so fast one has no ears one has no tail How strange How strange  Are you
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1100 
+ * @tc.number    : SUB_UTILS_KV_STORE_1400
  * @tc.name      : Value greater than 128 characters and key is an invalid character
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue014, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue014, Function | MediumTest | Level1)
 {
     char key[] = "Rw.sys.version";
     char value[] = "Two tigers Two tigers two tiger running so fast \
@@ -418,14 +376,11 @@ running so fast one has no ears one has no tail How strange How strange  Are you
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_100 
- * @tc.name      : UtilsSetValue parameter legal test(Lowercase alphanumeric, underscore, dot)
+ * @tc.number    : SUB_UTILS_KV_STORE_1500
+ * @tc.name      : UtilsSetValue parameter legal test with Special characters
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue015, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue015, Function | MediumTest | Level1)
 {
     char key[] = "_._..__...___";
     char value[] = "！@#￥%……&*（）——+~《》？，。、“‘；：、12345767890";
@@ -437,14 +392,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue015, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1200 
- * @tc.name      : UtilsSetValue parameter Illegal test(key contains space)
+ * @tc.number    : SUB_UTILS_KV_STORE_1600
+ * @tc.name      : UtilsSetValue parameter Illegal test when key contains blank
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue016, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue016, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version space test";
     char value[] = "Hello world !";
@@ -453,14 +405,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue016, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_100 
- * @tc.name      : UtilsSetValue parameter legal test(value contains only space)
+ * @tc.number    : SUB_UTILS_KV_STORE_1700
+ * @tc.name      : UtilsSetValue parameter legal test when value contains only blank
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue017, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue017, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "                                                   ";
@@ -472,14 +421,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreSetValue017, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_300 
- * @tc.name      : Use the interface(UtilsGetValue) to get the kv value(cache)
+ * @tc.number    : SUB_UTILS_KV_STORE_1800
+ * @tc.name      : Use the interface to get the kv value or cache
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue001, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue001, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -493,20 +439,17 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue001, LEVEL1)
 #else
         TEST_ASSERT_GREATER_THAN_INT(0, ret);
 #endif
-    TEST_ASSERT_EQUAL_STRING(value, temp); 
+    TEST_ASSERT_EQUAL_STRING(value, temp);
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_300 
- * @tc.name      : Use the interface(UtilsGetValue) to get the kv value(cache)
+ * @tc.number    : SUB_UTILS_KV_STORE_1900
+ * @tc.name      : Use the interface to get the kv value or cache when key contains only number
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue002, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue002, Function | MediumTest | Level1)
 {
     char key[] = "100";
     char value[] = "！@#￥%……&*（）——+~《》？，。、“‘；：、12345767890";
@@ -520,20 +463,17 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue002, LEVEL1)
 #else
         TEST_ASSERT_GREATER_THAN_INT(0, ret);
 #endif
-    TEST_ASSERT_EQUAL_STRING(value, temp); 
+    TEST_ASSERT_EQUAL_STRING(value, temp);
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_200 
- * @tc.name      : Use the interface(UtilsGetValue) to get the kv value(cache)
+ * @tc.number    : SUB_UTILS_KV_STORE_2000
+ * @tc.name      : Use the interface to get the kv value or cache after value is updated
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue003, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue003, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version.utilskvparameter";
     char value[] = "It is never too old to learn";
@@ -553,20 +493,17 @@ running so fast one has no ears one has no tail How strange How strangesleeping"
 #else
         TEST_ASSERT_GREATER_THAN_INT(0, ret);
 #endif
-    TEST_ASSERT_EQUAL_STRING(value1, temp); 
+    TEST_ASSERT_EQUAL_STRING(value1, temp);
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_300 
+ * @tc.number    : SUB_UTILS_KV_STORE_2100
  * @tc.name      : UtilsGetValue parameter Illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue004, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue004, Function | MediumTest | Level1)
 {
     char key[] = "Rw.sys.version";
     char temp[MAX_VALUE_LEN_TEST] = {0};
@@ -575,14 +512,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue004, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_300 
- * @tc.name      : Use the interface(UtilsGetValue) to get the kv value(cache)
+ * @tc.number    : SUB_UTILS_KV_STORE_2200
+ * @tc.name      : Get the kv value or cache when key contains only special characters and value contains only blank
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue005, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue005, Function | MediumTest | Level1)
 {
     char key[] = "_._..__...___";
     char value[] = "                                                 ";
@@ -596,20 +530,17 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreGetValue005, LEVEL1)
 #else
         TEST_ASSERT_GREATER_THAN_INT(0, ret);
 #endif
-    TEST_ASSERT_EQUAL_STRING(value, temp); 
+    TEST_ASSERT_EQUAL_STRING(value, temp);
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_400 
+ * @tc.number    : SUB_UTILS_KV_STORE_2300
  * @tc.name      : UtilsDeleteValue parameter Illegal test
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreDeleteValue, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreDeleteValue, Function | MediumTest | Level1)
 {
     char key[] = "Rw.sys.version";
     int ret = UtilsDeleteValue(key);
@@ -618,14 +549,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreDeleteValue, LEVEL1)
 
 #ifdef FEATURE_KV_CACHE
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_300 
- * @tc.name      : Use the interface(ClearKVCache) to clear cache
+ * @tc.number    : SUB_UTILS_KV_STORE_2400
+ * @tc.name      : Use the interface to clear cache
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache001, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache001, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -635,29 +563,26 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache001, LEVEL1)
     // Get the value of key
     ret = UtilsGetValue(key, temp, MAX_VALUE_LEN_TEST);
     TEST_ASSERT_EQUAL_INT(0, ret);
-    TEST_ASSERT_EQUAL_STRING(value, temp); 
+    TEST_ASSERT_EQUAL_STRING(value, temp);
     // Clear cache
     ret = ClearKVCache();
     TEST_ASSERT_EQUAL_INT(0, ret);
     // Get the value of key
-    memset_s(temp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);   
+    memset_s(temp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
     ret = UtilsGetValue(key, temp, MAX_VALUE_LEN_TEST);
     TEST_ASSERT_GREATER_THAN_INT(0, ret);
-    TEST_ASSERT_EQUAL_STRING(value, temp); 
+    TEST_ASSERT_EQUAL_STRING(value, temp);
     // Clear key
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_200 
- * @tc.name      : Use the interface(ClearKVCache) to clear cache
+ * @tc.number    : SUB_UTILS_KV_STORE_2500
+ * @tc.name      : Use the interface to clear cache after updating operation
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache002, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache002, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -672,7 +597,7 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache002, LEVEL1)
     // Get the value of key
     ret = UtilsGetValue(key, temp, MAX_VALUE_LEN_TEST);
     TEST_ASSERT_EQUAL_INT(0, ret);
-    TEST_ASSERT_EQUAL_STRING(value1, temp); 
+    TEST_ASSERT_EQUAL_STRING(value1, temp);
     // Clear cache
     ret = ClearKVCache();
     TEST_ASSERT_EQUAL_INT(0, ret);
@@ -680,7 +605,7 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache002, LEVEL1)
     memset_s(temp, MAX_VALUE_LEN_TEST, 0, MAX_VALUE_LEN_TEST);
     ret = UtilsGetValue(key, temp, MAX_VALUE_LEN_TEST);
     TEST_ASSERT_GREATER_THAN_INT(0, ret);
-    TEST_ASSERT_EQUAL_STRING(value1, temp); 
+    TEST_ASSERT_EQUAL_STRING(value1, temp);
     // Clear key
     ret = UtilsDeleteValue(key);
     TEST_ASSERT_EQUAL_INT(0, ret);
@@ -688,14 +613,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreClearCache002, LEVEL1)
 #endif
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1600 
- * @tc.name      : Specification test
+ * @tc.number    : SUB_UTILS_KV_STORE_2600
+ * @tc.name      : Specification test when MaxCacheNum is 9
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize001, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize001, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -710,7 +632,7 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize001, LEVEL1)
     if (ret != true)
     {
         TEST_FAIL();
-    } 
+    }
     ret = DeleteKVFiles(MAX_CACHE_NUM_TEST-1, key);
     if (ret != true)
     {
@@ -719,14 +641,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize001, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1600 
- * @tc.name      : Specification test
+ * @tc.number    : SUB_UTILS_KV_STORE_2700
+ * @tc.name      : Specification test when MaxCacheNum is 10
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize002, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize002, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -741,7 +660,7 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize002, LEVEL1)
     if (ret != true)
     {
         TEST_FAIL();
-    } 
+    }
     ret = DeleteKVFiles(MAX_CACHE_NUM_TEST, key);
     if (ret != true)
     {
@@ -750,14 +669,11 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize002, LEVEL1)
 };
 
 /**
- * @tc.number    : SUB_UTILS_KV_STORE_1600 
- * @tc.name      : Specification test
+ * @tc.number    : SUB_UTILS_KV_STORE_2800
+ * @tc.name      : Specification test when MaxCacheNum is 11
  * @tc.desc      : [C- SOFTWARE -0200]
- * @tc.size      : MEDIUM
- * @tc.type      : FUNC
- * @tc.level     : Level 1
  */
-LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize003, LEVEL1)
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize003, Function | MediumTest | Level1)
 {
     char key[] = "rw.sys.version";
     char value[] = "It is never too old to learn";
@@ -772,8 +688,128 @@ LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreCacheSize003, LEVEL1)
     if (ret != true)
     {
         TEST_FAIL();
-    } 
+    }
     ret = DeleteKVFiles(MAX_CACHE_NUM_TEST+1, key);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+};
+
+/**
+ * @tc.number    : SUB_UTILS_KV_STORE_2900
+ * @tc.name      : Specification test when MaxKeyNum is 49
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreMaxSize001, Function | MediumTest | Level1)
+{
+    char key[] = "rw.sys.version";
+    char value[] = "It is never too old to learn";
+    bool ret = false;
+
+    ret = SetKVFiles(MAX_KEY_NUM_TEST-1, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = ReadKVFiles(MAX_KEY_NUM_TEST-1, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = DeleteKVFiles(MAX_KEY_NUM_TEST-1, key);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+};
+
+/**
+ * @tc.number    : SUB_UTILS_KV_STORE_3000
+ * @tc.name      : Specification test when MaxKeyNum is 50
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreMaxSize002, Function | MediumTest | Level1)
+{
+    char key[] = "rw.sys.version";
+    char value[] = "It is never too old to learn";
+    bool ret = false;
+
+    ret = SetKVFiles(MAX_KEY_NUM_TEST, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = ReadKVFiles(MAX_KEY_NUM_TEST, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = DeleteKVFiles(MAX_KEY_NUM_TEST, key);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+};
+
+/**
+ * @tc.number    : SUB_UTILS_KV_STORE_3100
+ * @tc.name      : Specification test when MaxKeyNum is 51
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreMaxSize003, Function | MediumTest | Level1)
+{
+    char key[] = "rw.sys.version";
+    char value[] = "It is never too old to learn";
+    bool ret = false;
+
+    ret = SetKVFiles(MAX_KEY_NUM_TEST+1, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = ReadKVFiles(MAX_KEY_NUM_TEST+1, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = DeleteKVFiles(MAX_KEY_NUM_TEST+1, key);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+};
+
+/**
+ * @tc.number    : SUB_UTILS_KV_STORE_3200
+ * @tc.name      : Specification test using InvalidKeyNum
+ * @tc.desc      : [C- SOFTWARE -0200]
+ */
+LITE_TEST_CASE(KvStoreFuncTestSuite, testKvStoreMaxSize004, Function | MediumTest | Level1)
+{
+    char key[] = "rw.sys.version";
+    char value[] = "It is never too old to learn";
+    char value1[] = "Two tigers Two tigers two tiger running so fast \
+running so fast one has no ears one has no tail How strange How strange";
+    bool ret = false;
+
+    ret = SetKVFiles(INVALID_KEY_NUM, key, value);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    // Update operation
+    ret = SetKVFiles(INVALID_KEY_NUM, key, value1);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = ReadKVFiles(INVALID_KEY_NUM, key, value1);
+    if (ret != true)
+    {
+        TEST_FAIL();
+    }
+    ret = DeleteKVFiles(INVALID_KEY_NUM, key);
     if (ret != true)
     {
         TEST_FAIL();

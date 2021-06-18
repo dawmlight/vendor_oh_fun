@@ -1,0 +1,23 @@
+{
+    "name": "@ohos/xts_xdevice",
+    "version": "1.1.1",
+    "publishAs": "code-segment",
+    "description": "开发自测试与XTS认证测试基础库",
+    "scripts": {
+        "install": "DEST_PATH=$DEP_BUNDLE_BASE/test/xdevice && mkdir -p $DEST_PATH && cp -r . $DEST_PATH"
+    },
+    "repository": "https://gitee.com/openharmony/test_xdevice",
+    "tags": [
+        "test"
+    ],
+    "ohos": {
+        "os": "1.1.0",
+        "kernel": "liteos_a,liteos_m",
+        "board": "hispark_taurus,hispark_aries,hispark_pegasus"
+    },
+    "license": "Apache V2",
+    "keywords": [
+        "test",
+        "xtsxdevice"
+    ]
+}

@@ -71,7 +71,7 @@ static inline void seekpseudodir(struct fs_dirent_s *idir, off_t offset)
   if (offset < idir->fd_position)
     {
       pos  = 0;
-      curr = idir->fd_root;
+      curr = idir->fd_root->i_child;
     }
   else
     {
@@ -153,10 +153,12 @@ static inline void seekmountptdir(struct fs_dirent_s *idir, off_t offset)
    * directory entries until we are at the desired position.
    */
 
+  idir->read_cnt = 1;
+
   while (pos < offset)
     {
       if (!inode->u.i_mops || !inode->u.i_mops->readdir ||
-           inode->u.i_mops->readdir(inode, idir) < 0)
+           inode->u.i_mops->readdir(inode, idir) <= 0)
         {
           /* We can't read the next entry and there is no way to return
            * an error indication.
@@ -171,7 +173,6 @@ static inline void seekmountptdir(struct fs_dirent_s *idir, off_t offset)
     }
 
   /* If we get here the directory position has been successfully set */
-
   idir->fd_position = pos;
 }
 #endif

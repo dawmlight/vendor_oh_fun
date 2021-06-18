@@ -7,7 +7,7 @@ include(GNUInstallDirs)
 
 set(PROJECT_VERSION_MAJOR 1)
 set(PROJECT_VERSION_MINOR 7)
-set(PROJECT_VERSION_PATCH 13)
+set(PROJECT_VERSION_PATCH 14)
 set(CJSON_VERSION_SO 1)
 set(CJSON_UTILS_VERSION_SO 1)
 set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
@@ -68,7 +68,6 @@ if (ENABLE_SANITIZERS)
         -fno-omit-frame-pointer
         -fsanitize=address
         -fsanitize=undefined
-        -fsanitize=float-divide-by-zero
         -fsanitize=float-cast-overflow
         -fsanitize-address-use-after-scope
         -fsanitize=integer
@@ -223,10 +222,12 @@ configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/library_config/cJSONConfigVersion.cmake.in"
     ${PROJECT_BINARY_DIR}/cJSONConfigVersion.cmake @ONLY)
 
-# Install package config files
-install(FILES ${PROJECT_BINARY_DIR}/cJSONConfig.cmake
-    ${PROJECT_BINARY_DIR}/cJSONConfigVersion.cmake
-    DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/cJSON")
+if(ENABLE_TARGET_EXPORT)
+    # Install package config files
+    install(FILES ${PROJECT_BINARY_DIR}/cJSONConfig.cmake
+        ${PROJECT_BINARY_DIR}/cJSONConfigVersion.cmake
+        DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/cmake/cJSON")
+endif()
 
 option(ENABLE_CJSON_TEST "Enable building cJSON test" ON)
 if(ENABLE_CJSON_TEST)

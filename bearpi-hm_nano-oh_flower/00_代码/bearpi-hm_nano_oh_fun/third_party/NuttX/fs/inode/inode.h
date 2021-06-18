@@ -355,6 +355,9 @@ bool IsInRootfs(const char *relpath);
  ****************************************************************************/
 
 int inode_reserve(FAR const char *path, FAR struct inode **inode);
+#ifdef LOSCFG_FS_ZPFS
+int inode_reserve_rootdir(FAR const char *path, FAR struct inode **inode, bool force);
+#endif
 
 /****************************************************************************
  * Name: inode_unlink

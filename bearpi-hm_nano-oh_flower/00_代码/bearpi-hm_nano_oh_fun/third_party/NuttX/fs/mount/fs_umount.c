@@ -49,6 +49,9 @@
 #include "string.h"
 #include "disk.h"
 
+#ifdef LOSCFG_FS_ZPFS
+#include "vfs_zpfs.h"
+#endif
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
@@ -101,6 +104,11 @@ int umount(const char *target)
   const char *relpath = NULL;
   struct inode_search_s desc;
   int ret;
+#ifdef LOSCFG_FS_ZPFS
+  bool isZpfs = false;
+  struct inode zpfsInode;
+#endif
+
   /* Verify required pointer arguments */
 
   if (target == NULL)
@@ -159,6 +167,17 @@ int umount(const char *target)
     }
 
   inode_semtake(); /* Hold the semaphore through the unbind logic */
+
+#ifdef LOSCFG_FS_ZPFS
+  if (IsZpfsFileSystem(mountpt_inode))
+    {
+      isZpfs = true;
+      zpfsInode.i_private = mountpt_inode->i_private;
+      zpfsInode.u.i_ops = mountpt_inode->u.i_ops;
+      zpfsInode.i_flags = mountpt_inode->i_flags;
+    }
+#endif
+
   if (mountpt_inode->i_crefs == 1)
     {
       status = mountpt_inode->u.i_mops->unbind(mountpt_inode->i_private, &blkdrvr_inode);
@@ -206,6 +225,13 @@ int umount(const char *target)
     {
       inode_release(blkdrvr_inode);
     }
+
+#ifdef LOSCFG_FS_ZPFS
+  if (isZpfs)
+    {
+      ZpfsCleanUp((void*)&zpfsInode, fullpath);
+    }
+#endif
 
   free(fullpath);
   return OK;

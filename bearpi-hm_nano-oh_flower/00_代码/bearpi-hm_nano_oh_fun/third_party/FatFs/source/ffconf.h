@@ -5,8 +5,12 @@
 /  FatFs Functional Configurations
 /---------------------------------------------------------------------------*/
 
+#ifndef __LITEOS_M__
 #include "los_mux.h"
 #include "los_config.h"
+#else
+#include "fs_config.h"
+#endif
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -57,17 +61,28 @@ extern "C" {
 #define FF_USE_FASTSEEK	0
 /* This option switches fast seek function. (0:Disable or 1:Enable) */
 
-
+#ifndef __LITEOS_M__
 #define FF_USE_EXPAND	1
+#else
+#define FF_USE_EXPAND	0
+#endif
 /* This option switches f_expand function. (0:Disable or 1:Enable) */
 
 
+#ifndef __LITEOS_M__
 #define FF_USE_CHMOD	1
+#else
+#define FF_USE_CHMOD	0
+#endif
 /* This option switches attribute manipulation functions, f_chmod() and f_utime().
 /  (0:Disable or 1:Enable) Also FF_FS_READONLY needs to be 0 to enable this option. */
 
 
+#ifndef __LITEOS_M__
 #define FF_USE_LABEL	1
+#else
+#define FF_USE_LABEL	0
+#endif
 /* This option switches volume label functions, f_getlabel() and f_setlabel().
 /  (0:Disable or 1:Enable) */
 
@@ -113,6 +128,7 @@ extern "C" {
 /     0 - Include all code pages above and configured by f_setcp()
 */
 
+#ifndef __LITEOS_M__
 #define MMC0_DEVNAME	"mmcblk0"
 #define MMC1_DEVNAME	"mmcblk1"
 #define USB_DEVNAME		"sda"
@@ -121,6 +137,7 @@ enum STORAGE {
 	MMC0,
 	MMC1,
 };
+#endif
 
 #define FF_USE_LFN		2
 #define FF_MAX_LFN		255
@@ -139,8 +156,11 @@ enum STORAGE {
 /  memory for the working buffer, memory management functions, ff_memalloc() and
 /  ff_memfree(), must be added to the project. */
 
-
+#ifndef __LITEOS_M__
 #define FF_LFN_UNICODE	0
+#else
+#define FF_LFN_UNICODE	2
+#endif
 /* This option switches the character encoding on the API when LFN is enabled.
 /
 /   0: ANSI/OEM in current CP (TCHAR = char)
@@ -172,8 +192,11 @@ enum STORAGE {
 /   3: Unicode in UTF-8
 */
 
-
+#ifndef __LITEOS_M__
 #define FF_FS_RPATH		0
+#else
+#define FF_FS_RPATH		1
+#endif
 /* This option configures support for relative path.
 /
 /   0: Disable relative path and remove related functions.
@@ -186,7 +209,11 @@ enum STORAGE {
 / Drive/Volume Configurations
 /---------------------------------------------------------------------------*/
 
+#ifndef __LITEOS_M__
 #define FF_VOLUMES	LOSCFG_FS_FAT_VOLUMES
+#else
+#define FF_VOLUMES	4
+#endif
 /* Number of volumes (logical drives) to be used. (1-10) */
 
 #ifdef LOSCFG_FS_FAT_VIRTUAL_PARTITION
@@ -195,8 +222,12 @@ enum STORAGE {
 #define _FLOAT_ACC				0.00000001
 #endif
 
+#ifndef __LITEOS_M__
 #define FF_STR_VOLUME_ID	0
 #define FF_VOLUME_STRS		"RAM","NAND","CF","SD","SD2","USB","USB2","USB3"
+#else
+#define FF_STR_VOLUME_ID	2
+#endif
 /* FF_STR_VOLUME_ID switches support for volume ID in arbitrary strings.
 /  When FF_STR_VOLUME_ID is set to 1 or 2, arbitrary strings can be used as drive
 /  number in the path name. FF_VOLUME_STRS defines the volume ID strings for each
@@ -219,7 +250,11 @@ enum STORAGE {
 
 
 #define	FF_MIN_SS		512
+#ifndef __LITEOS_M__
 #define FF_MAX_SS		4096
+#else
+#define FF_MAX_SS		FS_MAX_SS
+#endif
 /* This set of options configures the range of sector size to be supported. (512,
 /  1024, 2048 or 4096) Always set both 512 for most systems, generic memory card and
 /  harddisk. But a larger value may be required for on-board flash memory and some
@@ -228,7 +263,11 @@ enum STORAGE {
 /  GET_SECTOR_SIZE command. */
 
 
+#ifndef __LITEOS_M__
 #define FF_USE_TRIM		0
+#else
+#define FF_USE_TRIM		1
+#endif
 /* This option switches support for ATA-TRIM. (0:Disable or 1:Enable)
 /  To enable Trim function, also CTRL_TRIM command should be implemented to the
 /  disk_ioctl() function. */
@@ -271,8 +310,11 @@ enum STORAGE {
 /  FF_NORTC_MDAY and FF_NORTC_YEAR have no effect.
 /  These options have no effect at read-only configuration (FF_FS_READONLY = 1). */
 
-
+#ifndef __LITEOS_M__
 #define FF_FS_LOCK	CONFIG_NFILE_DESCRIPTORS
+#else
+#define FF_FS_LOCK	64
+#endif
 /* The option FF_FS_LOCK switches file lock function to control duplicated file open
 /  and illegal operation to open objects. This option must be 0 when FF_FS_READONLY
 /  is 1.
@@ -284,9 +326,15 @@ enum STORAGE {
 /      lock control is independent of re-entrancy. */
 
 
+#ifndef __LITEOS_M__
 #define FF_FS_REENTRANT	1
-#define FF_FS_TIMEOUT	6000
+#define FF_FS_TIMEOUT	(60 * LOSCFG_BASE_CORE_TICK_PER_SECOND)
 #define FF_SYNC_t		LosMux
+#else
+#define FF_FS_REENTRANT	0
+#define FF_FS_TIMEOUT	1000
+#define FF_SYNC_t		HANDLE
+#endif
 /* The option FF_FS_REENTRANT switches the re-entrancy (thread safe) of the FatFs
 /  module itself. Note that regardless of this option, file access to different
 /  volume is always re-entrant and volume control functions, f_mount(), f_mkfs()
