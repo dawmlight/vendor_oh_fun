@@ -11,13 +11,13 @@
 - 最近总是下雨，还要不要给养的花花浇水了？
 - 今天又要加班了，又不能给我的肉肉及时浇水了。 
 
-&emsp;&emsp;别焦虑！OpenHarmony+小熊派BearPi-HM Nano开发板放大招啦！动动手指，一键解决浇水问题！
+&emsp;&emsp;别焦虑！HarmonyOS+小熊派BearPi-HM Nano开发板放大招啦！动动手指，一键解决浇水问题！
 
 &emsp;&emsp;<img src="./figures/植物.jpg" width = "650"  alt="下载代码" align=center />
 
 
 
-&emsp;&emsp;搭载OpenHarmony的小熊派BearPi-HM Nano主板，加上一块传感器扩展板，利用湿度监测探头和水泵，解决你的一切烦恼。将开发板上的传感器插入土壤，传感器实时监测土壤中的湿度信息并在手机界面中显示。所以，我们可以通过观察手机界面中显示的湿度信息，决定要不要给花花草草浇水。当我们发现土壤中的湿度较低时，可通过手机远程控制水泵工作，轻松实现远程浇花！手机远程控制，在外也可控制家里的浇灌系统，别有一番“指点江山，掌控全场”的体验感。
+&emsp;&emsp;搭载HarmonyOS的小熊派BearPi-HM Nano主板，加上一块传感器扩展板，利用湿度监测探头和水泵，解决你的一切烦恼。将开发板上的传感器插入土壤，传感器实时监测土壤中的湿度信息并在手机界面中显示。所以，我们可以通过观察手机界面中显示的湿度信息，决定要不要给花花草草浇水。当我们发现土壤中的湿度较低时，可通过手机远程控制水泵工作，轻松实现远程浇花！手机远程控制，在外也可控制家里的浇灌系统，别有一番“指点江山，掌控全场”的体验感。
  
  &emsp;&emsp;<img src="./figures/浇水.gif" width = "650"  alt="下载代码" align=center />
 
@@ -36,12 +36,12 @@ BearPi-HM_Nano开发板学习仓库：
 https://gitee.com/bearpi/bearpi-hm_nano
 
 # 互动有礼
-&emsp;&emsp;欢迎小伙伴尝试OpenHarmony+小熊派HM Nano开发板_护花使者_v0.1项目！我们征集以下OpenHarmony+小熊派HM Nano开发板落地实践：
+&emsp;&emsp;欢迎小伙伴尝试HarmonyOS+小熊派HM Nano开发板_护花使者_v0.1项目！我们征集以下HarmonyOS+小熊派HM Nano开发板落地实践：
 
 1.  基于本项目的植物浇水、宠物喂食等落地实践，请具体描述出设备品牌、型号、改造过程，并提供相关的改造文字、图片、视频等；
 
 2. 基于本项目的开发板美化实践，如3D打印、手工制作外壳等美化方案；
-3. 基于OpenHarmony项目好玩的创意。
+3. 基于HarmonyOS项目好玩的创意。
 
 &emsp;&emsp;在2021年06月18日00:00:00 -2021年07月18日23:59:59期间，将你的“护花使者”项目的体验或者有关OpenHarmony的创意实践或idea提PR到Gitee仓库：
 https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_flower
@@ -69,7 +69,7 @@ https://gitee.com/openharmony-sig/vendor_oh_fun/tree/master/bearpi-hm_nano-oh_fl
  &emsp;&emsp;如您参与活动并中奖，为了完成奖品发放，我们需要收集您的姓名、Gitee昵称、邮件地址、联系地址、联系电话等信息。实物奖品的寄送服务由第三方物流公司提供，为此我们会将您的上述信息向其进行共享。如您参与活动即表示您同意以上声明。
 
 # 技术交流
- &emsp;&emsp;已开设交流群，请扫描下方二维码或搜索小助手微信号：BearPi_Helper 添加小助手，让小助手拉您进群与开发者们进行技术讨论，还可以与工程师在线交流哦！
+ &emsp;&emsp;已开设交流群，请扫描下方二维码或搜索小助手微信号：BearPi_Helper 添加小助手并回复“护花使者”，让小助手拉您进群与开发者们进行技术讨论，还可以与工程师在线交流哦！
 
  &emsp;&emsp;![](./figures/小助手二维码.jpg)
  
