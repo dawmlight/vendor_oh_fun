@@ -145,26 +145,49 @@
 
 ## 七、编译代码
 
-1. 在MobaXterm中输入
+1. MobaXterm中运行如下命令安装hb
+
+
+    ```
+    python3 -m pip install --user ohos-build
+    ```
+
+2. 设置环境变量
+
+    ```
+    vim ~/.bashrc
+    ```
+3. 将以下命令拷贝到.bashrc文件的最后一行，保存并退出。
+
+    ```
+    export PATH=~/.local/bin:$PATH
+    ```
+4. 执行如下命令更新环境变量。
+
+    ```
+    source ~/.bashrc
+    ```
+
+5. 在MobaXterm中输入
 
     ```
     cd vendor_oh_fun/bearpi-hm_nano-oh_flower/00_代码/bearpi-hm_nano_oh_fun
     ```
     然后回车，进入源码目录
-2. 在MobaXterm中输入：
+6. 在MobaXterm中输入：
     ```
     hb set
     .
      ```
     选择bearpi_hm_nano@bearp，然后回车
 
-3. 在MobaXterm中输入：
+7. 在MobaXterm中输入：
     ```
     hb build -f
     ```
     然后回车，等待直到屏幕出现：`BUILD SUCCESS`字样，说明编译成功。
 
-4. 查看编译出的固件位置
+8. 查看编译出的固件位置
 
     当编译完后，在Windows中可以直接查看到最终编译的固件，具体路径在：
 
