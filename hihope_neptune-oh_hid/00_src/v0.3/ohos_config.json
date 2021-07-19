@@ -1,0 +1,8 @@
+{
+  "root_path": "/home/test/neptune-harmony-os1.1-iot",
+  "board": "neptune",
+  "kernel": "liteos_m",
+  "product": "wifiiot_neptune",
+  "product_path": "/home/test/neptune-harmony-os1.1-iot/vendor/winnermicro/neptune",
+  "device_path": "/home/test/neptune-harmony-os1.1-iot/device/winnermicro/neptune/sdk_liteos"
+}
