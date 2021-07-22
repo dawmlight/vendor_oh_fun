@@ -278,3 +278,21 @@ static int WaitConnectResult(void)
 
     return 1;
 }
+
+#include "iot_hardware_api.h"
+// the wifi part
+int Board_InitWifi(void)
+{
+    return 0;
+} 
+extern int WifiConnect(const char *ssid, const char *pwd);
+int Board_ConnectWifi(const char *wifiSSID, const char *wifiPWD)
+{
+    return WifiConnect(wifiSSID, wifiPWD);
+}
+
+int Board_DisConnectWifi()
+{
+    Disconnect();
+    return 0;
+}
