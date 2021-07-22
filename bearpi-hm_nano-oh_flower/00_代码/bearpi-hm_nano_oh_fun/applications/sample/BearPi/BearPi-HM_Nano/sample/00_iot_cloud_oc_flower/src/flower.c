@@ -203,6 +203,7 @@ void Flower_Read_Data(Flower_Data_TypeDef *ReadData)
     {
         dat = ((uint16_t)data[0] << 8) | data[1];
         ReadData->Temperature = SHT3x_CalcTemperatureC(dat);
+        printf("temperature:read success\r\n");
     }
 
     data[0] = SHT3X_Data_Buffer[3];
@@ -214,7 +215,9 @@ void Flower_Read_Data(Flower_Data_TypeDef *ReadData)
     {
         dat = ((uint16_t)data[0] << 8) | data[1];
         ReadData->Humidity = SHT3x_CalcRH(dat);
+        printf("humidity:read success\r\n");
     }
+
 }
 
 
@@ -237,4 +240,130 @@ void Motor_StatusSet(Flower_Status_ENUM status)
 
         //设置GPIO_14输出低电平关闭电机
         IoTGpioSetOutputVal(14, 1);
+}
+
+#include "iot_hardware_api.h"
+
+
+// the led part
+int Board_InitLed(void)
+{
+    //设置GPIO_2的复用功能为普通GPIO
+    IoTGpioSetFunc(2, IOT_GPIO_FUNC_GPIO_2_GPIO);
+    //设置GPIO_2为输出模式
+    IoTGpioSetDir(2, IOT_GPIO_DIR_OUT);
+
+    return 0;
+}
+
+int Board_SetLedStatus(int status)
+{
+    if (status) {
+        IoTGpioSetOutputVal(2, 1);
+    } else {
+        IoTGpioSetOutputVal(2, 0);
+    }
+    return 0;
+}
+
+// the motor part
+int Board_InitMotor(void)
+{
+    //设置GPIO_14的复用功能为普通GPIO
+    IoTGpioSetFunc(14, IOT_GPIO_FUNC_GPIO_14_GPIO);
+    //设置GPIO_14为输出模式
+    IoTGpioSetDir(14, IOT_GPIO_DIR_OUT);
+    IoTGpioSetOutputVal(14, 1);
+    return 0;
+}
+
+int Board_SetMotorStatus(int status)
+{
+    if (status) {
+        IoTGpioSetOutputVal(14, 0);
+    } else {
+        IoTGpioSetOutputVal(14, 1);
+    }
+    return 0;
+}
+
+// air sensor part
+int Board_InitAirSensor(void)
+{
+        //GPIO_0复用为I2C1_SDA
+    IoTGpioSetFunc(0, IOT_GPIO_FUNC_GPIO_0_I2C1_SDA);
+
+    //GPIO_1复用为I2C1_SCL
+    IoTGpioSetFunc(1, IOT_GPIO_FUNC_GPIO_1_I2C1_SCL);
+
+    //baudrate: 400kbps
+    IoTI2cInit(WIFI_IOT_I2C_IDX_1, 400000);
+
+    Init_SHT30();
+
+    return 0;
+}
+
+int Board_GetAirStatus(int *temperature, int *humidity)
+{
+    int ret = -1;
+    uint8_t data[3];
+    uint16_t dat, tmp;
+    uint8_t SHT3X_Data_Buffer[6];
+
+    IotI2cData sht30_i2c_data = {0};
+    uint8_t send_data[2] = {0xE0, 0x00};
+
+    if ((temperature == NULL) || (humidity == NULL)) {
+        return ret;
+    }
+
+    sht30_i2c_data.sendBuf = send_data;
+    sht30_i2c_data.sendLen = 2;
+    sht30_i2c_data.receiveBuf = SHT3X_Data_Buffer;
+    sht30_i2c_data.receiveLen = 6;
+    IoTI2cWriteread(WIFI_IOT_I2C_IDX_1, (SHT30_Addr << 1) | 0x00, &sht30_i2c_data);
+
+    data[0] = SHT3X_Data_Buffer[0];
+    data[1] = SHT3X_Data_Buffer[1];
+    data[2] = SHT3X_Data_Buffer[2];
+
+    tmp = SHT3x_CheckCrc(data, 2, data[2]);
+    if (!tmp) {
+        dat = ((uint16_t)data[0] << 8) | data[1];
+        *temperature = SHT3x_CalcTemperatureC(dat);
+    }
+
+    data[0] = SHT3X_Data_Buffer[3];
+    data[1] = SHT3X_Data_Buffer[4];
+    data[2] = SHT3X_Data_Buffer[5];
+
+    tmp = SHT3x_CheckCrc(data, 2, data[2]);
+    if (!tmp) {
+        dat = ((uint16_t)data[0] << 8) | data[1];
+        *humidity = SHT3x_CalcRH(dat);
+        ret = 0;
+    }
+
+    return ret;
+}
+
+// soil sensor part
+int Board_InitSoilSensor(void)
+{
+    return 0;
+}
+
+int Board_GetSoilStatus(int *moisture)
+{
+    int ret = -1;
+    unsigned short adc;
+
+    ret = IoTAdcRead(IOT_ADC_CHANNEL_6, &adc, IOT_ADC_EQU_MODEL_8, IOT_ADC_CUR_BAIS_DEFAULT, 0xff);
+    if (ret == IOT_SUCCESS) {
+        *moisture = (int)((float)adc/1500*100);
+        ret = 0;
+    }
+
+    return ret;
 }

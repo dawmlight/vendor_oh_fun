@@ -65,3 +65,30 @@ uint8_t nfc_get_devived_data(void)
     }
     return 0;
 }
+
+
+#include "iot_hardware_api.h"
+
+int Board_InitNfc(void)
+{
+    return 0;
+}
+
+int Board_GetNfcInfo(NfcInfo *info)
+{
+    int ret = -1;
+    if (info == NULL) {
+        return ret;
+    }
+
+    if (nfc_get_devived_data() == 0){
+        info->deviceID = (const char *)deviceid;
+        info->devicePWD = (const char *)devicepwd;
+        info->wifiSSID = (const char *)wifissid;
+        info->wifiPWD = (const char *)wifipwd;
+        ret = 0;
+    }
+    return ret;
+}
+
+
