@@ -25,6 +25,7 @@ typedef struct
     int smo;
     int temp;
     int hum;
+    int motor;
 } report_t;
 
 typedef struct

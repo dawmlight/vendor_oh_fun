@@ -13,7 +13,10 @@
 
 static_library("cloud_oc_flower") {
     sources = [
-        "iot_cloud_sample.c",
+        # "iot_cloud_sample.c",
+        "main/iot_main.c",
+        "src/iot_cloud_api.c",
+        "src/iot_hardware_api.c",
         "src/wifi_connect.c",
         "src/flower.c",
         "src/huawei_iot.c",        
@@ -42,7 +45,8 @@ static_library("cloud_oc_flower") {
         "include",
         "nfc/ndef",
         "nfc/ndef/rtd/",
-        "nfc"
+        "nfc",
+        "main"
     ]
 
     deps = [ 
