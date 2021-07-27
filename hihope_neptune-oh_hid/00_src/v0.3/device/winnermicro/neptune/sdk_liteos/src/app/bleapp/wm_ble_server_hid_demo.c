@@ -1772,14 +1772,16 @@ hid_advertise(ble_addr_t *direct_addr)
 
     /*Device Name*/
 	uint8_t bt_mac[6];
-    uint8_t adv_rsp_data[31] = {30,0x09, 0x00};
+    uint8_t adv_rsp_data[31] = {30, 0x09, 0x00};
     extern int tls_get_bt_mac_addr(uint8_t *mac);
     
     tls_get_bt_mac_addr(bt_mac);
     rc = sprintf(adv_rsp_data+2,"openHarmony_Keyboard-%02X:%02X:%02X",bt_mac[3], bt_mac[4], bt_mac[5]);
     
     rc = tls_ble_gap_set_data(WM_BLE_ADV_RSP_DATA, adv_rsp_data, 31);
-    
+
+    tls_ble_gap_set_name(adv_rsp_data, 0);
+
 #if HID_BT_SLEEP_MODE_SWITCHING 
     TLS_BT_APPL_TRACE_API("disable controller sleep mode...\r\n");
     tls_bt_ctrl_sleep(false);
