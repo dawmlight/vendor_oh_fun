@@ -38,28 +38,6 @@
             waterFlowerHintText.setText(showCloseText);
             waterFlowerHintText.setTextColor(ColorResources.COlOR_Btn_Open);
             waterFlowerStatue = true;
-        } else {
-            LinkedHashMap<String, Object> motorControlParas = new LinkedHashMap<>();
-            motorControlParas.put("Motor", "OFF");
-            chosenCommandType = stopeReta;
-            // FA设备连接华为云
-            sdkIoTDAClient.CreateCommand(device[0], "AutoWater", "AutoWater_Control_Pump", 
-                    motorControlParas, new SDKCallBack<CreateCommandResponse>() {
-                @Override
-                public void onResponse(CreateCommandResponse response) {
-
-                }
-
-                @Override
-                public void onFailure(int code, String errmsg) {
-                    Utils.gotoLogin(code, abilitySlice);
-                }
-            });
-
-            commandLightImgBtn.setPixelMap(ResourceTable.Media_btn_off);
-            waterFlowerHintText.setText(showOpenText);
-            waterFlowerHintText.setTextColor(ColorResources.COlOR_Btn_Close);
-            waterFlowerStatue = false;
         }
     });
 
