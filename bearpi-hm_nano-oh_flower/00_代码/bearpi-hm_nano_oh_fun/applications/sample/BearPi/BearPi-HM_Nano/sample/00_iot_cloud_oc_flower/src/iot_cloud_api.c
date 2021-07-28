@@ -31,7 +31,7 @@
 #define CONFIG_APP_LIFETIME       60     ///< seconds
 #define CONFIG_QUEUE_TIMEOUT      (5*1000)
 static app_cb_t  g_app_cb;
-static Cloud_CommandCallBack  g_RcvCmdCallBack = NULL;
+static CLOUD_CommandCallBack  g_RcvCmdCallBack = NULL;
 static osThreadId_t g_appCloudMainTaskId;
 
 /**
@@ -212,7 +212,7 @@ static int CloudMainTaskEntry(void *arg)
 }
 
 
-int Cloud_Init(void)
+int CLOUD_Init(void)
 {
     int ret = -1;
     /* create a queue to buffer the data */
@@ -240,7 +240,7 @@ int Cloud_Init(void)
     return ret;
 }
 
-int Cloud_DeInit(void)
+int CLOUD_Deinit(void)
 {
     int ret = -1;
     osThreadTerminate(g_appCloudMainTaskId);
@@ -250,9 +250,9 @@ int Cloud_DeInit(void)
     return ret;
 }
 
-int Cloud_Connect(const char *deviceID, const char *devicePwd, \
+int CLOUD_Connect(const char *deviceID, const char *devicePwd, \
 				  const char *serverIP, const char *serverPort, \
-				  Cloud_CommandCallBack cmdCallBack)
+				  CLOUD_CommandCallBack cmdCallBack)
 {
     int ret;
     oc_mqtt_profile_connect_t  connect_para;
@@ -279,7 +279,7 @@ int Cloud_Connect(const char *deviceID, const char *devicePwd, \
     return ret;      
 }
 
-int Cloud_DisConnect(void)
+int CLOUD_Disconnect(void)
 {
     int ret;
     ret = oc_mqtt_profile_disconnect();
@@ -290,7 +290,7 @@ int Cloud_DisConnect(void)
     }
 }
 
-int Cloud_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, int *motorStatus)
+int CLOUD_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, int *motorStatus)
 {
     int ret = -1;
     static int curMotorStatus = 0;

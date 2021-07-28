@@ -69,12 +69,12 @@ uint8_t nfc_get_devived_data(void)
 
 #include "iot_hardware_api.h"
 
-int Board_InitNfc(void)
+int BOARD_InitNfc(void)
 {
     return 0;
 }
 
-int Board_GetNfcInfo(NfcInfo *info)
+int BOARD_GetNfcInfo(NfcInfo *info)
 {
     int ret = -1;
     if (info == NULL) {

@@ -246,7 +246,7 @@ void Motor_StatusSet(Flower_Status_ENUM status)
 
 
 // the led part
-int Board_InitLed(void)
+int BOARD_InitLed(void)
 {
     //设置GPIO_2的复用功能为普通GPIO
     IoTGpioSetFunc(2, IOT_GPIO_FUNC_GPIO_2_GPIO);
@@ -256,7 +256,7 @@ int Board_InitLed(void)
     return 0;
 }
 
-int Board_SetLedStatus(int status)
+int BOARD_SetLedStatus(int status)
 {
     if (status) {
         IoTGpioSetOutputVal(2, 1);
@@ -267,7 +267,7 @@ int Board_SetLedStatus(int status)
 }
 
 // the motor part
-int Board_InitMotor(void)
+int BOARD_InitMotor(void)
 {
     //设置GPIO_14的复用功能为普通GPIO
     IoTGpioSetFunc(14, IOT_GPIO_FUNC_GPIO_14_GPIO);
@@ -277,7 +277,7 @@ int Board_InitMotor(void)
     return 0;
 }
 
-int Board_SetMotorStatus(int status)
+int BOARD_SetMotorStatus(int status)
 {
     if (status) {
         IoTGpioSetOutputVal(14, 0);
@@ -288,7 +288,7 @@ int Board_SetMotorStatus(int status)
 }
 
 // air sensor part
-int Board_InitAirSensor(void)
+int BOARD_InitAirSensor(void)
 {
         //GPIO_0复用为I2C1_SDA
     IoTGpioSetFunc(0, IOT_GPIO_FUNC_GPIO_0_I2C1_SDA);
@@ -304,7 +304,7 @@ int Board_InitAirSensor(void)
     return 0;
 }
 
-int Board_GetAirStatus(int *temperature, int *humidity)
+int BOARD_GetAirStatus(int *temperature, int *humidity)
 {
     int ret = -1;
     uint8_t data[3];
@@ -349,12 +349,12 @@ int Board_GetAirStatus(int *temperature, int *humidity)
 }
 
 // soil sensor part
-int Board_InitSoilSensor(void)
+int BOARD_InitSoilSensor(void)
 {
     return 0;
 }
 
-int Board_GetSoilStatus(int *moisture)
+int BOARD_GetSoilStatus(int *moisture)
 {
     int ret = -1;
     unsigned short adc;
