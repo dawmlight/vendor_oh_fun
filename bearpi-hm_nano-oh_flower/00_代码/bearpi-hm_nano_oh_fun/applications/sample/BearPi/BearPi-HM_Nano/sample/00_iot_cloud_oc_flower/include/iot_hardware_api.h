@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __BOARD_HARDWARE_H__
-#define __BOARD_HARDWARE_H__
+#ifndef __IOT_HARDWARE_API_H__
+#define __IOT_HARDWARE_API_H__
 
 #define CN_BOARD_SWITCH_ON    1
 #define CN_BOARD_SWITCH_OFF   0
@@ -118,5 +118,5 @@ int BOARD_InitLed(void);
 */
 int BOARD_SetLedStatus(int status);
 
-#endif /* __BOARD_HARDWARE_H__ */
+#endif /* __IOT_HARDWARE_API_H__ */
 

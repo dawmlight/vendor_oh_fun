@@ -191,6 +191,7 @@ static void MotorMonitorTimerCallBack(const void *arg)
 static void IotMainTaskEntry(const void *arg)
 {
     osThreadAttr_t attr;
+    NfcInfo nfcInfo;
     (void)arg;
 
     // initialize the hardware,read info from NFC,and create the software resource
@@ -200,7 +201,6 @@ static void IotMainTaskEntry(const void *arg)
     BOARD_InitAirSensor();
     BOARD_InitSoilSensor();
     BOARD_InitWifi();
-    NfcInfo nfcInfo;
     if (BOARD_GetNfcInfo(&nfcInfo) != 0) {
         return;
     }
