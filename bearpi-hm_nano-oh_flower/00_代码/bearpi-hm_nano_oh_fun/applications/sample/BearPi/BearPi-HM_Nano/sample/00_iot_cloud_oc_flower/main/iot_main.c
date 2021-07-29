@@ -70,12 +70,12 @@ static void SetMainStatus(IoTMainStatus newStatus)
 /**
  * @brief this is the LED FLASH task entry
  */
-static void LedTaskEntry(void *arg)
+static void LedTaskEntry(const void *arg)
 {
     uint32_t baseTicks;
     uint64_t delayTicks;
 
-    (void *)arg;
+    (void)arg;
     BOARD_InitLed();
     baseTicks = Time2Tick(CONFIG_LED_FLASH_BASECYCLE) / CN_LED_FLASH_STATUSNUM;
     while (1) {
@@ -111,7 +111,7 @@ static void LedTaskEntry(void *arg)
  *        2, sample the humidity/temperature/soil moisture
  *        3, report the board info to the cloud
  */
-static void SensorTaskEntry(void *arg)
+static void SensorTaskEntry(const void *arg)
 {
     int temperature, humidity, moisture, motorStatus;
     int *temperatureBuf = NULL;
@@ -119,7 +119,7 @@ static void SensorTaskEntry(void *arg)
     int *moistureBuf = NULL;
     int *motorStatusBuf = NULL;
     uint32_t sensorEvent;
-    (void *)arg;
+    (void)arg;
 
     while (1) {
         temperatureBuf = NULL;
@@ -172,9 +172,9 @@ static int CommandCallBack(int command, int value)
  * @brief This is the motor monitor timer callback
  *        When called, we must stop the motor, and trigger the task to report the status
  */
-static void MotorMonitorTimerCallBack(void *arg)
+static void MotorMonitorTimerCallBack(const void *arg)
 {
-    (void *)arg;
+    (void)arg;
     osTimerStop (g_motorMonitorTimer);
     BOARD_SetMotorStatus(CN_BOARD_SWITCH_OFF);
     osEventFlagsSet(g_sensorTaskEvent, CN_SENSOREVENT_MOTORSTOP);
@@ -188,10 +188,10 @@ static void MotorMonitorTimerCallBack(void *arg)
  *        3, connect the iot platform
  *        4, create the sensor task
  */
-static void IotMainTaskEntry(void *arg)
+static void IotMainTaskEntry(const void *arg)
 {
     osThreadAttr_t attr;
-    (void *)arg;
+    (void)arg;
 
     // initialize the hardware,read info from NFC,and create the software resource
     SetMainStatus(IOTMAIN_STATUS_HARDINIT);
@@ -229,7 +229,7 @@ static void IotMainTaskEntry(void *arg)
     attr.stack_size = CONFIG_TASK_DEFAULT_STACKSIZE;
     attr.priority = CONFIG_TASK_DEFAULT_PRIOR;
     attr.name = "SensorSample";
-    if (osThreadNew(SensorTaskEntry, NULL, (const osThreadAttr_t *)&attr) == NULL) {
+    if (osThreadNew((osThreadFunc_t)SensorTaskEntry, NULL, (const osThreadAttr_t *)&attr) == NULL) {
         return;
     }
 
@@ -245,7 +245,7 @@ static void IotMainEntry(void)
     osThreadAttr_t attr;
 
     // create the motor monitor timer and sync event.
-    g_motorMonitorTimer = osTimerNew(MotorMonitorTimerCallBack, osTimerPeriodic, NULL, NULL);
+    g_motorMonitorTimer = osTimerNew((osTimerFunc_t)MotorMonitorTimerCallBack, osTimerPeriodic, NULL, NULL);
     if (g_motorMonitorTimer == NULL) {
         return;
     }
@@ -262,12 +262,12 @@ static void IotMainEntry(void)
     attr.stack_size = CONFIG_TASK_MAIN_STACKSIZE;
     attr.priority = CONFIG_TASK_MAIN_PRIOR;
     attr.name = "IoTMain";
-    (void) osThreadNew(IotMainTaskEntry, NULL, (const osThreadAttr_t *)&attr);
+    (void) osThreadNew((osThreadFunc_t)IotMainTaskEntry, NULL, (const osThreadAttr_t *)&attr);
 
     attr.stack_size = CONFIG_TASK_DEFAULT_STACKSIZE;
     attr.priority = CONFIG_TASK_DEFAULT_PRIOR;
     attr.name = "LedFlash";
-    (void) osThreadNew(LedTaskEntry, NULL, (const osThreadAttr_t *)&attr);
+    (void) osThreadNew((osThreadFunc_t)LedTaskEntry, NULL, (const osThreadAttr_t *)&attr);
 
     return;
 }
