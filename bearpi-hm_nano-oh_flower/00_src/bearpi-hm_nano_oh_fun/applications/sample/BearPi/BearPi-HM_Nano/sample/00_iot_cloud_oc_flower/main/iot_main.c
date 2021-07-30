@@ -46,14 +46,14 @@ typedef enum {
     IOTMAIN_STATUS_CONNECTCLOUD,
     IOTMAIN_STATUS_LOOPSAMPLE,
 }IoTMainStatus;
-static IoTMainStatus g_iotMainStatus = IOTMAIN_STATUS_HARDINIT;  // represent the main flow status
-static osTimerId_t g_motorMonitorTimer;                          // soft timer to monitor the motor status
-static osEventFlagsId_t g_sensorTaskEvent;                       // the Sample task trigger event
+static IoTMainStatus g_iotMainStatus = IOTMAIN_STATUS_HARDINIT;  // Represent the main flow status
+static osTimerId_t g_motorMonitorTimer;                          // Soft timer to monitor the motor status
+static osEventFlagsId_t g_sensorTaskEvent;                       // The sensor collect data trigger event
 
 /**
- * @brief change miniseconds to ticks
- * @param ms, the mimiseconds to translate
- * @return the corresponding ticks of the time
+ * @brief Convert miniseconds to system ticks
+ * @param ms Indicates the mimiseconds to convert
+ * @return Returns the corresponding ticks of specified time
  */
 static uint32_t Time2Tick(uint32_t ms)
 {
@@ -62,13 +62,16 @@ static uint32_t Time2Tick(uint32_t ms)
     return (uint32_t)ret;
 }
 
+/**
+ @brief Set the main task flow status
+ */
 static void SetMainStatus(IoTMainStatus newStatus)
 {
     g_iotMainStatus = newStatus;
 }
 
 /**
- * @brief this is the LED FLASH task entry
+ * @brief LED flashing task entry
  */
 static void LedTaskEntry(const void *arg)
 {
@@ -105,11 +108,10 @@ static void LedTaskEntry(const void *arg)
 }
 
 /**
- * @brief This is the Sensor task entry, sample the data and report to the cloud
- *        The main flow like this:
- *        1, wait the trigger event by cycle time
- *        2, sample the humidity/temperature/soil moisture
- *        3, report the board info to the cloud
+ * @brief Sensor data collection task entry and the main flow is as follows:
+ *        1, Wait the for the event to trigger in specified time
+ *        2, Collect Sensor Data (air humidity/temperature, soil moisture, etc.)
+ *        3, Report the collected data to the Cloud Platform
  */
 static void SensorTaskEntry(const void *arg)
 {
@@ -147,30 +149,33 @@ static void SensorTaskEntry(const void *arg)
 }
 
 /**
- * @brief This function used to deal with cloud command
- * @param command, defines as CLOUD_CommandType
- * @param value, corresponding to command
- * @return 0 success while -1 failed
-*/
+ * @brief Callback function used to process commands delivered by the Cloud Platform
+ * @param command Indicates the command delivered by the Cloud Platform
+ * @param value Indicates the parameter corresponding to the command
+ * @return Returns 0 success while -1 failed
+ */
 static int CommandCallBack(int command, int value)
 {
-    int ret = -1;
-    CLOUD_CommandType cmd = (CLOUD_CommandType)command;
-
-    // we only deal the motor control command, and value could be CN_BOARD_SWITCH_ON/CN_BOARD_SWITCH_OFF
-    if (cmd == CLOUD_COMMAND_CONTROLMOTOR) {
-        // when open the motor, we should start the softtimer to monitor and stop the motor if the timer timeout
+    /**
+     * Here, we only process the command for controlling the motor issued by the Cloud Platform, and the
+     * value should be CN_BOARD_SWITCH_ON or CN_BOARD_SWITCH_OFF
+     */
+    if ((CLOUD_CommandType)command == CLOUD_COMMAND_CONTROLMOTOR) {
         if (value == CN_BOARD_SWITCH_ON) {
+            /**
+            * If the command is to start the motor, the soft timer needs to be started. Turn off the
+            * off motor when soft timer times out
+            */
             osTimerStart(g_motorMonitorTimer, Time2Tick(CONFIG_MOTOR_TIMELIMIT));
         }
-        ret = BOARD_SetMotorStatus(value);
+        return BOARD_SetMotorStatus(value);
     }
-    return ret;
+    return -1;
 }
 
 /**
- * @brief This is the motor monitor timer callback
- *        When called, we must stop the motor, and trigger the task to report the status
+ * @brief Callback function for motor monitor soft timer.
+ *        When soft timer times out, we stop the motor and trigger a stop event for the sensor task
  */
 static void MotorMonitorTimerCallBack(const void *arg)
 {
@@ -181,12 +186,11 @@ static void MotorMonitorTimerCallBack(const void *arg)
 }
 
 /**
- * @brief this is the main task entry
- *        The main flow is:
- *        1, init the necessary hardware and read info(like the deviceID devicePwd)from NFC
- *        2, connect the wifi
- *        3, connect the iot platform
- *        4, create the sensor task
+ * @brief IoTMain task entry and the main flow is as follows:
+ *        1, Initialize the necessary hardware and obtain the corresponding information from NFC
+ *        2, Connecting to wifi
+ *        3, Connecting to the HUAWEI CLOUD Platform
+ *        4, Creating a Sensor Collection Task
  */
 static void IotMainTaskEntry(const void *arg)
 {
@@ -194,7 +198,6 @@ static void IotMainTaskEntry(const void *arg)
     NfcInfo nfcInfo;
     (void)arg;
 
-    // initialize the hardware,read info from NFC,and create the software resource
     SetMainStatus(IOTMAIN_STATUS_HARDINIT);
     BOARD_InitNfc();
     BOARD_InitMotor();
@@ -205,7 +208,6 @@ static void IotMainTaskEntry(const void *arg)
         return;
     }
 
-    // connect the wifi and iot platform
     SetMainStatus(IOTMAIN_STATUS_CONNECTWIFI);
     if (BOARD_ConnectWifi(nfcInfo.wifiSSID, nfcInfo.wifiPWD) != 0) {
         return;
@@ -221,7 +223,6 @@ static void IotMainTaskEntry(const void *arg)
         return;
     }
 
-    // create the sensor task to sample and report the data periodically
     attr.attr_bits = 0U;
     attr.cb_mem = NULL;
     attr.cb_size = 0U;
@@ -238,13 +239,13 @@ static void IotMainTaskEntry(const void *arg)
 }
 
 /**
- * @brief this is the main Entry of the IoT-Flower project
+ * @brief IoT Main Entry of the IoT-Flower project
  */
 static void IotMainEntry(void)
 {
     osThreadAttr_t attr;
 
-    // create the motor monitor timer and sync event.
+    // Create the motor monitor timer and sync event.
     g_motorMonitorTimer = osTimerNew((osTimerFunc_t)MotorMonitorTimerCallBack, osTimerPeriodic, NULL, NULL);
     if (g_motorMonitorTimer == NULL) {
         return;
@@ -254,22 +255,22 @@ static void IotMainEntry(void)
         return;
     }
 
-    // create the led status task and the main flow task
+    // Create the Led flashing task and the iot main flow task
     attr.attr_bits = 0U;
     attr.cb_mem = NULL;
     attr.cb_size = 0U;
     attr.stack_mem = NULL;
-    attr.stack_size = CONFIG_TASK_MAIN_STACKSIZE;
-    attr.priority = CONFIG_TASK_MAIN_PRIOR;
-    attr.name = "IoTMain";
-    (void) osThreadNew((osThreadFunc_t)IotMainTaskEntry, NULL, (const osThreadAttr_t *)&attr);
-
     attr.stack_size = CONFIG_TASK_DEFAULT_STACKSIZE;
     attr.priority = CONFIG_TASK_DEFAULT_PRIOR;
     attr.name = "LedFlash";
     (void) osThreadNew((osThreadFunc_t)LedTaskEntry, NULL, (const osThreadAttr_t *)&attr);
 
+    attr.stack_size = CONFIG_TASK_MAIN_STACKSIZE;
+    attr.priority = CONFIG_TASK_MAIN_PRIOR;
+    attr.name = "IoTMain";
+    (void) osThreadNew((osThreadFunc_t)IotMainTaskEntry, NULL, (const osThreadAttr_t *)&attr);
+
     return;
 }
-// add the IotMainEntry to the system loader
+// Add the IotMainEntry function to the System Startup Procedure
 APP_FEATURE_INIT(IotMainEntry);

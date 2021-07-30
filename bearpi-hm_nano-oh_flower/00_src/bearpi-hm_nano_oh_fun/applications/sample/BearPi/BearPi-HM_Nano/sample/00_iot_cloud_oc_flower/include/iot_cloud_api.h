@@ -16,7 +16,7 @@
 #define __IOT_CLOUD_API_H__
 
 /**
- * @brief This is the cloud command here
+ * @brief Enumeration all the command issued by the Cloud Platform
  */
 typedef enum {
     CLOUD_COMMAND_SETTHRETHOLD = 0,
@@ -25,45 +25,48 @@ typedef enum {
 }CLOUD_CommandType;
 
 /**
- * @brief This api will do the cloud initialize
+ * @brief Initialize the cloud sdk
  * @return 0 success while others failed
  */
 int CLOUD_Init(void);
 /**
- * @brief This api will do the cloud deinitialize
+ * @brief Do deinitialize the cloud sdk
  * @return 0 success while others failed
  */
 int CLOUD_Deinit(void);
 
 /**
- * @brief This is the clould call back module, if any message comes, then the function will be called
+ * @brief Callback function used to process commands delivered by the Cloud Platform
+ * @param command Indicates the command delivered by the Cloud Platform
+ * @param value Indicates the parameter corresponding to the command
+ * @return Returns 0 success while -1 failed
  */
 typedef int (*CLOUD_CommandCallBack)(int command, int value);
 
 /**
- * @brief This api will send a meesage to the iot platform
- * @param airTemperature, the current local temperature, if NULL, will not update
- * @param airHumidity, the current local humiditym, if NULL, will not update
- * @param soilMoisture, the current soil moisture, if NULL, will not update
- * @param motorStatus, the current motor status, if NULL, will not update
- * @return 0 success while others failed
+ * @brief Send collected data to Cloud Platform
+ * @param airTemperature Indicates the current local temperature, if NULL, will not update
+ * @param airHumidity Indicates the current local humiditym, if NULL, will not update
+ * @param soilMoisture Indicates the current soil moisture, if NULL, will not update
+ * @param motorStatus Indicates the current motor status, if NULL, will not update
+ * @return Returns 0 success while others failed
 */
 int CLOUD_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, int *motorStatus);
 
 /**
- * @brief This api will connect to the iot platform
- * @param deviceID, the deviceID create in the iot platform
- * @param devicePwd, the corresponding to the deviceID
- * @param serverIP, the ip of the iot platform
- * @param serverPort, the port correspond to the ip
- * @param cmdCallBack, used for the command callback, if any message comes, will call this callback function
- * @return 0 success while others failed
+ * @brief Connect to the Cloud Platform
+ * @param deviceID Indicats the deviceID create in the iot platform
+ * @param devicePwd Indicates the corresponding to the deviceID
+ * @param serverIP Indicates the ip of the iot platform
+ * @param serverPort Indicates the port correspond to the ip
+ * @param cmdCallBack Indicates command callback and will be called if any message comes
+ * @return Returns 0 success while others failed
 */
 int CLOUD_Connect(const char *deviceID, const char *devicePwd, \
     const char *serverIP, const char *serverPort, \
     CLOUD_CommandCallBack cmdCallBack);
 /**
- * @brief This api will disconnect to the iot platform
+ * @brief Disconnect from the Cloud Platform
  * @return 0 success while others failed
 */
 int CLOUD_Disconnect(void);
