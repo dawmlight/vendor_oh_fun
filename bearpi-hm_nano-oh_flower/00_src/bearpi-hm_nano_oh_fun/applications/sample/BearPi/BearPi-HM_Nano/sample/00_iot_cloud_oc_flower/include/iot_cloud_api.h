@@ -22,23 +22,23 @@ typedef enum {
     CLOUD_COMMAND_SETTHRETHOLD = 0,
     CLOUD_COMMAND_CONTROLMOTOR,
     CLOUD_COMMAND_LAST,
-}Cloud_CommandType;
+}CLOUD_CommandType;
 
 /**
  * @brief This api will do the cloud initialize
  * @return 0 success while others failed
  */
-int Cloud_Init(void);
+int CLOUD_Init(void);
 /**
  * @brief This api will do the cloud deinitialize
  * @return 0 success while others failed
  */
-int Cloud_DeInit(void);
+int CLOUD_Deinit(void);
 
 /**
  * @brief This is the clould call back module, if any message comes, then the function will be called
  */
-typedef int (*Cloud_CommandCallBack)(int command, int value);
+typedef int (*CLOUD_CommandCallBack)(int command, int value);
 
 /**
  * @brief This api will send a meesage to the iot platform
@@ -48,7 +48,7 @@ typedef int (*Cloud_CommandCallBack)(int command, int value);
  * @param motorStatus, the current motor status, if NULL, will not update
  * @return 0 success while others failed
 */
-int Cloud_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, int *motorStatus);
+int CLOUD_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, int *motorStatus);
 
 /**
  * @brief This api will connect to the iot platform
@@ -59,13 +59,13 @@ int Cloud_ReportMsg(int *airTemperature, int *airHumidity, int *soilMoisture, in
  * @param cmdCallBack, used for the command callback, if any message comes, will call this callback function
  * @return 0 success while others failed
 */
-int Cloud_Connect(const char *deviceID, const char *devicePwd, \
+int CLOUD_Connect(const char *deviceID, const char *devicePwd, \
     const char *serverIP, const char *serverPort, \
-    Cloud_CommandCallBack cmdCallBack);
+    CLOUD_CommandCallBack cmdCallBack);
 /**
  * @brief This api will disconnect to the iot platform
  * @return 0 success while others failed
 */
-int Cloud_DisConnect(void);
+int CLOUD_Disconnect(void);
 #endif /* __IOT_CLOUD_API_H__ */
 
