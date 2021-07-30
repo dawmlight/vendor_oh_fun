@@ -164,7 +164,7 @@ static int CommandCallBack(int command, int value)
         if (value == CN_BOARD_SWITCH_ON) {
             /**
             * If the command is to start the motor, the soft timer needs to be started. Turn off the
-            * off motor when soft timer times out
+            * motor when soft timer times out
             */
             osTimerStart(g_motorMonitorTimer, Time2Tick(CONFIG_MOTOR_TIMELIMIT));
         }
