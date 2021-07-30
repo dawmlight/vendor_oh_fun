@@ -19,77 +19,77 @@
 #define CN_BOARD_SWITCH_OFF   0
 
 /**
- * @brief init the board wifi
- * @return 0 success while others failed
+ * @brief Initialize the board wifi
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitWifi(void);
 
 /**
- * @brief connect the wifi
- * @param wifiSSID, the ssid of the ap
- * @param wifiPWD, the pwd of the ap
+ * @brief Connect to the wifi
+ * @param wifiSSID Indicates the ssid of the ap
+ * @param wifiPWD Indicates the pwd of the ap
+ * @return Returns 0 success while others failed
  */
 int BOARD_ConnectWifi(const char *wifiSSID, const char *wifiPWD);
 
 /**
- * @brief disconnect the wifi
- * @return 0 success while others failed
+ * @brief Disconnect from the wifi AP
+ * @return Returns 0 success while others failed
  */
 int BOARD_DisconnectWifi(void);
 
 /**
- * @brief init the board motor
- * @return 0 success while others failed
+ * @brief Initialize the board motor
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitMotor(void);
 
 /**
- * @brief control the motor
- * @param status, has the value of CN_BOARD_SWICT_ON/OFF
- * @return 0 success while others failed
+ * @brief Control the motor
+ * @param status Indicates the status to set and  the value should be CN_BOARD_SWICT_ON/OFF
+ * @return Returns 0 success while others failed
  */
 int BOARD_SetMotorStatus(int status);
 
 /**
- * @brief get the motor status
- * @return the status of the motor, 0 means on others off
+ * @brief Get the motor status
+ * @return Returns the status of the motor,the value should be CN_BOARD_SWICT_ON/OFF
  */
 int BOARD_GetMotorStatus(void);
 
 /**
- * @brief init the board air sensor
- * @return 0 success while others failed
+ * @brief Initialize the board air sensor
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitAirSensor(void);
 
 /**
- * @brief get the air status
- * @return 0 success while others failed
+ * @brief Get the air status
+ * @return Returns 0 success while others failed
  */
 int BOARD_GetAirStatus(int *temperatur, int *humidity);
 
 /**
- * @brief init the board soil sensor
- * @return 0 success while others failed
+ * @brief Initialize the board soil sensor
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitSoilSensor(void);
 
 /**
- * @brief get the air status
- * @param moisture, store the data
- * @return 0 success while others failed
+ * @brief Get the air status
+ * @param moisture Indicates store the data
+ * @return Returns 0 success while others failed
  */
 int BOARD_GetSoilStatus(int *moisture);
 
 /**
- * @brief init the board NFC
- * @return 0 success while others failed
+ * @brief Initialize the board NFC
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitNfc(void);
 
 /**
- * @brief defins the nfc information
- *
+ * @brief Defines the nfc information
  */
 typedef struct {
     const char *deviceID;
@@ -99,23 +99,23 @@ typedef struct {
 }NfcInfo;
 
 /**
- * @brief get the nfc info
- * @param info,if success, the corresponding member will point to the real info, and must not free
- * @return 0 success while others failed
+ * @brief Get the nfc info
+ * @param info Indicates the buffer to storage the data get from NFC
+ * @return Returns 0 success while others failed
  */
 int BOARD_GetNfcInfo(NfcInfo *info);
 
 /**
- * @brief use this function to initialize the led
- *
+ * @brief Initialize the LED
+ * @return Returns 0 success while others failed
  */
 int BOARD_InitLed(void);
 
 /**
- * @brief use this function to set the led on/off
- * @param status, has the value of CN_BOARD_SWICT_ON/OFF
- * @return 0 success while others failed
-*/
+ * @brief Control the led status
+ * @param status Indicates the status to set and value should be CN_BOARD_SWICT_ON/OFF
+ * @return Returns 0 success while others failed
+ */
 int BOARD_SetLedStatus(int status);
 
 #endif /* __IOT_HARDWARE_API_H__ */
