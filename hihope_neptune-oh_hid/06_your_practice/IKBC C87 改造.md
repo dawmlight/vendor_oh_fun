@@ -28,6 +28,8 @@
 
 ###     先上改造完的内部图,见图1，电工胶布挡住了具体走线。因为怕压到线材，所以我把肋板削了几个口子走线。
 
+
+
 <div align="center"><img src="https://s3.bmp.ovh/imgs/2021/08/827ef534359d75e9.jpg" width = 500 height = 300 />
 
 <h3 style="text-align:center">图1</h3>
@@ -40,18 +42,17 @@
 ### 大体上就是锂电连接充放电板，充放电板供电（通过TypeC公头）给Neptune开发板，而Neptune开发板的四个引脚就直接如官方未加装锂电的示意图连接。具体看图2，图3。
 
 
+
 <div align="center"><img src="https://gitee.com/openharmony-sig/vendor_oh_fun/raw/master/hihope_neptune-oh_hid/02_%E6%93%8D%E4%BD%9C%E6%8C%87%E5%AF%BC%E6%96%87%E6%A1%A3/meta/wps40.jpg" width = 500 height = 300 />
+<h3 style="text-align:center">图2</h3>
 </div>
 
-
-<center>图2</center>
 
 
 <div align="center"><img src="https://gitee.com/openharmony-sig/vendor_oh_fun/raw/master/hihope_neptune-oh_hid/02_%E6%93%8D%E4%BD%9C%E6%8C%87%E5%AF%BC%E6%96%87%E6%A1%A3/meta/wps6.jpg" width = 500 height = 300 />
+<h3 style="text-align:center">图3</h3>
 </div>
 
-
-<center>图3</center>
 
 
 ## **使用感受**
