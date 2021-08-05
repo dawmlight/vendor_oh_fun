@@ -30,8 +30,8 @@
 
 <div align="center"><img src="https://s3.bmp.ovh/imgs/2021/08/827ef534359d75e9.jpg" width = 500 height = 300 />
 
+<h1 style="text-align:center">图1</h1>
 
-<center>\n图1</center>
 </div>
 
 ### 立柱削掉一些，正好能卡住充放电板。
