@@ -13,33 +13,32 @@
  * limitations under the License.
  */
 
-    // FA 设备连接华为云核心代码
-    commandLightImgBtn.setClickedListener(component -> {
-    	SDKIoTDAClient sdkIoTDAClient = SDKIoTDAClient.getInstance();
-        if (!waterFlowerStatue) {
-            LinkedHashMap<String, Object> motorControlParas = new LinkedHashMap<>();
-            motorControlParas.put("Motor", "ON");
-            chosenCommandType = stopeReta;
-            // FA设备连接华为云
-            sdkIoTDAClient.CreateCommand(device[0], "AutoWater", "AutoWater_Control_Pump",
-                    motorControlParas, new SDKCallBack<CreateCommandResponse>() {
-                @Override
-                public void onResponse(CreateCommandResponse response) {
 
-                }
+    /**
+    * @description Send a watering start command to HUAWEI CLOUD.
+    * 1. connect to the HUAWEI CLOUD
+    * 2. Send the water flower command
+    *
+    * @param waterFlowerCmd : watering start command
+    **/
+    private void startWaterFlower(String waterFlowerCmd) {
+        LinkedHashMap<String, String> motorControlParas = new LinkedHashMap<>();
+        motorControlParas.put("Motor", waterFlowerCmd);
+        SDKIoTDAClient sdkIoTDAClient = SDKIoTDAClient.getInstance();
 
-                @Override
-                public void onFailure(int code, String errmsg) {
-                    Utils.gotoLogin(code, abilitySlice);
-                }
-            });
+        // "AutoWater" : the serviceid
+        // "AutoWater_Conrol_Pump" : the command name
+        sdkIoTDAClient.CreateCommand(device[0], "AutoWater", "AutoWater_Control_Pump", 
+                motorControlParas, new SDKCallBack<CreateCommandResponse>() {
+            @Override
+            public void onResponse(CreateCommandResponse response) {
+                // Process the result of successfully connecting to HUAWEI CLOUD
+            }
 
-            commandLightImgBtn.setPixelMap(ResourceTable.Media_btn_on);
-            waterFlowerHintText.setText(showCloseText);
-            waterFlowerHintText.setTextColor(ColorResources.COlOR_Btn_Open);
-            waterFlowerStatue = true;
-        }
-    });
-
-
+            @Override
+            public void onFailure(int code, String errmsg) {
+                // Process the result of failure connecting to HUAWEI CLOUD
+            }
+        });
+    }
 
