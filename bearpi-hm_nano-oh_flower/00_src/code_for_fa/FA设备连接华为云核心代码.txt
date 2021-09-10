@@ -22,9 +22,9 @@
         LinkedHashMap<String, String> motorControlParas = new LinkedHashMap<>();
         motorControlParas.put("Motor", waterFlowerCmd);
         SDKIoTDAClient sdkIoTDAClient = SDKIoTDAClient.getInstance();
-	Progress.showProgress(getContext(), true);
+		Progress.showProgress(getContext(), true);
 
-	// 发送浇花的命令
+		// 发送浇花的命令
         // "AutoWater" : 命令的ID
         // "AutoWater_Control_Pump" : 命令的名字
         sdkIoTDAClient.CreateCommand(device[0], "AutoWater", "AutoWater_Control_Pump", 
@@ -32,17 +32,16 @@
             @Override
             public void onResponse(CreateCommandResponse response) {
                 // 处理连接华为云成功的结果
-		Progress.showProgress(getContext(), false);
+				Progress.showProgress(getContext(), false);
             }
 
             @Override
             public void onFailure(int code, String errmsg) {
                 // 处理连接华为云失败的结果
-		Progress.showProgress(getContext(), false);
+				Progress.showProgress(getContext(), false);
             }
         });
     }
-
 
 	// 登录华为云，获取状态
 	btnLogin.setClickedListener(component -> {
