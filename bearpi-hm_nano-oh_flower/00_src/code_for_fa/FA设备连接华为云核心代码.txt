@@ -15,30 +15,70 @@
 
 
     /**
-    * @description Send a watering start command to HUAWEI CLOUD.
-    * 1. connect to the HUAWEI CLOUD
-    * 2. Send the water flower command
-    *
-    * @param waterFlowerCmd : watering start command
+    * @brief 向华为云平台发送浇花命令
+    * @param waterFlowerCmd 发送的浇花命令
     **/
     private void startWaterFlower(String waterFlowerCmd) {
         LinkedHashMap<String, String> motorControlParas = new LinkedHashMap<>();
         motorControlParas.put("Motor", waterFlowerCmd);
         SDKIoTDAClient sdkIoTDAClient = SDKIoTDAClient.getInstance();
+		Progress.showProgress(getContext(), true);
 
-        // "AutoWater" : the serviceid
-        // "AutoWater_Conrol_Pump" : the command name
+		// 发送浇花的命令
+        // "AutoWater" : 命令的ID
+        // "AutoWater_Control_Pump" : 命令的名字
         sdkIoTDAClient.CreateCommand(device[0], "AutoWater", "AutoWater_Control_Pump", 
                 motorControlParas, new SDKCallBack<CreateCommandResponse>() {
             @Override
             public void onResponse(CreateCommandResponse response) {
-                // Process the result of successfully connecting to HUAWEI CLOUD
+                // 处理连接华为云成功的结果
+				Progress.showProgress(getContext(), false);
             }
 
             @Override
             public void onFailure(int code, String errmsg) {
-                // Process the result of failure connecting to HUAWEI CLOUD
+                // 处理连接华为云失败的结果
+				Progress.showProgress(getContext(), false);
             }
         });
     }
 
+	// 登录华为云，获取状态
+	btnLogin.setClickedListener(component -> {
+		// 显示登录进度
+		Progress.showProgress(getContext(),true);
+		TokenAPI.getInstance().CreateAccessKey(userid.getText(), iamid.getText(),
+				password.getText(), new APICallback() {
+			@Override
+			public void onSuccess(APIResponse response) {
+				if (rememberCheckBox.isChecked()) {
+					PfUtils.IAM_PF.putString("userid", userid.getText());
+					PfUtils.IAM_PF.putString("iamid", iamid.getText());
+					PfUtils.IAM_PF.putString("password", password.getText());
+					PfUtils.IAM_PF.flushSync();
+				} else {
+					PfUtils.IAM_PF.putString("userid", "");
+					PfUtils.IAM_PF.putString("iamid", "");
+					PfUtils.IAM_PF.putString("password", "");
+					PfUtils.IAM_PF.flushSync();
+				}
+				Progress.showProgress(getContext(),false);
+				startAbility(abilityUtils.moveToPageInside("MainAbility"));
+				terminate();
+			}
+
+			@Override
+			public void onError(APIResponse error) {
+				Progress.showProgress(getContext(),false);
+				if (error.code >= 500) {
+					DialogHelper.ShowDialog1(getContext(),"登录失败","网络异常无法访问当前接口");
+				} else if (error.code == -1) {
+					DialogHelper.ShowDialog1(getContext(),"登录失败","内容解析错误，接口可能发生改变");
+				} else {
+					DialogHelper.ShowDialog1(getContext(),"登录失败","用户登录信息输入错误");
+				}
+			}
+		});
+	});
+	
+	
